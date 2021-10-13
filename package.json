@@ -1,0 +1,28 @@
+{
+	"name": "refreps-server",
+	"version": "1.0.0",
+	"description": "back end to refreps application",
+	"main": "index.js",
+	"scripts": {
+		"start": "npm run server.js",
+		"devStart": "nodemon run server.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/hunterdurbin/refreps-backend.git"
+	},
+	"author": "Hunter Durbin, Maxwell Kidd, Annie Peabody, Jacob Cecil",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/hunterdurbin/refreps-backend/issues"
+	},
+	"homepage": "https://github.com/hunterdurbin/refreps-backend#readme",
+	"dependencies": {
+		"express": "^4.17.1",
+		"mongoose": "^6.0.10"
+	},
+	"devDependencies": {
+		"jest": "^27.2.5",
+		"nodemon": "^2.0.13"
+	}
+}
