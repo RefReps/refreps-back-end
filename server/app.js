@@ -4,8 +4,10 @@ require('dotenv').config({ path: __dirname + '/./../.env' })
 
 const app = express()
 
-app.get('/', (req, res) => {
-	res.json({ msg: 'server root' })
-})
+const indexRouter = require('../routers/index')
+const courseRouter = require('../routers/courses')
+
+app.use('', indexRouter)
+app.use('/courses', courseRouter)
 
 module.exports = app
