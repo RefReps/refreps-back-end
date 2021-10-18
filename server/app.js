@@ -16,15 +16,21 @@ app.use(
 	})
 )
 
-// Add endpoints to the application
+// Import Routes
 const indexRouter = require('../routers/index')
 const courseRouter = require('../routers/courses')
 const videoManagerRouter = require('../routers/videos')
 const adminRouter = require('../routers/admin')
+const authRouter = require('../routers/auth')
 
+// Middleware
+app.use(express.json())
+
+// Route Middleware
 app.use('/api', indexRouter)
-app.use('/api/courses', courseRouter)
-app.use('/api/videos', videoManagerRouter)
-app.use('/api/admin', adminRouter)
+app.use('/api/course', courseRouter)
+app.use('/api/video', videoManagerRouter)
+app.use('/api/admin', authRouter)
+app.use('/api/user', authRouter)
 
 module.exports = app
