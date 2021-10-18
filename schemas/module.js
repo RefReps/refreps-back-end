@@ -1,19 +1,20 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const ObjectId = mongoose.Types.ObjectId
 
 const moduleSchema = Schema(
 	{
-		title: {
+		moduleName: {
 			type: String,
 			required: true,
 		},
-		url: {
-			type: String,
-			required: true,
+		templateModule: {
+			type: Boolean,
+			default: false,
 		},
-		types: {
-			type: Array,
-			required: false,
+		parentModule: {
+			type: ObjectId,
+			default: null,
 		},
 	},
 	{ timestamps: true }
