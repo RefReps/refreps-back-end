@@ -7,9 +7,21 @@ const videoSchema = Schema(
 			type: String,
 			required: true,
 		},
+		description: {
+			type: String,
+			required: false,
+		},
 		url: {
 			type: String,
 			required: true,
+		},
+		duration: {
+			type: Number,
+			required: true,
+		},
+		types: {
+			type: Array,
+			required: false,
 		},
 	},
 	{ timestamps: true }
