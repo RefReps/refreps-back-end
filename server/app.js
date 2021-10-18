@@ -20,9 +20,11 @@ app.use(
 const indexRouter = require('../routers/index')
 const courseRouter = require('../routers/courses')
 const videoManagerRouter = require('../routers/videos')
+const adminRouter = require('../routers/admin')
 
 app.use('/api', indexRouter)
 app.use('/api/courses', courseRouter)
 app.use('/api/videos', videoManagerRouter)
+app.use('/api/admin', adminRouter)
 
 module.exports = app
