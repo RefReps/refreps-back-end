@@ -1,6 +1,12 @@
 const jwt = require('jsonwebtoken')
+require('dotenv').config({ path: '.env' })
 
 module.exports = (req, res, next) => {
+	if (process.env.ENVIRONMENT.toLocaleLowerCase() == 'dev') {
+		next()
+		return
+	}
+
 	// Check if auth-token exists
 	const token = req.header('auth-token')
 	if (!token) return res.status(401).send('Access Denied')

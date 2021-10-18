@@ -3,52 +3,41 @@ const path = require('path')
 const fs = require('fs')
 const conn = require('./../server/dbConnection')
 const videoQuery = require('./../utils/videoQuery')
-const verify = require('../utils/verifyToken')
+const verifyToken = require('../utils/middleware/verifyToken')
+const verifyUser = require('../utils/middleware/verifyUser')
+const upload = require('../utils/middleware/server-upload')
 
 // Handling Video Requests for the front-end
 // -----------------------------------------
 
 // get list of videos
-router.route('/').get(verify, async (req, res) => {
-	let user = await conn.models.User.findOne({ _id: req.user }).exec()
-	if (!user.isAdmin) return res.status(401).send('Access Denied: Admins only')
+router.route('/').get(verifyToken, verifyUser.admin, async (req, res) => {
+	let amount = req.query.amount ? req.query.amount : 20
+	let type = req.query.type ? req.query.type : ''
 	let doc = await videoQuery.queryVideos(10)
-	res.send(doc)
+	res.json(doc)
 })
 
 // get metadata for a single video for the video player
-router.route('/:id/data').get(async (req, res) => {
+router.route('/:id/data').get(verifyToken, async (req, res) => {
 	res.json(await videoQuery.queryById(req.params.id))
 })
 
 // stream a video from the given id
-router.route('/:id').get((req, res) => {
+router.route('/:id').get(verifyToken, (req, res) => {
 	// need api call to some api streaming
 })
 
 // Main page to view all of the videos in the db
 // ---------------------------------------------
-// router.route('/').get(async (req, res) => {
-// 	let doc = await videoQuery.queryVideos(10)
-// 	res.json(doc)
-// })
 
-router.route('/new').post(async (req, res) => {
-	// TODO: Authenticate user posting video
-	// TODO: upload video to cloud service, then store meta data in db
-	let video = new conn.models.Video({
-		title: 'Basketball 1',
-		url: 'https://youtube.com',
-		types: ['basketball'],
-		duration: 400,
+router
+	.route('/upload')
+	.post(verifyToken, verifyUser.admin, upload, async (req, res) => {
+		// TODO: Authenticate user posting video
+		// TODO: upload video to cloud service, then store meta data in db
+		return res.json({ status: 'OK' })
 	})
-	try {
-		let savedVideo = await video.save()
-		res.json({ video: video._id })
-	} catch (err) {
-		res.status(400).send(err)
-	}
-})
 
 router.route('/test').get(async (req, res) => {
 	let type = req.query.type
@@ -59,10 +48,6 @@ router.route('/test').get(async (req, res) => {
 	} catch (err) {
 		console.log(err)
 	}
-})
-
-router.route('/upload').get((req, res) => {
-	res.json({ msg: `viewCount: ${req.session.viewCount}` })
 })
 
 module.exports = router
