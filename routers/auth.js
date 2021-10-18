@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const conn = require('./../server/dbConnection')
 const { registerValidation, loginValidation } = require('../utils/validation')
-require('dotenv').config({ path: __dirname + './../.env' })
+require('dotenv').config({ path: '.env' })
 
 router.route('/register').post(async (req, res) => {
 	// Validate data before creating new user
