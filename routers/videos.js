@@ -55,7 +55,6 @@ router.route('/test').get(async (req, res) => {
 })
 
 router.route('/upload').get((req, res) => {
-	req.session.viewCount += 1
 	res.json({ msg: `viewCount: ${req.session.viewCount}` })
 })
 
