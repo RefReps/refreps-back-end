@@ -1,11 +1,19 @@
 const router = require('express').Router()
 const path = require('path')
 const fs = require('fs')
+
+// Server Import
 const conn = require('./../server/dbConnection')
+
+// Query Imports
 const videoQuery = require('./../utils/videoQuery')
+
+// Middleware Imports
 const verifyToken = require('../utils/middleware/verifyToken')
 const verifyUser = require('../utils/middleware/verifyUser')
+const verification = require('../utils/validation')
 const upload = require('../utils/middleware/server-upload')
+const uploadS3 = require('../utils/middleware/s3-upload')
 
 // Handling Video Requests for the front-end
 // -----------------------------------------
@@ -33,7 +41,23 @@ router.route('/:id').get(verifyToken, (req, res) => {
 
 router
 	.route('/upload')
-	.post(verifyToken, verifyUser.admin, upload, async (req, res) => {
+	.post(
+		verifyToken,
+		verifyUser.admin,
+		verification.bodyValidator(verification.videoUploadSchema),
+		upload,
+		async (req, res) => {
+			// TODO: Authenticate user posting video
+			// TODO: upload video to cloud service, then store meta data in db
+			const video = await new conn.models.Video(req.body)
+			video.save()
+			return res.json({ status: 'uploaded' })
+		}
+	)
+
+router
+	.route('/upload-s3')
+	.post(verifyToken, verifyUser.admin, uploadS3, async (req, res) => {
 		// TODO: Authenticate user posting video
 		// TODO: upload video to cloud service, then store meta data in db
 		return res.json({ status: 'OK' })

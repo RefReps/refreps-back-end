@@ -2,22 +2,22 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const ObjectId = mongoose.Types.ObjectId
 
-const moduleSchema = Schema(
-	{
-		moduleName: {
-			type: String,
-			required: true,
-		},
-		templateModule: {
-			type: Boolean,
-			default: false,
-		},
-		parentModule: {
-			type: ObjectId,
-			default: null,
-		},
+const moduleInfo = {
+	moduleName: {
+		type: String,
+		required: true,
 	},
-	{ timestamps: true }
-)
+	templateModule: {
+		type: Boolean,
+		default: false,
+	},
+	parentModule: {
+		type: ObjectId,
+		default: null,
+	},
+}
 
-module.exports = moduleSchema
+const moduleSchema = new Schema(moduleInfo, { timestamps: true })
+
+module.exports.moduleSchema = moduleSchema
+module.exports.moduleInfo = moduleInfo

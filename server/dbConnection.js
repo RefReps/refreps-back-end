@@ -15,7 +15,7 @@ conn.openUri(uri).catch((err) => {
 })
 
 // Create models from schemas for the conn object
-conn.model('Video', require(path.join(__dirname, '/./../schemas/video')))
-conn.model('User', require(path.join(__dirname, '/./../schemas/user')))
+conn.model('Video', require('../schemas/video').videoSchema)
+conn.model('User', require('../schemas/user').userSchema)
 
 module.exports = conn

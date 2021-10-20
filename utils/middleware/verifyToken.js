@@ -1,3 +1,5 @@
+// Middleware to handle if the user is logged in on their browser
+
 const jwt = require('jsonwebtoken')
 require('dotenv').config({ path: '.env' })
 
