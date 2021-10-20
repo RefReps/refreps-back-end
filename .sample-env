@@ -1,9 +1,10 @@
 HOST=
 PORT=
-DB_CONNECT=
+DB_CONNECT=[path to mongodb]
 DB_HOST=
 DB_PORT=
 BD_USER=
 DB_PASSWORD=
 DB_MAX_CONNECTIONS=
-TOKEN_SECRET=
+TOKEN_SECRET=[any token for the application to use]
+ENVIRONMENT=[dev/test/prod]

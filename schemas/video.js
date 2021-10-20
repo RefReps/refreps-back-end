@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const videoSchema = Schema({
+const videoInfo = {
 	title: {
 		type: String,
 		required: true,
@@ -26,6 +26,9 @@ const videoSchema = Schema({
 		type: Date,
 		default: Date.now(),
 	},
-})
+}
 
-module.exports = videoSchema
+const videoSchema = new Schema(videoInfo, { timestamps: true })
+
+module.exports.videoSchema = videoSchema
+module.exports.videoInfo = videoInfo

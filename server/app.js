@@ -3,18 +3,19 @@ const session = require('express-session')
 const path = require('path')
 const fs = require('fs')
 const cors = require('cors')
-require('dotenv').config({ path: __dirname + '/./../.env' })
+require('dotenv').config({ path: '.env' })
 
 // Initialize the express application
 const app = express()
 app.use(cors())
 app.use(
 	session({
-		secret: 'secret-key',
+		secret: process.env.TOKEN_SECRET,
 		resave: false,
 		saveUnitialized: false,
 	})
 )
+app.use(express.static('public'))
 
 // Import Routes
 const indexRouter = require('../routers/index')
