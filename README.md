@@ -5,6 +5,7 @@ Quick installation of API
 - setup repo
 - navigate to root of repo
 - run `npm install` at root
+- Also run `npm install -g nodemon` if you don't already have nodemon installed globally
 - make a `.env` file at the root of the repo
 - copy content of `sample.env` file into the new `.env` file
 - fill out the contents of the `.env` file
