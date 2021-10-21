@@ -8,3 +8,4 @@ DB_PASSWORD=
 DB_MAX_CONNECTIONS=
 TOKEN_SECRET=[any token for the application to use]
 ENVIRONMENT=[dev/test/prod]
+LOCAL_UPLOAD_PATH=[use "uploads/" as default]
