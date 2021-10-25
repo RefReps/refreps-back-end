@@ -15,39 +15,25 @@ const uploadS3 = require('../utils/middleware/s3-upload')
 
 // Set default Middleware for path
 
+// Course Utils
+const courseEndware = require('../utils/course/endware')
+const courseCreation = require('../utils/course/create')
+const courseQuery = require('../utils/course/query')
+
 // Display all accessable courses that the user has access to
-router.route('/').get(async (req, res) => {
-	try {
-		const courses = await conn.models.Course.find().exec()
-		res.json(
-			courses.map((course) => {
-				return { _id: course._id, courseName: course.courseName }
-			})
-		)
-	} catch (err) {
-		console.log(err)
-		res.status(400).json({ query: 'failed' })
-	}
+router.route('/').get(courseEndware.getAllCourses)
+
+router.post('/test', (req, res) => {
+	res.send(req.body)
 })
 
 // Make a new course (admin only)
-router.route('/new').post(async (req, res) => {
-	try {
-		const course = new conn.models.Course({
-			courseName: req.query.name ? req.query.name : 'Course Not Named',
-			isTemplateCourse: true ? req.query.isTemplate == 'true' : false,
-			sections: [{}, {}],
-			authors: [],
-			students: [],
-			settings: {},
-		})
-		course.save()
-		res.status(201).json(course)
-	} catch (err) {
-		console.log(err)
-		res.status(400).json({ post: 'failed' })
-	}
-})
+router
+	.route('/new')
+	.post(courseEndware.createTemplateCourse)
+	.get((req, res) => {
+		res.status(400).json({ msg: 'Cannot GET request' })
+	})
 
 // Go to a specific course's home page (if access to do so)
 router.route('/:courseId').get(async (req, res) => {
@@ -93,7 +79,17 @@ router.route('/:courseId/section').get(async (req, res) => {
 })
 
 // Create a new section and append it to the end of the sections for the course
-router.route('/:courseId/section/new').post((req, res) => {})
+router.route('/:courseId/section').post(async (req, res) => {
+	try {
+		const response = await courseCreation.pushNewSection({
+			sectionName: '1',
+			isViewable: true,
+		})
+		res.status(204).send(response)
+	} catch (err) {
+		res.status(400).send(err)
+	}
+})
 
 router
 	.route('/:courseId/section/:sectionId')
@@ -103,6 +99,20 @@ router
 	.put((req, res) => {})
 	// Delete a specific section from the course
 	.delete((req, res) => {})
+
+router
+	.route('/:courseId/section/:sectionId/module')
+	// Get the modules info for a specific section
+	.get((req, res) => {})
+	// Push a new module for the section
+	.post(async (req, res) => {
+		try {
+			const response = await courseCreation.pushNewModule()
+			res.status(204).send(response)
+		} catch (err) {
+			res.status(400).send(err)
+		}
+	})
 
 router
 	.route('/:courseId/section/:sectionId/module/:moduleId')

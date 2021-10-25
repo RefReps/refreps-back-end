@@ -1,21 +1,25 @@
 const express = require('express')
-const session = require('express-session')
+const upload = require('multer')()
 const path = require('path')
 const fs = require('fs')
 const cors = require('cors')
 require('dotenv').config({ path: '.env' })
+const { token_secret } = require('../data/config.json')
 
 // Initialize the express application
 const app = express()
-app.use(cors())
-app.use(
-	session({
-		secret: process.env.TOKEN_SECRET,
-		resave: false,
-		saveUnitialized: false,
-	})
-)
+
+// for parsing application/json
+app.use(express.json())
+
+// for parsing application/xwww-form-urlencoded
+app.use(express.urlencoded({ extended: true }))
+
+// for parsing multipart/form-data
+app.use(upload.none())
 app.use(express.static('public'))
+
+app.use(cors())
 
 // Import Routes
 const indexRouter = require('../routers/index')
@@ -23,9 +27,6 @@ const courseRouter = require('../routers/courses')
 const videoManagerRouter = require('../routers/videos')
 const adminRouter = require('../routers/admin')
 const authRouter = require('../routers/auth')
-
-// Middleware
-app.use(express.json())
 
 // Route Middleware
 app.use('/api', indexRouter)
