@@ -1,8 +1,0 @@
-{
-	"host": "localhost",
-	"port": 3000,
-	"db_connect": "",
-	"token_secret": "any-string",
-	"env": "dev",
-	"local_upload_path": "uploads/"
-}
