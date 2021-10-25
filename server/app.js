@@ -4,7 +4,6 @@ const path = require('path')
 const fs = require('fs')
 const cors = require('cors')
 require('dotenv').config({ path: '.env' })
-const { token_secret } = require('../data/config.json')
 
 // Initialize the express application
 const app = express()
@@ -16,7 +15,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // for parsing multipart/form-data
-app.use(upload.none())
+// app.use(upload.none())
 app.use(express.static('public'))
 
 app.use(cors())
