@@ -13,7 +13,7 @@ const contentInfo = {
 	order: {
 		type: Number,
 	},
-	type: {
+	contentType: {
 		type: String,
 		default: 'No Type',
 	},
@@ -30,7 +30,7 @@ const moduleInfo = {
 	},
 	isViewable: {
 		type: Boolean,
-		default: false,
+		default: true,
 	},
 	content: {
 		type: [new Schema(contentInfo)],
@@ -42,6 +42,10 @@ const sectionsInfo = {
 	sectionName: {
 		type: String,
 		default: 'Section not named',
+	},
+	isViewable: {
+		type: Boolean,
+		defaule: true,
 	},
 	modules: {
 		type: [new Schema(moduleInfo)],
