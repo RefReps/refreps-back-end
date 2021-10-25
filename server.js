@@ -1,6 +1,7 @@
 const app = require('./server/app')
 require('dotenv').config({ path: __dirname + '/./.env' })
-const { port } = require('./data/config.json')
+
+const port = process.env.PORT | 3000
 
 // Launch the application
 app.listen(port, () => {
