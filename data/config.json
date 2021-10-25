@@ -1,0 +1,8 @@
+{
+	"host": "localhost",
+	"port": 3000,
+	"db_connect": "mongodb+srv://sodadev:Mongodb123@cluster0.ocf1a.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+	"token_secret": "ncaskldjasodif",
+	"env": "dev",
+	"local_upload_path": "uploads/"
+}
