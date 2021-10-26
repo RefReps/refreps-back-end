@@ -1,6 +1,6 @@
 const { ValidationError } = require('joi')
 const { mockRequest, mockResponse } = require('jest-mock-req-res')
-const validation = require('../../../utils/validation')
+const validation = require('../../utils/validation')
 
 // Section for testing Register Validation Schema
 
