@@ -21,17 +21,11 @@ app.use(express.static('public'))
 app.use(cors())
 
 // Import Routes
-const indexRouter = require('../routers/index')
 const courseRouter = require('../routers/courses')
 const videoManagerRouter = require('../routers/videos')
-const adminRouter = require('../routers/admin')
-const authRouter = require('../routers/auth')
 
 // Route Middleware
-app.use('/api', indexRouter)
 app.use('/api/course', courseRouter)
 app.use('/api/video', videoManagerRouter)
-app.use('/api/admin', authRouter)
-app.use('/api/user', authRouter)
 
 module.exports = app
