@@ -6,7 +6,7 @@
 	"scripts": {
 		"start": "npm run server.js",
 		"devStart": "nodemon run server.js",
-		"test": "jest"
+		"test": "jest --collectCoverage"
 	},
 	"repository": {
 		"type": "git",
