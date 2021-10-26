@@ -13,19 +13,6 @@ module.exports.bodyValidator = bodyValidator = (schema) => (req, res, next) => {
 	return next()
 }
 
-// Register Validation Schema
-module.exports.registerUserSchema = Joi.object({
-	name: Joi.string().min(userInfo.name.min).required(),
-	email: Joi.string().min(userInfo.email.min).required().email(),
-	password: Joi.string().min(userInfo.password.min).required(),
-})
-
-// Login Validation Schema
-module.exports.loginUserSchema = Joi.object({
-	email: Joi.string().min(userInfo.email.min).required().email(),
-	password: Joi.string().min(userInfo.password.min).required(),
-})
-
 // Course Creation Validation Schema
 module.exports.courseCreationSchema = Joi.object({
 	title: Joi.string().min(6).required(),
