@@ -38,10 +38,12 @@ module.exports.courseCreationSchema = Joi.object({
 
 // Video Upload Validation Schema
 module.exports.videoUploadSchema = Joi.object({
-	title: Joi.string().required(),
-	description: Joi.string(),
-	url: Joi.string().required().uri(),
-	duration: Joi.number().required(),
-	types: Joi.array().items(Joi.string().lowercase()),
-	dateCreated: Joi.date(),
+	fieldname: Joi.string(),
+	originalname: Joi.string(),
+	encoding: Joi.string(),
+	mimetype: Joi.string(),
+	destination: Joi.string(),
+	filename: Joi.string(),
+	path: Joi.string(),
+	size: Joi.number(),
 })

@@ -2,29 +2,29 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const videoInfo = {
-	title: {
+	fieldname: {
 		type: String,
-		required: true,
 	},
-	description: {
+	originalname: {
 		type: String,
-		required: false,
 	},
-	url: {
+	encoding: {
 		type: String,
-		required: true,
 	},
-	duration: {
+	mimetype: {
+		type: String,
+	},
+	destination: {
+		type: String,
+	},
+	filename: {
+		type: String,
+	},
+	path: {
+		type: String,
+	},
+	size: {
 		type: Number,
-		required: true,
-	},
-	types: {
-		type: Array,
-		required: false,
-	},
-	dateCreated: {
-		type: Date,
-		default: Date.now(),
 	},
 }
 
