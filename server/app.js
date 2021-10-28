@@ -1,7 +1,5 @@
 const express = require('express')
 const upload = require('multer')()
-const path = require('path')
-const fs = require('fs')
 const cors = require('cors')
 require('dotenv').config({ path: '.env' })
 
@@ -21,11 +19,17 @@ app.use(express.static('public'))
 app.use(cors())
 
 // Import Routes
+const contentRouter = require('../routers/content')
 const courseRouter = require('../routers/courses')
-const videoManagerRouter = require('../routers/videos')
+const moduleRouter = require('../routers/module')
+const sectionRouter = require('../routers/section')
+const videoRouter = require('../routers/videos')
 
 // Route Middleware
+app.use('/api/content', contentRouter)
 app.use('/api/course', courseRouter)
-app.use('/api/video', videoManagerRouter)
+app.use('/api/module', moduleRouter)
+app.use('/api/section', sectionRouter)
+app.use('/api/video', videoRouter)
 
 module.exports = app
