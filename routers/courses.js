@@ -4,24 +4,19 @@ const router = express.Router()
 const { ObjectId } = require('mongoose').Types
 
 // Server db Import
-const conn = require('./../server/dbConnection')
-
-// Import Middleware
-const verifyToken = require('../utils/middleware/verifyToken')
-const verifyUser = require('../utils/middleware/verifyUser')
-const verification = require('../utils/validation')
-const upload = require('../utils/middleware/server-upload')
-const uploadS3 = require('../utils/middleware/s3-upload')
-
-// Set default Middleware for path
+const conn = require('../utils/mongodb/dbConnection')
 
 // Course Utils
 const courseEndware = require('../utils/course/endware')
 const courseCreation = require('../utils/course/create')
 const courseQuery = require('../utils/course/query')
 
+const courseCollection = require('../utils/mongodb/coursesCollection')
+
 // Display all accessable courses that the user has access to
-router.route('/').get(courseEndware.getAllCourses)
+router.route('/').get((req, res) => {
+	conn.openUri()
+})
 
 router.post('/test', (req, res) => {
 	res.send(req.body)
@@ -80,9 +75,10 @@ router.route('/:courseId/section').get(async (req, res) => {
 
 // Create a new section and append it to the end of the sections for the course
 router.route('/:courseId/section').post(async (req, res) => {
+	const { sectionName } = req.body
 	try {
-		const response = await courseCreation.pushNewSection({
-			sectionName: '1',
+		const response = await courseCreation.pushNewSection(req.params.courseId, {
+			sectionName: sectionName,
 			isViewable: true,
 		})
 		res.status(204).send(response)
@@ -106,8 +102,13 @@ router
 	.get((req, res) => {})
 	// Push a new module for the section
 	.post(async (req, res) => {
+		const { moduleName } = req.body
 		try {
-			const response = await courseCreation.pushNewModule()
+			const response = await courseCreation.pushNewModule(
+				req.params.courseId,
+				req.params.sectionId,
+				{ moduleName }
+			)
 			res.status(204).send(response)
 		} catch (err) {
 			res.status(400).send(err)
@@ -120,9 +121,20 @@ router
 	.get((req, res) => {})
 
 router
-	.route('/:courseId/section/:sectionId/module/:moduleId/:contentType')
+	.route('/module/:moduleId/:contentType')
 	// Append a new Content doc to the module
-	.post((req, res) => {})
+	.post(async (req, res) => {
+		const { name } = req.body
+		try {
+			const response = await courseCreation.pushNewContent(
+				req.params.moduleId,
+				{ name, contentType: req.params.contentType }
+			)
+			res.status(204).send(response)
+		} catch (err) {
+			res.status(400).send(err)
+		}
+	})
 
 router
 	.route('/:courseId/section/:sectionId/module/:moduleId/:contentId')
