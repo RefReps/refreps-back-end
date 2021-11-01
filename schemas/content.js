@@ -9,10 +9,11 @@ const contentInfo = {
 	},
 	orderInModule: {
 		type: Number,
+		default: -1,
 	},
 	contentType: {
 		type: String,
-		default: 'No Type',
+		default: 'No Type', //Values: video, quiz, article
 	},
 	toContent: {
 		type: ObjectId,

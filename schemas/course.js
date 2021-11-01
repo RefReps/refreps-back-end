@@ -2,10 +2,15 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const { ObjectId } = mongoose.Types
 
+const { sectionInfo } = require('./section')
+const { authorInfo } = require('./author')
+const { studentInfo } = require('./student')
+const { settingInfo } = require('./setting')
+
 const courseInfo = {
 	courseName: {
 		type: String,
-		required: true,
+		default: 'Course not nammed',
 		min: 6,
 	},
 	isTemplateCourse: {
@@ -28,6 +33,7 @@ const courseInfo = {
 	settings: {
 		// changable by authors
 		type: ObjectId,
+		default: null,
 	},
 }
 

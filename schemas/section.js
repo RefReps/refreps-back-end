@@ -2,14 +2,20 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const { ObjectId, Null, Undefined } = mongoose.Types
 
+const { moduleInfo } = require('./module')
+
 const sectionInfo = {
 	sectionName: {
 		type: String,
 		default: 'Section not named',
 	},
+	orderInCourse: {
+		type: Number,
+		default: -1,
+	},
 	isViewable: {
 		type: Boolean,
-		defaule: true,
+		default: true,
 	},
 	modules: {
 		type: [ObjectId],

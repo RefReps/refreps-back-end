@@ -2,10 +2,16 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const { ObjectId } = mongoose.Types
 
+const { contentInfo } = require('./content')
+
 const moduleInfo = {
 	moduleName: {
 		type: String,
 		default: 'Not named module.',
+	},
+	orderInSection: {
+		type: Number,
+		default: -1,
 	},
 	lectureDropDate: {
 		type: Date,
