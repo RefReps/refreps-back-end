@@ -2,99 +2,163 @@ const conn = require('./dbConnection')
 const Course = conn.models.Course
 const { ObjectId } = require('mongoose').Types
 
+// COURSE ROOT FUNCTIONS
+
+module.exports.getAllCourses = async () => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let courses = await Course.find({}).exec()
+			resolve(courses)
+		} catch (error) {
+			reject(error)
+		}
+	})
+}
+
 module.exports.addNewCourse = async (doc) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			if (!doc) return reject({ error: 'must include doc' })
-
 			let course = new Course(doc)
 			await course.save()
-			return resolve(course)
+			resolve(course)
 		} catch (error) {
-			return reject({ error: 'addNewCourse could not save new course' })
+			reject(error)
 		}
 	})
 }
 
-module.exports.deleteCourse = async (courseId) => {
+module.exports.deleteCourseById = async (courseId) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			if (!courseId) return reject({ error: 'must inlcude courseId' })
-
-			let deletedCount = await Course.deleteOne({ _id: courseId }).exec()
-			if (deletedCount['deletedCount'] === 0)
-				return reject({ error: 'no course found to delete' })
-			return resolve(deletedCount)
+			let course = await Course.findOneAndDelete({ _id: courseId }).exec()
+			if (course === null) reject({ error: 'Course not found' })
+			resolve(course)
 		} catch (error) {
-			return reject({ error: 'deleteCourse could not delete course' })
+			reject(error)
 		}
 	})
 }
 
-module.exports.getCoursesById = async (courseIds = []) => {
+// SECTION FUNCTIONS
+
+module.exports.pushNewSectionBlank = async (courseId, sectionDoc) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			if (courseIds.length === 0)
-				return reject({ error: 'must include courseIds' })
-
-			let courses = await Course.find({ _id: { $in: courseIds } }).exec()
-			return resolve(courses)
-		} catch (error) {
-			return reject({
-				error: 'getCoursesById could not query courses',
-			})
-		}
-	})
-}
-
-module.exports.updateCourseById = async (courseId, updateDoc) => {
-	return new Promise(async (resolve, reject) => {
-		try {
-			let updatedCourse = await Course.findOneAndUpdate(
+			let course = await Course.findOneAndUpdate(
 				{ _id: courseId },
-				updateDoc,
-				{ upsert: false, new: true }
-			)
-			if (updatedCourse === null)
-				return reject({ error: 'No course found to update' })
-			return resolve(updatedCourse)
+				{ $push: { sections: sectionDoc } },
+				{ new: true }
+			).exec()
+			resolve(course)
 		} catch (error) {
-			return reject({ error: 'cannot update course' })
+			console.log(error)
+			reject(error)
 		}
 	})
 }
 
-module.exports.pushSectionIntoCourse = async (courseId, sectionId) => {
-	// TODO: check to see if section exists
-	return await this.updateCourseById(courseId, {
-		$addToSet: { sections: sectionId }, // addToSet for unique sections
+module.exports.deleteSection = async (courseId, sectionId) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let course = await Course.findOneAndUpdate(
+				{ _id: courseId },
+				{ $pull: { sections: { _id: sectionId } } },
+				{ new: true }
+			).exec()
+			resolve(course)
+		} catch (error) {
+			reject(error)
+		}
 	})
 }
 
-module.exports.getAllSectionsInCourseBrief = async (courseId) => {
+module.exports.getOneSection = async (courseId, sectionId) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			let sections = await Course.aggregate([
+			let section = await Course.aggregate([
 				{ $match: { _id: ObjectId(courseId) } },
-				{
-					$lookup: {
-						from: 'sections',
-						localField: 'sections',
-						foreignField: '_id',
-						as: 'sectionsObjects',
-					},
-				},
-				{
-					$project: {
-						_id: 1,
-						courseName: 1,
-						sectionsObjects: 1,
-					},
-				},
+				{ $unwind: { path: '$sections' } },
+				{ $match: { 'sections._id': ObjectId(sectionId) } },
+				{ $project: { _id: 0, sections: 1 } },
 			]).exec()
-			return resolve(sections)
+			resolve(section[0]['sections'])
 		} catch (error) {
-			return reject({ error: 'cannot find sections' })
+			reject(error)
+		}
+	})
+}
+
+module.exports.getAllSections = async (courseId) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let section = await Course.aggregate([
+				{ $match: { _id: ObjectId(courseId) } },
+				{ $project: { _id: 0, sections: 1 } },
+			]).exec()
+			resolve(section[0]['sections'])
+		} catch (error) {
+			reject(error)
+		}
+	})
+}
+
+module.exports.updateSection = async (courseId, sectionId) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let course = await Course.findOneAndUpdate(
+				{ _id: courseId, sections: { $elemMatch: { _id: sectionId } } },
+				// { $set: {'sections.$[]'} },
+				{ new: true, upsert: false }
+			).exec()
+			resolve(course)
+		} catch (error) {
+			console.log(error)
+			reject(error)
+		}
+	})
+}
+
+// MODULE FUNCTIONS
+
+module.exports.pushNewModule = async (courseId, sectionId, moduleDoc) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let course = await Course.findByIdAndUpdate(
+				{ _id: courseId },
+				{ $push: { 'sections.$[elem].modules': moduleDoc } },
+				{ arrayFilters: [{ 'elem._id': sectionId }], new: true }
+			).exec()
+			resolve(course)
+		} catch (error) {
+			console.log(error)
+			reject(error)
+		}
+	})
+}
+
+module.exports.updateModule = async (
+	courseId,
+	sectionId,
+	moduleId,
+	moduleDoc
+) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let course = await Course.findOneAndUpdate(
+				{ _id: courseId },
+				{ $set: { 'sections.$[secId].modules.$[modId]': moduleDoc } },
+				{
+					$arrayFilters: [
+						{ secId: { _id: sectionId } },
+						{ modId: { _id: moduleId } },
+					],
+				},
+				{ new: true, upsert: false }
+			).exec()
+			resolve(course)
+		} catch (error) {
+			console.log(error)
+			reject(error)
 		}
 	})
 }
