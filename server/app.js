@@ -19,10 +19,10 @@ app.use(express.static('public'))
 app.use(cors())
 
 // Import Routes
-const contentRouter = require('../routers/content')
+const contentRouter = require('../routers/contents')
 const courseRouter = require('../routers/courses')
-const moduleRouter = require('../routers/module')
-const sectionRouter = require('../routers/section')
+const moduleRouter = require('../routers/modules')
+const sectionRouter = require('../routers/sections')
 const videoRouter = require('../routers/videos')
 
 // Route Middleware
