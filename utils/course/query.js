@@ -1,4 +1,4 @@
-const conn = require('../../server/dbConnection')
+const conn = require('../mongodb/dbConnection')
 
 const executeAggregation = async (pipeline, options) => {
 	if (!pipeline) throw 'A pipeline must be included'

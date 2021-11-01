@@ -1,10 +1,11 @@
 const Joi = require('joi')
 
 // Info Imports from schemas to easily reference the schema's properties
-const { userInfo } = require('../schemas/user')
+const { courseInfo } = require('../schemas/course')
 const { videoInfo } = require('../schemas/video')
 
-module.exports.bodyValidator = bodyValidator = (schema) => (req, res, next) => {
+// Should be moved to middleware
+module.exports.bodyValidator = (schema) => (req, res, next) => {
 	const { error } = schema.validate(req.body)
 	if (error) {
 		const errorMsg = error.details.map((detail) => detail.message)
@@ -13,21 +14,17 @@ module.exports.bodyValidator = bodyValidator = (schema) => (req, res, next) => {
 	return next()
 }
 
-// Register Validation Schema
-module.exports.registerUserSchema = Joi.object({
-	name: Joi.string().min(userInfo.name.min).required(),
-	email: Joi.string().min(userInfo.email.min).required().email(),
-	password: Joi.string().min(userInfo.password.min).required(),
-})
-
-// Login Validation Schema
-module.exports.loginUserSchema = Joi.object({
-	email: Joi.string().min(userInfo.email.min).required().email(),
-	password: Joi.string().min(userInfo.password.min).required(),
-})
+module.exports.validCourseCreation = (doc) => {
+	const { error } = courseCreationSchema.validate(doc)
+	if (error) {
+		const errorMsg = error.details.map((detail) => detail.message)
+		return errorMsg
+	}
+	return true
+}
 
 // Course Creation Validation Schema
-module.exports.courseCreationSchema = Joi.object({
+const courseCreationSchema = Joi.object({
 	title: Joi.string().min(6).required(),
 	templateCourse: Joi.bool(),
 	description: Joi.string(),
@@ -36,14 +33,23 @@ module.exports.courseCreationSchema = Joi.object({
 	students: Joi.array(),
 })
 
+module.exports.validVideo = (doc) => {
+	const { error } = videoSchema.validate(doc)
+	if (error) {
+		const errorMsg = error.details.map((detail) => detail.message)
+		return errorMsg
+	}
+	return true
+}
+
 // Video Upload Validation Schema
-module.exports.videoUploadSchema = Joi.object({
-	fieldname: Joi.string(),
-	originalname: Joi.string(),
-	encoding: Joi.string(),
-	mimetype: Joi.string(),
-	destination: Joi.string(),
-	filename: Joi.string(),
-	path: Joi.string(),
-	size: Joi.number(),
+const videoSchema = Joi.object({
+	fieldname: Joi.string().required(),
+	originalname: Joi.string().required(),
+	encoding: Joi.string().required(),
+	mimetype: Joi.string().required(),
+	destination: Joi.string().required(),
+	filename: Joi.string().required(),
+	path: Joi.string().required(),
+	size: Joi.number().required(),
 })

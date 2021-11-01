@@ -1,7 +1,5 @@
 const express = require('express')
 const upload = require('multer')()
-const path = require('path')
-const fs = require('fs')
 const cors = require('cors')
 require('dotenv').config({ path: '.env' })
 
@@ -15,23 +13,16 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // for parsing multipart/form-data
-// app.use(upload.none())
 app.use(express.static('public'))
 
 app.use(cors())
 
 // Import Routes
-const indexRouter = require('../routers/index')
 const courseRouter = require('../routers/courses')
-const videoManagerRouter = require('../routers/videos')
-const adminRouter = require('../routers/admin')
-const authRouter = require('../routers/auth')
+const videoRouter = require('../routers/videos')
 
 // Route Middleware
-app.use('/api', indexRouter)
 app.use('/api/course', courseRouter)
-app.use('/api/video', videoManagerRouter)
-app.use('/api/admin', authRouter)
-app.use('/api/user', authRouter)
+app.use('/api/video', videoRouter)
 
 module.exports = app
