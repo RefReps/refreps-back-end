@@ -3,7 +3,7 @@ const Video = require('./dbConnection').models.Video
 // Creates a video document in the db
 module.exports.createNewVideo = async (doc) => {
 	return new Promise(async (resolve, reject) => {
-		if (!doc) reject({ error: 'doc must be included' })
+		if (!doc) return reject({ error: 'doc must be included' })
 		try {
 			const video = Video(doc)
 			await video.save()
