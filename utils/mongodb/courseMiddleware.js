@@ -53,10 +53,7 @@ module.exports.deleteCourseById = async (req, res, next) => {
 module.exports.addNewSection = async (req, res, next) => {
 	try {
 		await conn.openUri(db_uri)
-		let course = await coursedb.pushNewSectionBlank(
-			req.params.courseId,
-			req.body
-		)
+		let course = await coursedb.pushNewSection(req.params.courseId, req.body)
 		res.status(200).json(course)
 	} catch (error) {
 		res.status(400).json(error)
@@ -138,6 +135,20 @@ module.exports.updateModule = async (req, res, next) => {
 			req.body
 		)
 		res.status(200).json(sections)
+	} catch (error) {
+		res.status(400).json(error)
+	} finally {
+		conn.close()
+		next()
+	}
+}
+
+module.exports.deleteModule = async (req, res, next) => {
+	try {
+		await conn.openUri(db_uri)
+		const { courseId, sectionId, moduleId } = req.params
+		let course = await coursedb.deleteModule(courseId, sectionId, moduleId)
+		res.status(200).json(course)
 	} catch (error) {
 		res.status(400).json(error)
 	} finally {

@@ -41,7 +41,7 @@ module.exports.deleteCourseById = async (courseId) => {
 
 // SECTION FUNCTIONS
 
-module.exports.pushNewSectionBlank = async (courseId, sectionDoc) => {
+module.exports.pushNewSection = async (courseId, sectionDoc) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			let course = await Course.findOneAndUpdate(
@@ -144,16 +144,39 @@ module.exports.updateModule = async (
 ) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			let course = await Course.findOneAndUpdate(
+			let course = await Course.findByIdAndUpdate(
 				{ _id: courseId },
-				{ $set: { 'sections.$[secId].modules.$[modId]': moduleDoc } },
 				{
-					$arrayFilters: [
-						{ secId: { _id: sectionId } },
-						{ modId: { _id: moduleId } },
-					],
+					$set: { 'sections.$[secElem].modules.$[modElem]': moduleDoc },
 				},
-				{ new: true, upsert: false }
+				{
+					arrayFilters: [
+						{ 'secElem._id': sectionId },
+						{ 'modElem._id': moduleId },
+					],
+					new: true,
+				}
+			).exec()
+			resolve(course)
+		} catch (error) {
+			console.log(error)
+			reject(error)
+		}
+	})
+}
+
+module.exports.deleteModule = async (courseId, sectionId, moduleId) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let course = await Course.findByIdAndUpdate(
+				{ _id: courseId },
+				{
+					$pull: { 'sections.$[secElem].modules': { _id: moduleId } },
+				},
+				{
+					arrayFilters: [{ 'secElem._id': sectionId }],
+					new: true,
+				}
 			).exec()
 			resolve(course)
 		} catch (error) {
