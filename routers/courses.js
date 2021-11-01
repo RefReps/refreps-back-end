@@ -7,6 +7,8 @@ const conn = require('../utils/mongodb/dbConnection')
 const courseware = require('../utils/mongodb/courseMiddleware')
 require('dotenv').config({ path: '.env' })
 
+// COURSE ROOT ROUTES
+
 router
 	.route('/')
 	// Get a list of all accessible courses
@@ -22,6 +24,8 @@ router
 	.put(multer.none(), async (req, res) => {})
 	// Delete a course by the courseId
 	.delete(courseware.deleteCourseById)
+
+// SECTION ROUTES
 
 router
 	.route('/:courseId/section')
@@ -39,6 +43,8 @@ router
 	// Delete a specific section
 	.delete(courseware.deleteSection)
 
+// MODULE ROUTES
+
 router
 	.route('/:courseId/section/:sectionId/module')
 	// Get all of the modules in a section
@@ -51,8 +57,8 @@ router
 	// Get a specific module in a section
 	.get()
 	// Update a module
-	.put()
+	.put(multer.none(), courseware.updateModule)
 	// Delete a module
-	.delete()
+	.delete(courseware.deleteModule)
 
 module.exports = router
