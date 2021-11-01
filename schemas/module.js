@@ -22,7 +22,7 @@ const moduleInfo = {
 		default: true,
 	},
 	content: {
-		type: [ObjectId],
+		type: [new Schema(contentInfo)],
 		default: [],
 	},
 }

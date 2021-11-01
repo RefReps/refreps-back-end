@@ -18,7 +18,7 @@ const sectionInfo = {
 		default: true,
 	},
 	modules: {
-		type: [ObjectId],
+		type: [new Schema(moduleInfo)],
 		default: [],
 	},
 }

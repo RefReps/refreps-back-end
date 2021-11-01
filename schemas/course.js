@@ -19,20 +19,20 @@ const courseInfo = {
 		default: false,
 	},
 	sections: {
-		type: [ObjectId],
+		type: [new Schema(sectionInfo)],
 		default: [],
 	},
 	authors: {
-		type: [ObjectId],
+		type: [new Schema(authorInfo)],
 		default: [],
 	},
 	students: {
-		type: [ObjectId],
+		type: [new Schema(studentInfo)],
 		default: [],
 	},
 	settings: {
 		// changable by authors
-		type: ObjectId,
+		type: new Schema(settingInfo),
 		default: null,
 	},
 }
