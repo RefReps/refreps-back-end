@@ -4,102 +4,55 @@ const router = express.Router()
 const multer = require('multer')()
 
 const conn = require('../utils/mongodb/dbConnection')
-const coursedb = require('../utils/mongodb/course')
-const sectiondb = require('../utils/mongodb/section')
+const courseware = require('../utils/mongodb/courseMiddleware')
 require('dotenv').config({ path: '.env' })
 
 router
 	.route('/')
 	// Get a list of all accessible courses
-	.get((req, res) => {})
+	.get(courseware.getAllCourses)
 	// Post a new course
-	.post(multer.none(), async (req, res) => {
-		try {
-			await conn.openUri(process.env.DB_CONNECT)
-			let createdCourse = await coursedb.addNewCourse(req.body)
-			res.status(200).json(createdCourse)
-		} catch (error) {
-			res.status(400).json(error)
-		} finally {
-			conn.close()
-		}
-	})
+	.post(multer.none(), courseware.addNewCourseBlank)
 
 router
 	.route('/:courseId')
 	// Get a course by the courseId
-	.get(async (req, res) => {
-		try {
-			await conn.openUri(process.env.DB_CONNECT)
-			let course = await coursedb.getCoursesById([req.params.courseId])
-			res.status(200).json(course[0])
-		} catch (error) {
-			res.status(400).json(error)
-		} finally {
-			conn.close()
-		}
-	})
+	.get(async (req, res) => {})
 	// Update a courseId by the courseId
-	.put(multer.none(), async (req, res) => {
-		try {
-			await conn.openUri(process.env.DB_CONNECT)
-			let updatedCourse = await coursedb.updateCourseById(
-				req.params.courseId,
-				req.body
-			)
-			res.status(200).json(updatedCourse)
-		} catch (error) {
-			res.status(400).json(error)
-		} finally {
-			conn.close()
-		}
-	})
+	.put(multer.none(), async (req, res) => {})
 	// Delete a course by the courseId
-	.delete(async (req, res) => {
-		try {
-			await conn.openUri(process.env.DB_CONNECT)
-			let deleted = await coursedb.deleteCourse(req.params.courseId)
-			res.status(200).json(deleted)
-		} catch (error) {
-			res.status(400).json(error)
-		} finally {
-			conn.close()
-		}
-	})
+	.delete(courseware.deleteCourseById)
 
 router
 	.route('/:courseId/section')
 	// Get the brief section info of all sections in the course
-	.get(async (req, res) => {
-		try {
-			await conn.openUri(process.env.DB_CONNECT)
-			let sections = await coursedb.getAllSectionsInCourseBrief(
-				req.params.courseId
-			)
-			res.status(200).json(sections)
-		} catch (error) {
-			res.status(400).json(error)
-		} finally {
-			conn.close()
-		}
-	})
+	.get(courseware.getAllSectionsInCourse)
+	// Post a new section in the course
+	.post(multer.none(), courseware.addNewSection)
 
 router
-	.route('/:courseId/link/:sectionId')
-	// Link a section to a course
-	.put(async (req, res) => {
-		try {
-			await conn.openUri(process.env.DB_CONNECT)
-			let updatedCourse = await coursedb.pushSectionIntoCourse(
-				req.params.courseId,
-				req.params.sectionId
-			)
-			res.status(200).json(updatedCourse)
-		} catch (error) {
-			res.status(400).json(error)
-		} finally {
-			conn.close()
-		}
-	})
+	.route('/:courseId/section/:sectionId')
+	// Get a specific section
+	.get(courseware.getSectionById)
+	// Update a specifc section
+	.put(multer.none(), async (req, res) => {})
+	// Delete a specific section
+	.delete(courseware.deleteSection)
+
+router
+	.route('/:courseId/section/:sectionId/module')
+	// Get all of the modules in a section
+	.get()
+	//Post a new module in a section
+	.post(multer.none(), courseware.addNewModule)
+
+router
+	.route('/:courseId/section/:sectionId/module/:moduleId')
+	// Get a specific module in a section
+	.get()
+	// Update a module
+	.put()
+	// Delete a module
+	.delete()
 
 module.exports = router
