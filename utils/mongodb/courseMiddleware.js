@@ -48,6 +48,21 @@ module.exports.deleteCourseById = async (req, res, next) => {
 	}
 }
 
+// Find 1 course
+module.exports.getOneCourse = async (req, res, next) => {
+	try {
+		await conn.openUri(db_uri)
+		const { courseId } = req.params
+		let course = await coursedb.getCourseById(courseId)
+		res.status(200).json(course)
+	} catch (error) {
+		res.status(400).json(error)
+	} finally {
+		conn.close()
+		next()
+	}
+}
+
 // MIDDLEWARE THAT DEALS WITH SECTIONS
 
 module.exports.addNewSection = async (req, res, next) => {

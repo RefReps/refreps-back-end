@@ -19,7 +19,7 @@ router
 router
 	.route('/:courseId')
 	// Get a course by the courseId
-	.get(async (req, res) => {})
+	.get(courseware.getOneCourse)
 	// Update a courseId by the courseId
 	.put(multer.none(), async (req, res) => {})
 	// Delete a course by the courseId
