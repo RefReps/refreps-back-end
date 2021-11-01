@@ -5,6 +5,7 @@ const multer = require('multer')()
 
 const conn = require('../utils/mongodb/dbConnection')
 const coursedb = require('../utils/mongodb/course')
+const sectiondb = require('../utils/mongodb/section')
 require('dotenv').config({ path: '.env' })
 
 router
@@ -100,14 +101,5 @@ router
 			conn.close()
 		}
 	})
-
-router
-	.route('/:courseId/section/:sectionId')
-	// Get a specific section through the course
-	.get(async (req, body) => {})
-	// Post a new section directly in the course and link the _id
-	.post(async (req, body) => {})
-	// Delete a section in the course directly and delete the section in the collection
-	.delete(async (req, body) => {})
 
 module.exports = router
