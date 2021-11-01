@@ -1,143 +1,113 @@
 const express = require('express')
 const router = express.Router()
 
-const { ObjectId } = require('mongoose').Types
+const multer = require('multer')()
 
-// Server db Import
 const conn = require('../utils/mongodb/dbConnection')
+const coursedb = require('../utils/mongodb/course')
+require('dotenv').config({ path: '.env' })
 
-// Course Utils
-const courseEndware = require('../utils/course/endware')
-const courseCreation = require('../utils/course/create')
-const courseQuery = require('../utils/course/query')
-
-const courseCollection = require('../utils/mongodb/coursesCollection')
-
-// Display all accessable courses that the user has access to
-router.route('/').get((req, res) => {
-	conn.openUri()
-})
-
-router.post('/test', (req, res) => {
-	res.send(req.body)
-})
-
-// Make a new course (admin only)
 router
-	.route('/new')
-	.post(courseEndware.createTemplateCourse)
-	.get((req, res) => {
-		res.status(400).json({ msg: 'Cannot GET request' })
-	})
-
-// Go to a specific course's home page (if access to do so)
-router.route('/:courseId').get(async (req, res) => {
-	if (!req.params.courseId) {
-		res.status(400).json({ msg: 'Could not find course' })
-	}
-	try {
-		const course = await conn.models.Course.findById(req.params.courseId).exec()
-		if (course) {
-			return res.json(course)
+	.route('/')
+	// Get a list of all accessible courses
+	.get((req, res) => {})
+	// Post a new course
+	.post(multer.none(), async (req, res) => {
+		try {
+			await conn.openUri(process.env.DB_CONNECT)
+			let createdCourse = await coursedb.addNewCourse(req.body)
+			res.status(200).json(createdCourse)
+		} catch (error) {
+			res.status(400).json(error)
+		} finally {
+			conn.close()
 		}
-	} catch (err) {
-		console.log(err)
-		return res.status(400).json({ query: 'failed' })
-	}
-	res.status(204).json({
-		query: 'success',
-		msg: `Could not find course with id: ${req.params.courseId}`,
 	})
-})
 
-// Get all the sections for a course
-router.route('/:courseId/section').get(async (req, res) => {
-	if (!req.params.courseId) {
-		res.status(400).json({ msg: 'Could not find course' })
-	}
-	try {
-		const course = await conn.models.Course.aggregate([
-			{ $match: { _id: ObjectId(req.params.courseId) } },
-			{ $project: { _id: 0, sections: 1 } },
-		]).exec()
-		if (course) {
-			return res.json(course[0].sections)
+router
+	.route('/:courseId')
+	// Get a course by the courseId
+	.get(async (req, res) => {
+		try {
+			await conn.openUri(process.env.DB_CONNECT)
+			let course = await coursedb.getCoursesById([req.params.courseId])
+			res.status(200).json(course[0])
+		} catch (error) {
+			res.status(400).json(error)
+		} finally {
+			conn.close()
 		}
-	} catch (err) {
-		console.log(err)
-		return res.status(400).json({ query: 'failed' })
-	}
-	res.status(204).json({
-		query: 'success',
-		msg: `Could not find course with id: ${req.params.courseId}`,
 	})
-})
+	// Update a courseId by the courseId
+	.put(multer.none(), async (req, res) => {
+		try {
+			await conn.openUri(process.env.DB_CONNECT)
+			let updatedCourse = await coursedb.updateCourseById(
+				req.params.courseId,
+				req.body
+			)
+			res.status(200).json(updatedCourse)
+		} catch (error) {
+			res.status(400).json(error)
+		} finally {
+			conn.close()
+		}
+	})
+	// Delete a course by the courseId
+	.delete(async (req, res) => {
+		try {
+			await conn.openUri(process.env.DB_CONNECT)
+			let deleted = await coursedb.deleteCourse(req.params.courseId)
+			res.status(200).json(deleted)
+		} catch (error) {
+			res.status(400).json(error)
+		} finally {
+			conn.close()
+		}
+	})
 
-// Create a new section and append it to the end of the sections for the course
-router.route('/:courseId/section').post(async (req, res) => {
-	const { sectionName } = req.body
-	try {
-		const response = await courseCreation.pushNewSection(req.params.courseId, {
-			sectionName: sectionName,
-			isViewable: true,
-		})
-		res.status(204).send(response)
-	} catch (err) {
-		res.status(400).send(err)
-	}
-})
+router
+	.route('/:courseId/section')
+	// Get the brief section info of all sections in the course
+	.get(async (req, res) => {
+		try {
+			await conn.openUri(process.env.DB_CONNECT)
+			let sections = await coursedb.getAllSectionsInCourseBrief(
+				req.params.courseId
+			)
+			res.status(200).json(sections)
+		} catch (error) {
+			res.status(400).json(error)
+		} finally {
+			conn.close()
+		}
+	})
+
+router
+	.route('/:courseId/link/:sectionId')
+	// Link a section to a course
+	.put(async (req, res) => {
+		try {
+			await conn.openUri(process.env.DB_CONNECT)
+			let updatedCourse = await coursedb.pushSectionIntoCourse(
+				req.params.courseId,
+				req.params.sectionId
+			)
+			res.status(200).json(updatedCourse)
+		} catch (error) {
+			res.status(400).json(error)
+		} finally {
+			conn.close()
+		}
+	})
 
 router
 	.route('/:courseId/section/:sectionId')
-	// Get content for a specific section, such as all of the modules in the section
-	.get((req, res) => {})
-	// Update section ordering
-	.put((req, res) => {})
-	// Delete a specific section from the course
-	.delete((req, res) => {})
-
-router
-	.route('/:courseId/section/:sectionId/module')
-	// Get the modules info for a specific section
-	.get((req, res) => {})
-	// Push a new module for the section
-	.post(async (req, res) => {
-		const { moduleName } = req.body
-		try {
-			const response = await courseCreation.pushNewModule(
-				req.params.courseId,
-				req.params.sectionId,
-				{ moduleName }
-			)
-			res.status(204).send(response)
-		} catch (err) {
-			res.status(400).send(err)
-		}
-	})
-
-router
-	.route('/:courseId/section/:sectionId/module/:moduleId')
-	// Get a specific module within a course's section
-	.get((req, res) => {})
-
-router
-	.route('/module/:moduleId/:contentType')
-	// Append a new Content doc to the module
-	.post(async (req, res) => {
-		const { name } = req.body
-		try {
-			const response = await courseCreation.pushNewContent(
-				req.params.moduleId,
-				{ name, contentType: req.params.contentType }
-			)
-			res.status(204).send(response)
-		} catch (err) {
-			res.status(400).send(err)
-		}
-	})
-
-router
-	.route('/:courseId/section/:sectionId/module/:moduleId/:contentId')
-	.get((req, res) => {})
+	// Get a specific section through the course
+	.get(async (req, body) => {})
+	// Post a new section directly in the course and link the _id
+	.post(async (req, body) => {})
+	// Delete a section in the course directly and delete the section in the collection
+	.delete(async (req, body) => {})
 
 module.exports = router
