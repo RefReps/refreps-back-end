@@ -54,7 +54,7 @@ module.exports.deleteCourseById = async (courseId) => {
 module.exports.getCourseById = async (courseId) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			let course = await Course.find({ $match: { _id: courseId } }).exec()
+			let course = await Course.findById({ _id: courseId }).exec()
 			if (course === null) reject({ error: 'Course not found' })
 			resolve(course)
 		} catch (error) {
