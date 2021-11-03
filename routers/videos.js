@@ -19,11 +19,13 @@ router
 	// Post a new video in the database AND upload directory
 	.post(upload.single('video'), async (req, res) => {
 		try {
+			if (!req.hasOwnProperty('file'))
+				throw new Error('req.file is needed to save video to db')
 			await conn.openUri(db_uri)
 			await videodb.saveNewVideo(req.file)
 			res.status(204).send()
 		} catch (error) {
-			res.status(400).json(error)
+			res.status(400).json()
 		}
 	})
 
