@@ -23,17 +23,10 @@ const userInfo = {
 		type: Date,
 		default: Date.now,
 	},
-	isAdmin: {
-		type: Boolean,
-		default: false,
-	},
-	isSales: {
-		type: Boolean,
-		default: false,
-	},
-	isAuthor: {
-		type: Boolean,
-		default: false,
+	userType: {
+		type: String,
+		enum: ['user', 'sales', 'admin'],
+		default: 'user',
 	},
 }
 
