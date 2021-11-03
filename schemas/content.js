@@ -11,13 +11,16 @@ const contentInfo = {
 		type: Number,
 		default: -1,
 	},
-	contentType: {
-		type: String,
-		default: 'No Type', //Values: video, quiz, article
-	},
 	toContent: {
 		type: ObjectId,
 		required: true,
+		refPath: 'onModel', // Used for .populate() on a video doc
+	},
+	onModel: {
+		// Used to reference what collection the content is in
+		type: String,
+		required: true,
+		enum: ['Video', 'Quiz'],
 	},
 	data: {
 		type: Array,
