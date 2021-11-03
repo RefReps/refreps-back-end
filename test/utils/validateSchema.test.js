@@ -1,4 +1,4 @@
-const validation = require('../../utils/validation')
+const validation = require('../../utils/validateSchema')
 
 describe('validCourseCreation', () => {
 	it('should successfully validate a course', () => {
