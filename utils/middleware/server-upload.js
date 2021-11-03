@@ -12,4 +12,4 @@ const storage = multer.diskStorage({
 	},
 })
 
-module.exports = multer({ storage: storage }).array('video')
+module.exports = multer({ storage: storage })
