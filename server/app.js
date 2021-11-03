@@ -1,5 +1,4 @@
 const express = require('express')
-const upload = require('multer')()
 const cors = require('cors')
 require('dotenv').config({ path: '.env' })
 
