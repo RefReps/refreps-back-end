@@ -2,6 +2,12 @@ const express = require('express')
 const cors = require('cors')
 require('dotenv').config({ path: '.env' })
 
+// Make sure that the env file critical variables are populated with values
+if (!require('../utils/checkEnvFile').checkAllCriticalEnvVariablesExists()) {
+	console.log('Server refused to start')
+	process.exit(1)
+}
+
 // Initialize the express application
 const app = express()
 
