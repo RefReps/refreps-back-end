@@ -1,11 +1,13 @@
-HOST=
-PORT=
-DB_CONNECT=[path to mongodb]
-DB_HOST=
-DB_PORT=
-BD_USER=
-DB_PASSWORD=
-DB_MAX_CONNECTIONS=
-TOKEN_SECRET=[any token for the application to use]
-ENVIRONMENT=[dev/test/prod]
+COPY ALL CONTENT BELOW THIS LINE TO YOUR OWN .env file
+in the root of this repository.
+
+Remove any square bracket, they are just there for quick information
+
+\/ COPY BELOW THIS LINE TO YOUR .env FILE \/
+---------------------------------------------------------
+
+HOST=[host of the machine, usually `localhost`]
+PORT=[port that the api will be hosted on, usually `3000`]
+DB_CONNECT="uri-of-mongodb"
+TOKEN_SECRET="can be any string"
 LOCAL_UPLOAD_PATH=[use "uploads/" as default]
