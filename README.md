@@ -1,23 +1,31 @@
-# refreps-back-end
+# RefReps API BallState
 
-Quick installation of API
+## API Manual Setup of Repository
 
-- setup repo
-- navigate to root of repo
-- run `npm install` at root
-- Also run `npm install -g nodemon` if you don't already have nodemon installed globally
-- make a `.env` file at the root of the repo
-- copy content of `sample.env` file into the new `.env` file
-- fill out the contents of the `.env` file
-- run `npm run devStart` to run the API server
-
+- Download the repository on your local machine: `https://github.com/hunterdurbin/refreps-back-end`
+- Navigate to the root of the repository
+- If you don't already have `nodemon` installed globally, run `npm install -g nodemon`
+  - If you choose to just run the codebase without nodemon, you may skip this step
+- Run `npm install` at root of the repository
+- Create a `.env` file at the root of the repo
+- Copy the template content of `sample.env` file (located at the root of the repository) into your `.env` file
+- Fill out the information in the `.env` file
+  - When filling out the `.env`, remember:
+  - Remove any square brackets
+  - Put double quotes around values
+- Run `npm run devStart` at the root of the repository to run the API server
+  - Alternatively, run `npm run start` to execute the application without `nodemon`
+  - Note that the application will refuse to execute if the `.env`
+    file variables are not populated
+- Additional notes:
+  - When choosing a LOCAL_UPLOAD_PATH, it is located based on the root of the repository, and the **directory must exist**.
 
 # Filling out .env file
 
 The only fields that matter are:
 
-- HOST=[the host (usually `localhost`)]
-- PORT=[port of the host (usually `3000` if available)]
+- HOST=[host of the machine, usually `localhost`]
+- PORT=[port that the api will be hosted on, usually `3000`]
 - DB_CONNECT="uri-of-mongodb"
-- TOKEN_SECRET="can-literally-be-any-string"
-- ENVIRONMENT=[`dev` for bypassing all auth/user checks | `prod` for enforcing auth tokens/user checks]
+- TOKEN_SECRET="can be any string"
+- LOCAL_UPLOAD_PATH=[use "uploads/" as default]
