@@ -3,6 +3,11 @@ in the root of this repository.
 
 Remove any square bracket, they are just there for quick information
 
+**ADDING NEW VARIABLES TO THIS FILE
+    - When adding new variables, also include them in 
+      the utils/checkEnvFile.js. Append variables in the
+      criticalEnvVariables list.
+
 \/ COPY BELOW THIS LINE TO YOUR .env FILE \/
 ---------------------------------------------------------
 
