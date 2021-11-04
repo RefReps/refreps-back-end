@@ -20,6 +20,8 @@
 - Additional notes:
   - When choosing a LOCAL_UPLOAD_PATH, it is located based on the root of the repository, and the **directory must exist**.
 
+> Tested on npm version=8.1.1 and nodejs=14.18.1
+
 # Filling out .env file
 
 The only fields that matter are:
