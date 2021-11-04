@@ -1,16 +1,17 @@
 require('dotenv').config({ path: '.env' })
 
+const criticalEnvVariables = [
+	'HOST',
+	'PORT',
+	'DB_CONNECT',
+	'DB_TEST',
+	'TOKEN_SECRET',
+	'LOCAL_UPLOAD_PATH',
+]
+
 module.exports.checkAllCriticalEnvVariablesExists = () => {
-	const checking = [
-		'HOST',
-		'PORT',
-		'DB_CONNECT',
-		'DB_TEST',
-		'TOKEN_SECRET',
-		'LOCAL_UPLOAD_PATH',
-	]
 	let envObj = {}
-	checking.forEach((ele) => {
+	criticalEnvVariables.forEach((ele) => {
 		envObj[ele] = process.env[ele]
 	})
 	let errorList = []
