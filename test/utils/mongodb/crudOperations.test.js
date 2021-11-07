@@ -152,7 +152,8 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
-	await conn.dropDatabase()
+	await conn.models.Course.deleteMany()
+	await conn.models.Video.deleteMany()
 })
 
 afterAll(() => {
