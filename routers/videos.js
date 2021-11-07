@@ -55,7 +55,7 @@ router
 			const videoObj = videoDoc.toObject()
 			res.status(200).json(videoObj)
 		} catch (error) {
-			res.status(400).send('oops')
+			res.status(400).send(error)
 		} finally {
 			conn.close()
 		}
