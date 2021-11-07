@@ -2,6 +2,48 @@ const conn = require('./dbConnection')
 const Course = conn.models.Course
 const { ObjectId } = require('mongoose').Types
 
+const aggregateStages = {
+	matchCourse: function (courseId) {
+		return { $match: { _id: ObjectId(courseId) } }
+	},
+	unwindToSections: function () {
+		return { $unwind: { path: '$sections' } }
+	},
+	matchSectionInCourse: function (sectionId) {
+		return { $match: { 'sections._id': ObjectId(sectionId) } }
+	},
+	replaceRootWithSection: function () {
+		return { $replaceRoot: { newRoot: '$sections' } }
+	},
+	unwindToModules: function () {
+		return { $unwind: { path: '$modules' } }
+	},
+	matchModuleInSection: function (moduleId) {
+		return { $match: { 'modules._id': ObjectId(moduleId) } }
+	},
+	replaceRootWithModule: function () {
+		return { $replaceRoot: { newRoot: '$modules' } }
+	},
+	unwindToContent: function () {
+		return { $unwind: { path: '$content' } }
+	},
+	matchContentInModule: function (contentId) {
+		return { $match: { 'content._id': ObjectId(contentId) } }
+	},
+}
+
+const aggregate = async (pipeline) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let doc = await Course.find(pipeline).exec()
+			// const doc = 'd'
+			resolve(doc)
+		} catch (error) {
+			reject(error)
+		}
+	})
+}
+
 // COURSE ROOT FUNCTIONS
 
 // Gets all of the courses wihtin the db
@@ -16,6 +58,14 @@ module.exports.getAllCourses = async () => {
 			reject(error)
 		}
 	})
+}
+
+// Get one course
+// Resolves a course doc
+// Rejects an error
+module.exports.getCourseById = async (courseId) => {
+	const pipeline = [aggregateStages.matchCourse(courseId)]
+	return aggregate(pipeline)
 }
 
 // Add a new course to the db
@@ -177,6 +227,45 @@ module.exports.pushNewModule = async (courseId, sectionId, moduleDoc) => {
 	})
 }
 
+module.exports.getAllModules = async (courseId, sectionId) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let modulesDoc = await Course.aggregate()
+				.match({ _id: ObjectId(courseId) })
+				.unwind('sections')
+				.match({ 'sections._id': ObjectId(sectionId) })
+				.replaceRoot('sections')
+				.unwind('modules')
+				.replaceRoot('modules')
+				.exec()
+			resolve(modulesDoc)
+		} catch (error) {
+			console.log(error)
+			reject(error)
+		}
+	})
+}
+
+module.exports.getModuleById = async (courseId, sectionId, moduleId) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let moduleDoc = await Course.aggregate()
+				.match({ _id: ObjectId(courseId) })
+				.unwind('sections')
+				.match({ 'sections._id': ObjectId(sectionId) })
+				.replaceRoot('sections')
+				.unwind('modules')
+				.match({ 'modules._id': ObjectId(moduleId) })
+				.replaceRoot('modules')
+				.exec()
+			resolve(moduleDoc[0])
+		} catch (error) {
+			console.log(error)
+			reject(error)
+		}
+	})
+}
+
 // Update a module,
 // Resolves the updated course doc
 // Rejects the error
@@ -222,6 +311,241 @@ module.exports.deleteModule = async (courseId, sectionId, moduleId) => {
 				},
 				{
 					arrayFilters: [{ 'secElem._id': sectionId }],
+					new: true,
+				}
+			).exec()
+			resolve(course)
+		} catch (error) {
+			console.log(error)
+			reject(error)
+		}
+	})
+}
+
+// CONTENT FUNCTIONS
+
+// Push a new content at the end of a module
+// Resolve the course doc
+// Reject the error
+module.exports.pushNewContent = async (
+	courseId,
+	sectionId,
+	moduleId,
+	contentDoc
+) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let course = await Course.findByIdAndUpdate(
+				{ _id: courseId },
+				{
+					$push: {
+						'sections.$[section].modules.$[module].content': contentDoc,
+					},
+				},
+				{
+					arrayFilters: [
+						{ 'section._id': sectionId },
+						{ 'module._id': moduleId },
+					],
+					new: true,
+				}
+			).exec()
+			resolve(course)
+		} catch (error) {
+			console.log(error)
+			reject(error)
+		}
+	})
+}
+
+// Get all content in a module
+// Resolves an array of content docs
+// Rejects the error
+module.exports.getAllContentInModule = async (
+	courseId,
+	sectionId,
+	moduleId
+) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let contentsDoc = await Course.aggregate()
+				.match({ _id: ObjectId(courseId) })
+				.unwind('sections')
+				.match({ 'sections._id': ObjectId(sectionId) })
+				.replaceRoot('sections')
+				.unwind('modules')
+				.match({ 'modules._id': ObjectId(moduleId) })
+				.replaceRoot('modules')
+				.unwind('content')
+				.replaceRoot('content')
+				.exec()
+			resolve(contentsDoc)
+		} catch (error) {
+			console.log(error)
+			reject(error)
+		}
+	})
+}
+
+// Get single content in a module
+// Resolves  content doc
+// Rejects the error
+module.exports.getContentById = async (
+	courseId,
+	sectionId,
+	moduleId,
+	contentId
+) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let contentsDoc = await Course.aggregate()
+				.match({ _id: ObjectId(courseId) })
+				.unwind('sections')
+				.match({ 'sections._id': ObjectId(sectionId) })
+				.replaceRoot('sections')
+				.unwind('modules')
+				.match({ 'modules._id': ObjectId(moduleId) })
+				.replaceRoot('modules')
+				.unwind('content')
+				.match({ 'content._id': ObjectId(contentId) })
+				.replaceRoot('content')
+				.exec()
+			resolve(contentsDoc[0])
+		} catch (error) {
+			console.log(error)
+			reject(error)
+		}
+	})
+}
+
+// Update a content,
+// Resolves the updated course doc
+// Rejects the error
+module.exports.updateContent2 = async (
+	courseId,
+	sectionId,
+	moduleId,
+	contentId,
+	contentDoc
+) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let course = await Course.findByIdAndUpdate(
+				{ _id: courseId },
+				{
+					$set: {
+						'sections.$[secElem].modules.$[modElem].content.$[contElem]':
+							contentDoc,
+					},
+				},
+				{
+					arrayFilters: [
+						{ 'secElem._id': sectionId },
+						{ 'modElem._id': moduleId },
+						{ 'contElem._id': contentId },
+					],
+					new: true,
+				}
+			).exec()
+			resolve(course)
+		} catch (error) {
+			console.log(error)
+			reject(error)
+		}
+	})
+}
+
+const coursePaths = {
+	root: '',
+	section: 'sections.$[secElem]',
+	module: 'sections.$[secElem].modules.$[modElem]',
+	content: 'sections.$[secElem].modules.$[modElem].content.$[contElem]',
+}
+const courseArrayFilters = {
+	root: function () {
+		return []
+	},
+	section: function (sectionId) {
+		return [{ 'secElem._id': sectionId }]
+	},
+	module: function (sectionId, moduleId) {
+		return [{ 'secElem._id': sectionId }, { 'modElem._id': moduleId }]
+	},
+	content: function (sectionId, moduleId, contentId) {
+		return [
+			{ 'secElem._id': sectionId },
+			{ 'modElem._id': moduleId },
+			{ 'contElem._id': contentId },
+		]
+	},
+}
+
+// Constructor for making the $set fields in the update docs
+// Returns a object of update fields
+const constructSetUpdateFields = (doc, updatePath) => {
+	let setUpdateObj = {}
+	Object.entries(doc).forEach(([key, val]) => {
+		setUpdateObj[`${updatePath}.${key}`] = val
+	})
+	return setUpdateObj
+}
+
+module.exports.updateContent = async (
+	courseId,
+	sectionId,
+	moduleId,
+	contentId,
+	updateDoc = {}
+) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let course = await Course.findByIdAndUpdate(
+				{ _id: courseId },
+				{
+					$set: constructSetUpdateFields(updateDoc, coursePaths.content),
+				},
+				{
+					arrayFilters: courseArrayFilters.content(
+						sectionId,
+						moduleId,
+						contentId
+					),
+					new: true,
+				}
+			).exec()
+			resolve(course)
+		} catch (error) {
+			console.log(error)
+			reject(error)
+		}
+	})
+}
+
+// Delete a content
+// Resolves the updated course module
+// Rejects the error
+module.exports.deleteContent = async (
+	courseId,
+	sectionId,
+	moduleId,
+	contentId
+) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let course = await Course.findByIdAndUpdate(
+				{ _id: courseId },
+				{
+					$pull: {
+						'sections.$[secElem].modules.$[modElem].content': {
+							_id: contentId,
+						},
+					},
+				},
+				{
+					arrayFilters: [
+						{ 'secElem._id': sectionId },
+						{ 'modElem._id': moduleId },
+					],
 					new: true,
 				}
 			).exec()
