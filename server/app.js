@@ -17,9 +17,6 @@ app.use(express.json())
 // for parsing application/xwww-form-urlencoded
 app.use(express.urlencoded({ extended: true }))
 
-// for parsing multipart/form-data
-app.use(express.static('public'))
-
 app.use(cors())
 
 // Import Routes

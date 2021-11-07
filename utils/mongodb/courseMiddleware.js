@@ -78,22 +78,6 @@ module.exports.addNewSection = async (req, res, next) => {
 	}
 }
 
-module.exports.deleteSection = async (req, res, next) => {
-	try {
-		await conn.openUri(db_uri)
-		let course = await coursedb.deleteSection(
-			req.params.courseId,
-			req.params.sectionId
-		)
-		res.status(200).json(course)
-	} catch (error) {
-		res.status(400).json(error)
-	} finally {
-		conn.close()
-		next()
-	}
-}
-
 module.exports.getSectionById = async (req, res, next) => {
 	try {
 		await conn.openUri(db_uri)
@@ -139,17 +123,12 @@ module.exports.addNewModule = async (req, res, next) => {
 	}
 }
 
-module.exports.updateModule = async (req, res, next) => {
+module.exports.getModuleById = async (req, res, next) => {
 	try {
 		await conn.openUri(db_uri)
 		const { courseId, sectionId, moduleId } = req.params
-		let sections = await coursedb.updateModule(
-			courseId,
-			sectionId,
-			moduleId,
-			req.body
-		)
-		res.status(200).json(sections)
+		let doc = await coursedb.getModuleById(courseId, sectionId, moduleId)
+		res.status(200).json(doc)
 	} catch (error) {
 		res.status(400).json(error)
 	} finally {
@@ -158,12 +137,88 @@ module.exports.updateModule = async (req, res, next) => {
 	}
 }
 
-module.exports.deleteModule = async (req, res, next) => {
+module.exports.getAllModules = async (req, res, next) => {
+	try {
+		await conn.openUri(db_uri)
+		const { courseId, sectionId } = req.params
+		let doc = await coursedb.getAllModules(courseId, sectionId)
+		res.status(200).json(doc)
+	} catch (error) {
+		res.status(400).json(error)
+	} finally {
+		conn.close()
+		next()
+	}
+}
+
+// CONTENT MIDDLEWARE
+
+module.exports.addNewContent = async (req, res, next) => {
 	try {
 		await conn.openUri(db_uri)
 		const { courseId, sectionId, moduleId } = req.params
-		let course = await coursedb.deleteModule(courseId, sectionId, moduleId)
+		let course = await coursedb.pushNewContent(
+			courseId,
+			sectionId,
+			moduleId,
+			req.body
+		)
 		res.status(200).json(course)
+	} catch (error) {
+		res.status(400).json(error)
+	} finally {
+		conn.close()
+		next()
+	}
+}
+
+module.exports.getAllContentInModule = async (req, res, next) => {
+	try {
+		await conn.openUri(db_uri)
+		const { courseId, sectionId, moduleId } = req.params
+		let course = await coursedb.getAllContentInModule(
+			courseId,
+			sectionId,
+			moduleId
+		)
+		res.status(200).json(course)
+	} catch (error) {
+		res.status(400).json(error)
+	} finally {
+		conn.close()
+		next()
+	}
+}
+
+module.exports.getAllContent = async (req, res, next) => {
+	try {
+		await conn.openUri(db_uri)
+		const { courseId, sectionId, moduleId } = req.params
+		let doc = await coursedb.getAllContentInModule(
+			courseId,
+			sectionId,
+			moduleId
+		)
+		res.status(200).json(doc)
+	} catch (error) {
+		res.status(400).json(error)
+	} finally {
+		conn.close()
+		next()
+	}
+}
+
+module.exports.getContentById = async (req, res, next) => {
+	try {
+		await conn.openUri(db_uri)
+		const { courseId, sectionId, moduleId, contentId } = req.params
+		let doc = await coursedb.getContentById(
+			courseId,
+			sectionId,
+			moduleId,
+			contentId
+		)
+		res.status(200).json(doc)
 	} catch (error) {
 		res.status(400).json(error)
 	} finally {
