@@ -34,9 +34,8 @@ router
 				toContent: videoDoc._id,
 				onModel: 'Video',
 			}
-			console.log('yo')
 			await courseware.pushNewContent(courseId, sectionId, moduleId, contentDoc)
-			res.status(200).send('uo')
+			res.status(204).send()
 		} catch (error) {
 			res.status(400).json()
 		} finally {
