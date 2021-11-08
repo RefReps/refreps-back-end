@@ -4,7 +4,7 @@
 	"description": "back end to refreps application",
 	"main": "index.js",
 	"scripts": {
-		"start": "npm run server.js",
+		"start": "node server.js",
 		"devStart": "nodemon run server.js",
 		"test": "jest --collectCoverage --verbose false"
 	},
