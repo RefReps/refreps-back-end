@@ -8,6 +8,14 @@ if (!require('../utils/checkEnvFile').checkAllCriticalEnvVariablesExists()) {
 	process.exit(1)
 }
 
+// Make local uploads dir, if not exists
+var fs = require('fs')
+var dir = process.env.LOCAL_UPLOAD_PATH
+if (!fs.existsSync(dir)) {
+	console.log(`Making local upload dir at ${dir}`)
+	fs.mkdirSync(dir, { recursive: true })
+}
+
 // Initialize the express application
 const app = express()
 
