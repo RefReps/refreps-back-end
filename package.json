@@ -32,8 +32,10 @@
 		"uuid": "^8.3.2"
 	},
 	"devDependencies": {
+		"faker": "^5.5.3",
 		"jest": "^27.2.5",
 		"jest-mock-req-res": "^1.0.2",
+		"mongodb-memory-server": "^8.0.2",
 		"nodemon": "^2.0.13"
 	}
 }
