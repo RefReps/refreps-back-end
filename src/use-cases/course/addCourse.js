@@ -7,9 +7,9 @@ module.exports = makeAddCourse = ({ Course }) => {
 			const course = new Course(courseInfo)
 			try {
 				const saved = await course.save()
-				resolve(saved.toObject())
+				return resolve(saved.toObject())
 			} catch (err) {
-				reject(err.name)
+				return reject(err.name)
 			}
 		})
 	}
