@@ -25,4 +25,14 @@ describe('addSection Test Suite', () => {
 		const section = await addSection(makeFakeSection())
 		expect(section.name).toBe(makeFakeSection().name)
 	})
+
+	it('fails to add section when required properties are not passed', async () => {
+		await expect(addSection()).rejects.toBe('ValidationError')
+	})
+
+	it('fails to add a section that does not have valid properties', async () => {
+		await expect(addSection(makeFakeSection({ name: '' }))).rejects.toBe(
+			'ValidationError'
+		)
+	})
 })
