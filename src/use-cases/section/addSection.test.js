@@ -27,12 +27,26 @@ describe('addSection Test Suite', () => {
 	})
 
 	it('fails to add section when required properties are not passed', async () => {
-		await expect(addSection()).rejects.toBe('ValidationError')
+		let errorMessage = 'nothing'
+		try {
+			await addSection()
+		} catch (error) {
+			errorMessage = error.message
+		}
+		expect(errorMessage).toBe(
+			'Section validation failed: sectionOrder: Path `sectionOrder` is required., courseId: Path `courseId` is required., name: Path `name` is required.'
+		)
 	})
 
 	it('fails to add a section that does not have valid properties', async () => {
-		await expect(addSection(makeFakeSection({ name: '' }))).rejects.toBe(
-			'ValidationError'
+		let errorMessage = 'nothing'
+		try {
+			await addSection(makeFakeSection({ name: '' }))
+		} catch (error) {
+			errorMessage = error.message
+		}
+		expect(errorMessage).toBe(
+			'Section validation failed: name: Path `name` is required.'
 		)
 	})
 })

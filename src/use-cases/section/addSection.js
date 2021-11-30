@@ -9,7 +9,7 @@ module.exports = makeAddSection = ({ Section }) => {
 				const saved = await section.save()
 				return resolve(saved)
 			} catch (err) {
-				return reject(err.name)
+				return reject(err)
 			}
 		})
 	}
