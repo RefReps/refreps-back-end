@@ -76,8 +76,14 @@ describe('findCourseById Test Suite', () => {
 	})
 
 	it('CastError when the id is not an ObjectId', async () => {
-		await expect(findCourseById('123')).rejects.toEqual(
-			'Error - Type: CastError'
+		let errorMessage = 'nothing'
+		try {
+			await findCourseById('123')
+		} catch (error) {
+			errorMessage = error.message
+		}
+		expect(errorMessage).toBe(
+			'Cast to ObjectId failed for value "123" (type string) at path "_id" for model "Course"'
 		)
 	})
 })

@@ -1,7 +1,7 @@
 module.exports = makeUpdateCourse = ({ Course }) => {
 	// Updates an existing course
 	// Resolve -> {count: #, course: {courseObject}}
-	// Rejects -> err.name
+	// Rejects -> error
 
 	// NOTE: this function does not ensure any specific parts of the course are
 	// not updated. That is handled inside of the controller that uses this function.
@@ -9,17 +9,21 @@ module.exports = makeUpdateCourse = ({ Course }) => {
 		return new Promise(async (resolve, reject) => {
 			const options = { returnDocument: 'after' }
 			try {
+				if (!id) {
+					throw new ReferenceError('`id` is required to update')
+				}
+
 				const updated = await Course.findByIdAndUpdate(
 					id,
 					courseInfo,
 					options
 				).exec()
 				if (updated == null) {
-					resolve({ count: 0, course: {} })
+					return resolve({ count: 0, course: {} })
 				}
 				return resolve({ count: 1, course: updated.toObject() })
-			} catch (err) {
-				return reject(err.name)
+			} catch (error) {
+				return reject(error)
 			}
 		})
 	}

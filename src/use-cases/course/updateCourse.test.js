@@ -34,4 +34,14 @@ describe('updateCourse Test Suite', () => {
 		const updated = await updateCourse('6197ae39ef8716d0dd181e08')
 		expect(updated).toMatchObject({ count: 0, course: {} })
 	})
+
+	it('rejects an error if no courseId is passed', async () => {
+		let errorMessage = 'nothing'
+		try {
+			await updateCourse()
+		} catch (error) {
+			errorMessage = error.message
+		}
+		expect(errorMessage).toBe('`id` is required to update')
+	})
 })

@@ -1,7 +1,7 @@
 module.exports = makeDeleteCourse = ({ Course }) => {
-	// Save a new course doc in the db
+	// Delete a course in the db
 	// Resolve -> course Object
-	// Rejects -> err.name
+	// Rejects -> error
 	return async function deleteCourse(id, { softDelete = true } = {}) {
 		return new Promise(async (resolve, reject) => {
 			if (softDelete) {
@@ -23,8 +23,8 @@ module.exports = makeDeleteCourse = ({ Course }) => {
 						return reject({ deleted: 0 })
 					}
 					return resolve({ deleted: 1 })
-				} catch (err) {
-					return reject(err.name)
+				} catch (error) {
+					return reject(error)
 				}
 			}
 		})

@@ -88,10 +88,16 @@ describe('deleteCourse Test Suite', () => {
 	})
 
 	it('fails to hard delete a course if a bad id is parsed', async () => {
-		await expect(
-			deleteCourse('bad id', {
+		let errorMessage = 'nothing'
+		try {
+			await deleteCourse('bad id', {
 				softDelete: false,
 			})
-		).rejects.toEqual('CastError')
+		} catch (error) {
+			errorMessage = error.message
+		}
+		expect(errorMessage).toBe(
+			'Cast to ObjectId failed for value "bad id" (type string) at path "_id" for model "Course"'
+		)
 	})
 })

@@ -7,7 +7,7 @@ module.exports = makeFindAllCourses = ({ Course }) => {
 	//          skip -> skip the first 'n' entries of the query (default: 0)
 	//          limit -> limit the results in the query (default: 100)
 	// Resolve -> {found: #, course: {object}}
-	// Reject -> err.name
+	// Reject -> error
 	return async function findAllCourses({
 		publishedOnly = true,
 		includeDeleted = false,
@@ -45,8 +45,8 @@ module.exports = makeFindAllCourses = ({ Course }) => {
 					found: courseObjects.length,
 					courses: courseObjects,
 				})
-			} catch (err) {
-				return reject(err.name)
+			} catch (error) {
+				return reject(error)
 			}
 		})
 	}
