@@ -16,6 +16,7 @@ const sectionSchema = new Schema(
 		isPublished: {
 			type: Boolean,
 			required: true,
+			default: true,
 		},
 		sectionOrder: {
 			type: Number,
