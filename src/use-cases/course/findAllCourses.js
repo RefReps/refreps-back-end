@@ -1,5 +1,3 @@
-const errorHandle = require('../../utils/errorHandle.util')
-
 module.exports = makeFindAllCourses = ({ Course }) => {
 	// Finds all courses in the db
 	// Options: publishedOnly -> Find only published courses (default: true)
