@@ -7,7 +7,7 @@ module.exports = makeAddSection = ({ Section }) => {
 			const section = new Section(sectionInfo)
 			try {
 				const saved = await section.save()
-				return resolve(saved)
+				return resolve(saved.toObject())
 			} catch (err) {
 				return reject(err)
 			}
