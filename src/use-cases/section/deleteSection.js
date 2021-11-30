@@ -11,7 +11,7 @@ module.exports = makeDeleteSection = ({ Section }) => {
 				}
 				return resolve({ deleted: 1 })
 			} catch (err) {
-				return reject(err.name)
+				return reject(err)
 			}
 		})
 	}

@@ -50,6 +50,14 @@ describe('deleteSection Test Suite', () => {
 	})
 
 	it('fails to delete a section if a bad id is parsed', async () => {
-		await expect(deleteSection('bad id')).rejects.toEqual('CastError')
+		let errorMessage = 'nothing'
+		try {
+			await deleteSection('bad id')
+		} catch (error) {
+			errorMessage = error.message
+		}
+		expect(errorMessage).toBe(
+			'Cast to ObjectId failed for value "bad id" (type string) at path "_id" for model "Section"'
+		)
 	})
 })
