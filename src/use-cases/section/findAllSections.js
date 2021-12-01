@@ -2,7 +2,7 @@ module.exports = makeFindAllSections = ({ Section }) => {
 	// Finds all sections in the db
 	// Options: publishedOnly -> Find only published sections (default: true)
 	// Resolve -> {found: #, sections: {object}}
-	// Reject -> err.name
+	// Reject -> error
 	return async function findAllSections(
 		courseId,
 		{ publishedOnly = true } = {}
@@ -32,8 +32,8 @@ module.exports = makeFindAllSections = ({ Section }) => {
 					found: sectionObjects.length,
 					sections: sectionObjects,
 				})
-			} catch (err) {
-				return reject(err)
+			} catch (error) {
+				return reject(error)
 			}
 		})
 	}

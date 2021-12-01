@@ -50,11 +50,11 @@ describe('findAllSections Test Suite', () => {
 		const foundSections = await findAllSections(courseId)
 		expect(foundSections.found).toBe(5)
 		expect(foundSections.sections).toEqual([
-			section1.toObject(),
-			section2.toObject(),
-			section3.toObject(),
-			section4.toObject(),
-			section5.toObject(),
+			section1,
+			section2,
+			section3,
+			section4,
+			section5,
 		])
 	})
 
@@ -73,14 +73,20 @@ describe('findAllSections Test Suite', () => {
 		expect(errorMessage).toBe('courseId is undefined')
 	})
 
-	// it('includes non published courses if specified', async () => {
-	// 	await addCourse(makeFakeCourse({ isPublished: false }))
-	// 	await addCourse(makeFakeCourse({ isPublished: true }))
+	it('includes non published courses if specified', async () => {
+		await addSection(makeFakeSection({ isPublished: false }))
+		await addSection(makeFakeSection({ isPublished: true }))
 
-	// 	const resultsPublishedOnly = await findAllCourses({ publishedOnly: true })
-	// 	expect(resultsPublishedOnly.found).toBe(1)
+		const { courseId } = makeFakeSection()
 
-	// 	const resultsNonPublished = await findAllCourses({ publishedOnly: false })
-	// 	expect(resultsNonPublished.found).toBe(2)
-	// })
+		const resultsPublishedOnly = await findAllSections(courseId, {
+			publishedOnly: true,
+		})
+		expect(resultsPublishedOnly.found).toBe(1)
+
+		const resultsNonPublished = await findAllSections(courseId, {
+			publishedOnly: false,
+		})
+		expect(resultsNonPublished.found).toBe(2)
+	})
 })
