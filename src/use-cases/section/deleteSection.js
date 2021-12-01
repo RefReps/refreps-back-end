@@ -5,8 +5,8 @@ module.exports = makeDeleteSection = ({ Section }) => {
 	return async function deleteSection(id) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				const course = await Section.findByIdAndDelete(id).exec()
-				if (course == null) {
+				const section = await Section.findByIdAndDelete(id).exec()
+				if (section == null) {
 					return reject({ deleted: 0 })
 				}
 				return resolve({ deleted: 1 })
