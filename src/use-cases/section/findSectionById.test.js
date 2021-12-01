@@ -27,10 +27,7 @@ describe('findSectionById Test Suite', () => {
 		const section1 = await addSection(makeFakeSection({ name: 'section1' }))
 
 		const found = await findSectionById(section1._id)
-		expect(found).toMatchObject({
-			found: 1,
-			section: section1,
-		})
+		expect(found).toMatchObject(section1)
 	})
 
 	it('finds the right section given multiple entries', async () => {
@@ -39,16 +36,13 @@ describe('findSectionById Test Suite', () => {
 		const section3 = await addSection(makeFakeSection({ name: 'section3' }))
 
 		const found = await findSectionById(section2._id)
-		expect(found).toMatchObject({
-			found: 1,
-			section: section2,
-		})
+		expect(found).toMatchObject(section2)
 	})
 
 	it('successfully finds 0 when the section is in the db', async () => {
 		await expect(
 			findSectionById('6197ae39ef8716d0dd181e08')
-		).resolves.toMatchObject({ found: 0, section: {} })
+		).resolves.toMatchObject({})
 	})
 
 	it('CastError when the id is not an ObjectId', async () => {
