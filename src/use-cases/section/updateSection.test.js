@@ -34,4 +34,14 @@ describe('updateSection Test Suite', () => {
 		const updated = await updateSection('6197ae39ef8716d0dd181e08')
 		expect(updated).toMatchObject({ count: 0, section: {} })
 	})
+
+	it('rejects if `id` is not provided', async () => {
+		let errorName = 'nothing'
+		try {
+			await updateSection()
+		} catch (error) {
+			errorName = error.name
+		}
+		expect(errorName).toBe('ReferenceError')
+	})
 })
