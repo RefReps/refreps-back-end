@@ -16,10 +16,11 @@ const moduleSchema = new Schema(
 		isPublished: {
 			type: Boolean,
 			required: true,
+			default: true,
 		},
 		moduleOrder: {
 			type: Number,
-			min: 0,
+			min: 1,
 			required: true,
 		},
 		dropDate: {

@@ -22,7 +22,7 @@ module.exports.makeFakeSection = (overrides) => {
 		name: 'Section Name',
 		courseId: '619c14ba91b3af1d40e295e5',
 		isPublished: true,
-		sectionOrder: 0,
+		sectionOrder: 1,
 		dropDate: null,
 	}
 	return {
@@ -36,7 +36,7 @@ module.exports.makeFakeModule = (overrides) => {
 		name: 'Module Name',
 		sectionId: '619c14ba91b3af1d40e295f1',
 		isPublished: true,
-		moduleOrder: 0,
+		moduleOrder: 1,
 		dropDate: null,
 	}
 	return {
