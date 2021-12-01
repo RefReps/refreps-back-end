@@ -14,50 +14,26 @@ module.exports = makeCollapseSections = ({ Section }) => {
 
 				const sectionQuery = Section.find(query)
 
-				sectionQuery.sort({ sectionOrder: 1, _id: 1 })
+				// Sort the query by the following: sectionOrder->name->_id
+				sectionQuery.sort({ sectionOrder: 1, name: 1, _id: 1 })
 				const sectionDocs = await sectionQuery.exec()
 
-				// Move all sections down a number until the first section has sectionOrder=1
-				while (sectionDocs[0].sectionOrder > 1) {
-					sectionDocs.forEach((doc) => {
-						doc.sectionOrder -= 1
+				if (isDocsEmpty(sectionDocs)) {
+					return resolve({
+						found: 0,
+						sections: [],
 					})
 				}
 
+				decreaseToLowestNumber(sectionDocs, 'sectionOrder', 1)
+
 				const totalDocs = sectionDocs.length
 				if (totalDocs > 1) {
-					// Find any gaps in the section and decrease those sectionOrder(s) by 1
-					// (Loop through 2nd to last)
-					for (let i = 1; i < totalDocs; i++) {
-						const previous = i - 1
-						while (
-							sectionDocs[i].sectionOrder !=
-							sectionDocs[previous].sectionOrder + 1
-						) {
-							sectionDocs[i].sectionOrder -= 1
-						}
-					}
-
-					// Find duplicate sectionOrder(s) and fix by adding 1
-					// (Loop through first to second last)
-					for (let i = 0; i < totalDocs - 1; i++) {
-						if (
-							sectionDocs[i].sectionOrder == sectionDocs[i + 1].sectionOrder
-						) {
-							sectionDocs[i + 1].sectionOder += 1
-						}
-					}
-
-					// Check to see if the last sectionOrder is equal to the prior and fix if needed
-					if (
-						sectionDocs[totalDocs - 2].sectionOrder ==
-						sectionDocs[totalDocs - 1].sectionOrder
-					) {
-						sectionDocs[totalDocs - 1].sectionOrder += 1
-					}
+					fixDuplicates(sectionDocs, 'sectionOrder')
+					fixGaps(sectionDocs, 'sectionOrder')
 				}
 
-				// Save all docs
+				// Update all docs
 				for (let i = 0; i < totalDocs; i++) {
 					await Section.findByIdAndUpdate(sectionDocs[i]._id, {
 						sectionOrder: sectionDocs[i].sectionOrder,
@@ -72,9 +48,57 @@ module.exports = makeCollapseSections = ({ Section }) => {
 					found: sectionObjects.length,
 					sections: sectionObjects,
 				})
-			} catch (err) {
-				return reject(err)
+			} catch (error) {
+				return reject(error)
 			}
 		})
+	}
+}
+
+const isDocsEmpty = (docs) => {
+	if (!docs[0]) {
+		return true
+	}
+	return false
+}
+
+// decrease each doc's attribute down a number until the first doc has attribute=1
+// param: docs -> array of docs
+// param: attribute -> string of an attribute in the docs
+// param: lowestNumber -> int of the lowest number desired
+const decreaseToLowestNumber = (docs, attribute, lowestNumber) => {
+	while (docs[0][attribute] > lowestNumber) {
+		docs.forEach((doc) => {
+			doc[attribute] -= 1
+		})
+	}
+}
+
+// Find duplicate attribute values and fix by adding 1 to duplicate and remaining docs
+// (Loop through first to second last)
+// param: docs -> array of docs
+// param: attribute -> string of an attribute in the docs
+const fixDuplicates = (docs, attribute) => {
+	const totalDocs = docs.length
+	for (let i = 0; i < totalDocs - 1; i++) {
+		if (docs[i][attribute] == docs[i + 1][attribute]) {
+			for (let j = i + 1; j < totalDocs; j++) {
+				docs[j][attribute] += 1
+			}
+		}
+	}
+}
+
+// Find any gaps in the section and decrease those sectionOrder(s) by 1
+// (Loop 2nd through last)
+// param: docs -> array of docs
+// param: attribute -> string of an attribute in the docs
+const fixGaps = (docs, attribute) => {
+	const totalDocs = docs.length
+	for (let i = 1; i < totalDocs; i++) {
+		const previous = i - 1
+		while (docs[i][attribute] != docs[previous][attribute] + 1) {
+			docs[i][attribute] -= 1
+		}
 	}
 }
