@@ -26,12 +26,26 @@ describe('addCourse Test Suite', () => {
 	})
 
 	it('fails to add a course if not valid', async () => {
-		await expect(addCourse(makeFakeCourse({ name: 'short' }))).rejects.toEqual(
-			'ValidationError'
+		let errorMessage = 'nothing'
+		try {
+			await addCourse(makeFakeCourse({ name: '' }))
+		} catch (error) {
+			errorMessage = error.message
+		}
+		expect(errorMessage).toBe(
+			'Course validation failed: name: Path `name` is required.'
 		)
 	})
 
 	it('fails when no courseInfo is passed', async () => {
-		await expect(addCourse()).rejects.toEqual('ValidationError')
+		let errorMessage = 'nothing'
+		try {
+			await addCourse()
+		} catch (error) {
+			errorMessage = error.message
+		}
+		expect(errorMessage).toBe(
+			'Course validation failed: name: Path `name` is required.'
+		)
 	})
 })

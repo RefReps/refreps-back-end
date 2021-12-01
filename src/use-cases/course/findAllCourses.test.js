@@ -56,7 +56,13 @@ describe('findAllCourses Test Suite', () => {
 	})
 
 	it('rejects with `RangeError` if invalid param', async () => {
-		await expect(findAllCourses({ limit: -1 })).rejects.toEqual('RangeError')
+		let errorMessage = 'nothing'
+		try {
+			await findAllCourses({ limit: -1 })
+		} catch (error) {
+			errorMessage = error.message
+		}
+		expect(errorMessage).toBe('query out of range')
 	})
 
 	it('includes non published courses if specified', async () => {

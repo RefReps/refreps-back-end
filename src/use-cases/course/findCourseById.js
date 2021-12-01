@@ -1,9 +1,7 @@
-const errorHandle = require('../../utils/errorHandle.util')
-
 module.exports = makeFindCourseById = ({ Course }) => {
 	// Finds a course by an ObjectId
 	// Resolve -> {found: #, course: {object}}
-	// Reject -> err.name
+	// Reject -> error
 	return async function findCourseById(
 		id,
 		{ publishedOnly = true, includeDeleted = false } = {}
@@ -25,8 +23,8 @@ module.exports = makeFindCourseById = ({ Course }) => {
 				const found = courseDoc.toObject()
 
 				return resolve({ found: 1, course: found })
-			} catch (err) {
-				return reject(errorHandle(err))
+			} catch (error) {
+				return reject(error)
 			}
 		})
 	}

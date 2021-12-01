@@ -4,8 +4,8 @@
 	"description": "back end to refreps application",
 	"main": "index.js",
 	"scripts": {
-		"start": "node server.js",
-		"devStart": "nodemon run server.js",
+		"start": "node src/index.js",
+		"devStart": "nodemon run src/index.js",
 		"test": "jest --collectCoverage --verbose false"
 	},
 	"repository": {
