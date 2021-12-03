@@ -1,12 +1,20 @@
-FROM node:12-alpine as build-step
+FROM node:14 as builder
 
-WORKDIR /refreps-back-end
+WORKDIR /app
 
-COPY package.json /refreps-back-end/utils
+COPY package*.json /app
 
 RUN npm install
 
-COPY . /refreps-back-end
+COPY . /app
 
-CMD [ "node","server.js" ]
+FROM node
+
+WORKDIR /app
+
+COPY --from=builder /app .
+
+EXPOSE 3000
+
+CMD [ "npm","run", "devStart" ]
 
