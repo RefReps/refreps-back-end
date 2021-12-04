@@ -1,13 +1,44 @@
-<h1>File Upload</h1>
 
-<form action="api/video/upload" method="POST" enctype="multipart/form-data">
-	<h2>Upload to private server</h2>
-	<input type="file" name="video" multiple />
-	<button type="submit">Submit</button>
-</form>
-<br /><br />
-<form action="api/video/upload-s3" method="POST" enctype="multipart/form-data">
-	<h2>Upload to s3</h2>
-	<input type="file" name="video" multiple />
-	<button type="submit">Submit</button>
-</form>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>HTTP Video Stream</title>
+	</head>
+	<script>
+		// Change the source `src` attr in the video player
+		function changeVideoId() {
+			const videoId = document.getElementById('videoIdInput').value
+			var videoPlayer = document.getElementById('videoPlayer')
+			var videoSource = document.getElementById('videoSource')
+
+			videoSource.setAttribute('src', '/api/video/' + videoId)
+			videoPlayer.load()
+		}
+	</script>
+	<body>
+		<!-- Watch Videos -->
+		<video id="videoPlayer" width="650" controls muted="muted">
+			<source id="videoSource" src="/api/video/" type="video/mp4" />
+		</video>
+		<div>
+			<input id="videoIdInput" type="text">
+			<input id="videoIdSubmit" type="button" value="change video" onclick="changeVideoId()">
+		</div>
+
+		<!-- Upload videos -->
+		<h1>File Upload</h1>
+		
+		<form action="api/video/upload" method="POST" enctype="multipart/form-data">
+			<h2>Upload to private server</h2>
+			<input type="file" name="video" multiple />
+			<button type="submit">Submit</button>
+		</form>
+		<br /><br />
+		<form action="api/video/upload-s3" method="POST" enctype="multipart/form-data">
+			<h2>Upload to s3</h2>
+			<input type="file" name="video" multiple />
+			<button type="submit">Submit</button>
+		</form>
+  </body>
+</html>

@@ -9,6 +9,16 @@ const moduleSchema = new Schema(
 			minlength: 1,
 			maxlength: 120,
 		},
+		toDocument: {
+			type: Types.ObjectId,
+			required: true,
+			refPath: 'onModel',
+		},
+		onModel: {
+			type: String,
+			required: true,
+			enum: ['Video'],
+		},
 		moduleId: {
 			type: Types.ObjectId,
 			required: true,
@@ -16,10 +26,11 @@ const moduleSchema = new Schema(
 		isPublished: {
 			type: Boolean,
 			required: true,
+			default: true,
 		},
 		contentOrder: {
 			type: Number,
-			min: 0,
+			min: 1,
 			required: true,
 		},
 		dropDate: {
