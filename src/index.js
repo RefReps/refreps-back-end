@@ -1,5 +1,6 @@
 const express = require('express')
 require('dotenv').config({ path: '.env' })
+const cors = require('cors')
 const { postCourse } = require('./controllers/index')
 const makeCallback = require('./express-callback/index')
 const mongoose = require('mongoose')
@@ -7,6 +8,8 @@ mongoose.connect(process.env.DB_CONNECT)
 
 const app = express()
 app.use(express.json())
+
+app.use(cors())
 
 // app.post('/api/course', makeCallback(postCourse))
 
