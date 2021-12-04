@@ -50,12 +50,29 @@ module.exports.makeFakeContent = (overrides) => {
 		name: 'Content Name',
 		moduleId: '619c14ba91b3af1d40e29522',
 		isPublished: true,
-		contentOrder: 0,
-		toContentId: '619c14ba91b3af1d40e29555',
+		contentOrder: 1,
+		toDocument: '619c14ba91b3af1d40e29555',
 		onModel: 'Video',
 	}
 	return {
 		...content,
+		...overrides,
+	}
+}
+
+module.exports.makeFakeVideo = (overrides) => {
+	const video = {
+		fieldname: 'video',
+		originalname: 'video123.mp4',
+		encoding: '7bit',
+		mimetype: 'video123/mp4',
+		destination: 'uploads/',
+		filename: 'video123.mp4',
+		path: 'uploads\\video123.mp4',
+		size: 8443873,
+	}
+	return {
+		...video,
 		...overrides,
 	}
 }
