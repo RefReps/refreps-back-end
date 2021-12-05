@@ -6,6 +6,7 @@
 	"scripts": {
 		"start": "node src/index.js",
 		"devStart": "nodemon run src/index.js",
+		"oldStart": "nodemon run server.js",
 		"test": "jest --collectCoverage --verbose false"
 	},
 	"repository": {
