@@ -14,7 +14,7 @@ router
 				throw new ReferenceError('query for courseId must be provided')
 			}
 			const result = await useCases.section.findAllSections(courseId)
-			res.send(result)
+			res.send(result.sections)
 		} catch (error) {
 			res.status(400).send(error.message)
 		}
