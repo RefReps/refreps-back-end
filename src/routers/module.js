@@ -14,7 +14,7 @@ router
 				throw new ReferenceError('query for sectionId must be provided')
 			}
 			const result = await useCases.module_.findAllModules(sectionId)
-			res.send(result)
+			res.send(result.modules)
 		} catch (error) {
 			res.status(400).send(error.message)
 		}
