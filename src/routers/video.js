@@ -19,38 +19,55 @@ router
 	.route('/:videoId')
 	// Play a video from local server
 	.get(async (req, res) => {
-		const { videoId } = req.params
+		try {
+			const { videoId } = req.params
 
-		const { range } = req.headers
-		if (!range) {
-			res.status(400).send('Requires Range Header')
+			const { range } = req.headers
+			if (!range) {
+				throw new Error('Requires Range Header')
+			}
+
+			// Find the video document in the db
+			const video = await useCases.video.findVideoById(videoId)
+
+			const { path } = video
+			const videoSize = fs.statSync(path).size
+
+			// Parse Range
+			const CHUNK_SIZE = 10 ** 6 // 1MB
+			const start = Number(range.replace(/\D/g, ''))
+			const end = Math.min(start + CHUNK_SIZE, videoSize - 1)
+
+			// Create headers
+			const contentLength = end - start + 1
+			const headers = {
+				'Content-Range': `bytes ${start}-${end}/${videoSize}`,
+				'Accept-Ranges': 'bytes',
+				'Content-Length': contentLength,
+				'Content-Type': 'video/mp4',
+			}
+
+			res.writeHead(206, headers)
+
+			const videoStream = fs.createReadStream(path, { start, end })
+
+			videoStream.pipe(res)
+		} catch (error) {
+			res.status(400).send(error)
 		}
+	})
 
-		// Find the video document in the db
-		const video = await useCases.video.findVideoById(videoId)
-
-		const { path } = video
-		const videoSize = fs.statSync(path).size
-
-		// Parse Range
-		const CHUNK_SIZE = 10 ** 6 // 1MB
-		const start = Number(range.replace(/\D/g, ''))
-		const end = Math.min(start + CHUNK_SIZE, videoSize - 1)
-
-		// Create headers
-		const contentLength = end - start + 1
-		const headers = {
-			'Content-Range': `bytes ${start}-${end}/${videoSize}`,
-			'Accept-Ranges': 'bytes',
-			'Content-Length': contentLength,
-			'Content-Type': 'video/mp4',
+router
+	.route('/:videoId/meta')
+	// Get video document (video metadata)
+	.get(async (req, res) => {
+		try {
+			const { videoId } = req.params
+			const video = await useCases.video.findVideoById(videoId)
+			res.send(video)
+		} catch (error) {
+			res.status(400).send(error)
 		}
-
-		res.writeHead(206, headers)
-
-		const videoStream = fs.createReadStream(path, { start, end })
-
-		videoStream.pipe(res)
 	})
 
 module.exports = router
