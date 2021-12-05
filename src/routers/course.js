@@ -9,7 +9,7 @@ router
 	.get(async (req, res) => {
 		try {
 			const result = await useCases.course.findAllCourses()
-			res.send(result)
+			res.send(result.courses)
 		} catch (error) {
 			res.status(400).send(error)
 		}
