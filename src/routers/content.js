@@ -14,7 +14,7 @@ router
 				throw new ReferenceError('query for moduleId must be provided')
 			}
 			const result = await useCases.content.findAllContents(moduleId)
-			res.send(result)
+			res.send(result.contents)
 		} catch (error) {
 			res.status(400).send(error.message)
 		}
