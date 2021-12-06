@@ -5,6 +5,9 @@
 /uploads
 /data/config.json
 
+/.vs
+/.vscode
+
 ### Node ###
 # Logs
 logs
