@@ -1,10 +1,22 @@
 const express = require('express')
 require('dotenv').config({ path: '.env' })
 const cors = require('cors')
-const { postCourse } = require('./controllers/index')
-const makeCallback = require('./express-callback/index')
 const mongoose = require('mongoose')
 mongoose.connect(process.env.DB_CONNECT)
+
+if (!require('./utils/checkEnvFile').checkAllCriticalEnvVariablesExists()) {
+	console.log('Server refused to start')
+	process.exit(1)
+}
+
+// Create Uploads dir if needed
+const {
+	checkIfLocalUploadDir,
+	createLocalUploadDir,
+} = require('./utils/createUploadsDir')
+if (!checkIfLocalUploadDir()) {
+	createLocalUploadDir()
+}
 
 const app = express()
 app.use(express.json())
