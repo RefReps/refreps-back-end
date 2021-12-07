@@ -2,10 +2,15 @@ const express = require('express')
 require('dotenv').config({ path: '.env' })
 const cors = require('cors')
 const mongoose = require('mongoose')
-mongoose.connect(process.env.DB_CONNECT)
+
+// Connect to mongodb
+mongoose
+	.connect(process.env.DB_CONNECT, { useNewUrlParser: true })
+	.then(() => console.log(`MongoDB Connected: ${process.env.DB_CONNECT}`))
+	.catch((error) => console.log(error))
 
 if (!require('./utils/checkEnvFile').checkAllCriticalEnvVariablesExists()) {
-	console.log('Server refused to start')
+	console.log('Server refused to start.\nExiting...')
 	process.exit(1)
 }
 
