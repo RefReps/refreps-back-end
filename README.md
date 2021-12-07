@@ -29,6 +29,5 @@ The only fields that matter are:
 - HOST=[host of the machine, usually `localhost`]
 - PORT=[port that the api will be hosted on, usually `3000`]
 - DB_CONNECT="uri-of-mongodb"
-- DB_TEST="uri-of-test-mongodb"
 - TOKEN_SECRET="can be any string"
 - LOCAL_UPLOAD_PATH=[use "uploads/" as default]
