@@ -4,7 +4,6 @@ const criticalEnvVariables = [
 	'HOST',
 	'PORT',
 	'DB_CONNECT',
-	'DB_TEST',
 	'TOKEN_SECRET',
 	'LOCAL_UPLOAD_PATH',
 ]
