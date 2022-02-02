@@ -53,4 +53,39 @@ router
 		}
 	})
 
+router.route('/:courseId/copy').post(multer.none(), async (req, res) => {
+	try {
+		const { courseId } = req.params
+
+		const course = await useCases.course.copyCourse(courseId)
+
+		const { sections } = await useCases.section.findAllSections(courseId)
+		sections.forEach(async (section) => {
+			let sectionCopy = await useCases.section.copySection(
+				section._id,
+				course._id
+			)
+
+			let { modules } = await useCases.module_.findAllModules(section._id)
+			modules.forEach(async (module_) => {
+				let moduleCopy = await useCases.module_.copyModule(
+					module_._id,
+					sectionCopy._id
+				)
+				let { contents } = await useCases.content.findAllContents(module_._id)
+				contents.forEach(async (content) => {
+					await useCases.content.copyContent(content._id, moduleCopy._id)
+
+					// If video -> dont do anything else
+					// If quiz -> copy the quiz (change toDocument in content) so that it can be edited
+				})
+			})
+		})
+
+		res.status(201).send()
+	} catch (error) {
+		res.status(400).send(error)
+	}
+})
+
 module.exports = router
