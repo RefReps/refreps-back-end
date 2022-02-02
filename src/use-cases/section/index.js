@@ -2,6 +2,7 @@ const Section = require('../../database/models/section.model')
 
 const makeAddSection = require('./addSection')
 const makeCollapseSection = require('./collapseSections')
+const makeCopySection = require('./copySection')
 const makeDeleteSection = require('./deleteSection')
 const makeFindAllSections = require('./findAllSections')
 const makeFindSectionById = require('./findSectionById')
@@ -10,6 +11,7 @@ const makeUpdateSection = require('./updateSection')
 
 const addSection = makeAddSection({ Section })
 const collapseSection = makeCollapseSection({ Section })
+const copySection = makeCopySection({ Section })
 const deleteSection = makeDeleteSection({ Section })
 const findAllSections = makeFindAllSections({ Section })
 const findSectionById = makeFindSectionById({ Section })
@@ -19,6 +21,7 @@ const updateSection = makeUpdateSection({ Section })
 module.exports = {
 	addSection,
 	collapseSection,
+	copySection,
 	deleteSection,
 	findAllSections,
 	findSectionById,
