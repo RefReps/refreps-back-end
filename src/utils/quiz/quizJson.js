@@ -1,6 +1,7 @@
 const fs = require('fs')
 const fsPromise = fs.promises
 require('dotenv').config({ path: '.env' })
+const localPath = process.env.LOCAL_UPLOAD_PATH
 
 const Validator = require('jsonschema').Validator
 const {
@@ -17,9 +18,18 @@ const questionSchemas = {
 	TRUE_FALSE: trueFalseSchema,
 }
 
-const loadLocalQuiz = async (file) => {
+const touch = async (filepath) => {
 	try {
-		let fileData = await fsPromise.readFile(`${file}`)
+		await fsPromise.writeFile(filepath, '')
+		return true
+	} catch (err) {
+		return false
+	}
+}
+
+const loadLocalQuiz = async (filepath) => {
+	try {
+		let fileData = await fsPromise.readFile(`${filepath}`)
 		return JSON.parse(fileData)
 	} catch (err) {
 		throw ReferenceError('No quiz found.')
@@ -79,9 +89,11 @@ const validateQuizRootData = (quizData) => {
 }
 
 module.exports = {
+	touch,
 	loadLocalQuiz,
 	updateLocalQuiz,
 	condenseOrdering,
 	validateQuizQuestionData,
 	validateQuizRootData,
+	localPath,
 }
