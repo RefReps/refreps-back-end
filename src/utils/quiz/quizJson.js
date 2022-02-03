@@ -20,7 +20,7 @@ const questionSchemas = {
 
 const touch = async (filepath) => {
 	try {
-		await fsPromise.writeFile(filepath, '')
+		await fsPromise.writeFile(filepath, JSON.stringify({}))
 		return true
 	} catch (err) {
 		return false
@@ -29,19 +29,18 @@ const touch = async (filepath) => {
 
 const loadLocalQuiz = async (filepath) => {
 	try {
-		let fileData = await fsPromise.readFile(`${filepath}`)
+		let fileData = await fsPromise.readFile(filepath)
 		return JSON.parse(fileData)
 	} catch (err) {
 		throw ReferenceError('No quiz found.')
 	}
 }
 
-const updateLocalQuiz = async (file, data) => {
+const saveLocalQuiz = async (filepath, data) => {
 	try {
-		let quiz = await loadLocalQuiz(`${file}`)
-		let updatedQuiz = Object.assign(quiz, data)
-		let newData = JSON.stringify(updatedQuiz)
-		return await fsPromise.writeFile(`${file}`, newData)
+		let dataJson = JSON.stringify(data)
+		await fsPromise.writeFile(filepath, dataJson)
+		return true
 	} catch (err) {
 		throw err
 	}
@@ -71,6 +70,9 @@ const validateQuizQuestionData = (questionObjectData) => {
 	if (!questionType) {
 		return false
 	}
+	console.log(
+		v.validate(questionObjectData, questionSchemas[questionType]).valid
+	)
 	return v.validate(questionObjectData, questionSchemas[questionType]).valid
 }
 
@@ -91,7 +93,7 @@ const validateQuizRootData = (quizData) => {
 module.exports = {
 	touch,
 	loadLocalQuiz,
-	updateLocalQuiz,
+	saveLocalQuiz,
 	condenseOrdering,
 	validateQuizQuestionData,
 	validateQuizRootData,

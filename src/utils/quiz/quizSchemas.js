@@ -85,7 +85,7 @@ const oneChoiceSchema = {
 					examples: ['Dark Orange'],
 				},
 			},
-			additionalProperties: true,
+			additionalProperties: false,
 		},
 		answers: {
 			$id: '#/properties/answers',
@@ -200,7 +200,7 @@ const multiChoiceSchema = {
 					examples: ['Dark Orange'],
 				},
 			},
-			additionalProperties: true,
+			additionalProperties: false,
 		},
 		answers: {
 			$id: '#/properties/answers',
@@ -239,7 +239,7 @@ const trueFalseSchema = {
 		{
 			type: 'TRUE_FALSE',
 			question: 'Blue is my favorite color.',
-			answer: true,
+			answer: 'true',
 		},
 	],
 	required: ['type', 'question', 'answer'],
@@ -262,14 +262,14 @@ const trueFalseSchema = {
 		},
 		answer: {
 			$id: '#/properties/answer',
-			type: 'boolean',
+			type: 'string',
 			title: 'The answer schema',
 			description: 'An explanation about the purpose of this instance.',
-			default: false,
-			examples: [true],
+			default: '',
+			examples: ['true'],
 		},
 	},
-	additionalProperties: true,
+	additionalProperties: false,
 }
 
 const freeResponseSchema = {
@@ -287,7 +287,7 @@ const freeResponseSchema = {
 			'case-sensitive': true,
 		},
 	],
-	required: ['type', 'question', 'answers', 'case-sensitive'],
+	required: ['type', 'question', 'answers'],
 	properties: {
 		type: {
 			$id: '#/properties/type',
@@ -327,16 +327,8 @@ const freeResponseSchema = {
 				],
 			},
 		},
-		'case-sensitive': {
-			$id: '#/properties/case-sensitive',
-			type: 'boolean',
-			title: 'The case-sensitive schema',
-			description: 'An explanation about the purpose of this instance.',
-			default: false,
-			examples: [true],
-		},
 	},
-	additionalProperties: true,
+	additionalProperties: false,
 }
 
 const quizRootSchema = {
@@ -373,7 +365,7 @@ const quizRootSchema = {
 			additionalProperties: true,
 		},
 	},
-	additionalProperties: true,
+	additionalProperties: false,
 }
 
 module.exports = {

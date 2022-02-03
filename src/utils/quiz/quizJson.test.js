@@ -1,6 +1,6 @@
 const {
 	loadLocalQuiz,
-	updateLocalQuiz,
+	saveLocalQuiz,
 	condenseOrdering,
 	validateQuizQuestionData,
 	validateQuizRootData,
@@ -44,7 +44,8 @@ describe('loadQuiz Test Suite', () => {
 	it('throws ReferenceError when quiz is not found', async () => {
 		let error = 'Nothing'
 		try {
-			await loadLocalQuiz(`${testDir}no-quiz-here.json`)
+			const quiz = await loadLocalQuiz(`${testDir}no-quiz-here.json`)
+			console.log(quiz)
 		} catch (err) {
 			error = err.name
 		}
@@ -52,7 +53,7 @@ describe('loadQuiz Test Suite', () => {
 	})
 })
 
-describe('updateLocalQuiz Test Suite', () => {
+describe('saveLocalQuiz Test Suite', () => {
 	beforeAll(async () => {
 		// Create a temp file for testing
 		if (!fs.existsSync(testDir)) {
@@ -65,8 +66,7 @@ describe('updateLocalQuiz Test Suite', () => {
 		await fsPromise.writeFile(quizPath, JSON.stringify(quizContent))
 	})
 
-	afterAll(async () => {
-		// Delete the file after all tests in the suite
+	afterEach(async () => {
 		fs.unlinkSync(quizPath)
 	})
 
@@ -84,17 +84,7 @@ describe('updateLocalQuiz Test Suite', () => {
 				answers: ['A', 'D'],
 			},
 		}
-		await updateLocalQuiz(quizPath, contentAdding)
-	})
-
-	it('fails to update a quiz when there is no quiz found', async () => {
-		let error = 'Nothing'
-		try {
-			await updateLocalQuiz(`${testDir}no-quiz-here.json`, {})
-		} catch (err) {
-			error = err.name
-		}
-		expect(error).toBe('ReferenceError')
+		await saveLocalQuiz(quizPath, contentAdding)
 	})
 })
 
@@ -133,7 +123,7 @@ describe('validateQuizQuestionData Test Suite', () => {
 		const questionData = {
 			type: 'TRUE_FALSE',
 			question: 'My favorite number is 6.',
-			answer: true,
+			answer: 'true',
 		}
 		expect(validateQuizQuestionData(questionData)).toBe(true)
 	})
@@ -143,7 +133,6 @@ describe('validateQuizQuestionData Test Suite', () => {
 			type: 'FREE_RESPONSE',
 			question: 'What is my favorite color?',
 			answers: ['blue', 'BLUE', 'Blue'],
-			'case-sensitive': true,
 		}
 		expect(validateQuizQuestionData(questionData)).toBe(true)
 	})
