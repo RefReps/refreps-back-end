@@ -76,3 +76,32 @@ module.exports.makeFakeVideo = (overrides) => {
 		...overrides,
 	}
 }
+
+module.exports.makeFakeQuiz = (overrides) => {
+	const quiz = {
+		name: 'fake-quiz-name',
+		filename: 'fake-quiz-filename.json',
+	}
+	return {
+		...quiz,
+		...overrides,
+	}
+}
+
+module.exports.makeFakeQuestion = (overrides) => {
+	const question = {
+		type: '1_CHOICE',
+		question: 'What is my favorite number?',
+		responses: {
+			A: '1',
+			B: '2',
+			C: '3',
+			D: '6',
+		},
+		answers: ['A', 'D'],
+	}
+	return {
+		...question,
+		...overrides,
+	}
+}

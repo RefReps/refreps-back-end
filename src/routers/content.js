@@ -22,8 +22,18 @@ router
 	// addContent
 	.post(multer.none(), async (req, res) => {
 		try {
-			const result = await useCases.content.addContent(req.body)
-			await useCases.content.collapseContent(req.body.moduleId)
+			const {
+				name,
+				toDocument,
+				onModel,
+				moduleId,
+				isPublished,
+				contentOrder,
+				dropDate,
+			} = req.body
+			const contentData = req.body
+			const result = await useCases.content.addContent(contentData)
+			await useCases.content.collapseContent(moduleId)
 			res.status(204).send()
 		} catch (error) {
 			res.status(400).send(error)

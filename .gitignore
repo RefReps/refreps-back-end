@@ -4,6 +4,7 @@
 
 /uploads
 /data/config.json
+/__test__/temp
 
 /.vs
 /.vscode
