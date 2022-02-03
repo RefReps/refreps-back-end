@@ -31,7 +31,7 @@ describe('findQuizById Test Suite', () => {
 		const quiz1 = await addQuiz(makeFakeQuiz({ name: 'quiz1' }))
 
 		const found = await findQuizById(quiz1._id)
-		expect(found).toMatchObject(mockQuizData)
+		expect(found).toMatchObject(quiz1)
 	})
 
 	it('finds the right quiz given multiple entries', async () => {
@@ -40,7 +40,7 @@ describe('findQuizById Test Suite', () => {
 		const quiz3 = await addQuiz(makeFakeQuiz({ name: 'quiz3' }))
 
 		const found = await findQuizById(quiz2._id)
-		expect(found.name).toEqual(mockQuizData.name)
+		expect(found.name).toEqual(quiz2.name)
 	})
 
 	it('successfully finds only if the quiz is in the db', async () => {

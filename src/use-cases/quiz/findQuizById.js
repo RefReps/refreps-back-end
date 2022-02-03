@@ -1,5 +1,6 @@
 require('dotenv').config({ path: '.env' })
-const quizDir = process.env.LOCAL_PATH_UPLOAD
+const quizDir = process.env.LOCAL_UPLOAD_PATH
+const path = require('path')
 
 module.exports = makeFindQuizById = ({ Quiz, QuizJson }) => {
 	// Finds a quiz by an ObjectId
@@ -10,15 +11,13 @@ module.exports = makeFindQuizById = ({ Quiz, QuizJson }) => {
 			try {
 				let query = {}
 
-				const quizDoc = await Quiz.findById(id).where(query).exec()
+				const quizDoc = await Quiz.findById(id)
 				if (quizDoc == null) {
 					return reject(ReferenceError('No quiz found in db'))
 				}
 				const found = quizDoc.toObject()
 
-				const data = await QuizJson.loadLocalQuiz(`${quizDir}${found.filename}`)
-
-				return resolve(data)
+				return resolve(found)
 			} catch (error) {
 				return reject(error)
 			}
