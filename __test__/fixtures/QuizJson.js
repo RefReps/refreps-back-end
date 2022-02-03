@@ -8,7 +8,7 @@ module.exports = {
 			questions: {},
 		}
 	},
-	updateLocalQuiz: async function (path, data) {
+	saveLocalQuiz: async function (path, data) {
 		return Promise.resolve()
 	},
 	condenseOrdering: function (data) {
