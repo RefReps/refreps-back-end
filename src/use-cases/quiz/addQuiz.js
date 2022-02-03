@@ -16,7 +16,11 @@ module.exports = makeAddQuiz = ({ Quiz, QuizJson }) => {
 			// Add new quiz reference in db
 			const quiz = new Quiz({ ...quizInfo, filename: uniqueFilename })
 			try {
-				QuizJson.touch(`${quizPath}${uniqueFilename}`)
+				const quizData = {
+					name: quiz.name,
+					questions: {},
+				}
+				await QuizJson.saveLocalQuiz(`${quizPath}${uniqueFilename}`, quizData)
 				const saved = await quiz.save()
 				return resolve(saved.toObject())
 			} catch (err) {
