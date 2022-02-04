@@ -2,7 +2,7 @@ module.exports = makeCopyCourse = ({ Course }) => {
 	// Copy a course
 	// Resolve -> course object
 	// Reject -> error name
-	return async function copyCourse(courseId) {
+	return async function copyCourse(courseId, overrides = {}) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				const course = await Course.findById(courseId)
@@ -11,18 +11,15 @@ module.exports = makeCopyCourse = ({ Course }) => {
 					throw ReferenceError('Not Found')
 				}
 
-				const courseInfo = Object.assign(
-					{},
-					{
-						name: course.name,
-						isTemplate: course.isTemplate,
-						isPublished: course.isPublished,
-						isDeleted: course.isDeleted,
-						settings: course.settings,
-					}
-				)
+				const courseInfo = {
+					name: course.name + ' (copy)',
+					isTemplate: course.isTemplate,
+					isPublished: course.isPublished,
+					isDeleted: course.isDeleted,
+					settings: course.settings,
+				}
 
-				const copyCourse = new Course(courseInfo)
+				const copyCourse = new Course({ ...courseInfo, ...overrides })
 
 				const saved = await copyCourse.save()
 				return resolve(saved.toObject())

@@ -27,7 +27,11 @@ describe('copyContent Test Suite', () => {
 		const content = await addContent(makeFakeContent())
 
 		const bindModuleId = '61f9fadbef472bd26d0e684f'
-		const copy = await copyContent(content._id, bindModuleId)
+		const copy = await copyContent(
+			content._id,
+			bindModuleId,
+			content.toDocument
+		)
 		expect(copy._id).not.toBe(content._id)
 		expect(copy.moduleId).not.toBe(content.moduleId)
 		expect({
