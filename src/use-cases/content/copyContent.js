@@ -2,7 +2,7 @@ module.exports = makeCopyContent = ({ Content }) => {
 	// Copy a content
 	// Resolve -> content object
 	// Reject -> error name
-	return async function copyContent(contentId, bindModuleId) {
+	return async function copyContent(contentId, bindModuleId, bindDocumentId) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				const content = await Content.findById(contentId)
@@ -11,18 +11,15 @@ module.exports = makeCopyContent = ({ Content }) => {
 					throw ReferenceError('Not Found')
 				}
 
-				const contentInfo = Object.assign(
-					{},
-					{
-						name: content.name,
-						toDocument: content.toDocument,
-						onModel: content.onModel,
-						moduleId: bindModuleId,
-						isPublished: content.isPublished,
-						contentOrder: content.contentOrder,
-						dropDate: content.dropDate,
-					}
-				)
+				const contentInfo = {
+					name: content.name,
+					toDocument: bindDocumentId,
+					onModel: content.onModel,
+					moduleId: bindModuleId,
+					isPublished: content.isPublished,
+					contentOrder: content.contentOrder,
+					dropDate: content.dropDate,
+				}
 
 				const copyContent = new Content(contentInfo)
 
