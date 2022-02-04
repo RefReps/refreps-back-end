@@ -25,7 +25,7 @@ describe('copyCourse Test Suite', () => {
 
 	it('successfully copies a course', async () => {
 		const course = await addCourse(makeFakeCourse())
-		const copy = await copyCourse(course._id)
+		const copy = await copyCourse(course._id, { name: course.name })
 		expect(copy._id).not.toBe(course._id)
 		expect({
 			name: copy.name,
