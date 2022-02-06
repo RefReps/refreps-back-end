@@ -1,15 +1,17 @@
-const content = require('./content/index')
-const course = require('./course/index')
-const module_ = require('./module/index')
-const quiz = require('./quiz/index')
-const section = require('./section/index')
-const video = require('./video/index')
+const Content = require('./content/index')
+const Course = require('./course/index')
+const Module_ = require('./module/index')
+const Quiz = require('./quiz/index')
+const Section = require('./section/index')
+const User = require('./user/index')
+const Video = require('./video/index')
 
 module.exports = {
-	content,
-	course,
-	module_,
-	quiz,
-	section,
-	video,
+	Content,
+	Course,
+	Module_,
+	Quiz,
+	Section,
+	User,
+	Video,
 }

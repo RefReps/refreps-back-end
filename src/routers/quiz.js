@@ -18,7 +18,7 @@ router
 	.post(multer.none(), async (req, res) => {
 		try {
 			const { name } = req.body
-			const quiz = await useCases.quiz.addQuiz({ name })
+			const quiz = await useCases.Quiz.addQuiz({ name })
 			res.status(200).send({ _id: quiz._id })
 		} catch (error) {
 			res.status(400).send(error)
@@ -30,7 +30,7 @@ router
 	.get(async (req, res) => {
 		try {
 			const { quizId } = req.params
-			const quiz = await useCases.quiz.findQuizById(quizId)
+			const quiz = await useCases.Quiz.findQuizById(quizId)
 			const json = await quizJson.loadLocalQuiz(
 				`${process.env.LOCAL_UPLOAD_PATH}${quiz.filename}`
 			)
@@ -62,8 +62,8 @@ router
 				D,
 			}
 
-			const quiz = await useCases.quiz.findQuizById(quizId)
-			const result = await useCases.quiz.addQuestion(
+			const quiz = await useCases.Quiz.findQuizById(quizId)
+			const result = await useCases.Quiz.addQuestion(
 				quiz._id,
 				questionNumber || 100,
 				{
@@ -86,7 +86,7 @@ router
 router.route('/:quizId/:questionNumber').delete(async (req, res) => {
 	try {
 		const { quizId, questionNumber } = req.params
-		await useCases.quiz.deleteQuestion(quizId, questionNumber)
+		await useCases.Quiz.deleteQuestion(quizId, questionNumber)
 		return res.status(201).send({ success: true })
 	} catch (err) {
 		return res

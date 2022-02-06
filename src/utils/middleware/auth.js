@@ -1,16 +1,24 @@
 const jwt = require('jsonwebtoken')
 
+// Check if authenticated
+// Updates req.email
 const isAuthenticated = (req, res, next) => {
-	// TODO: If authenticated, goto next middleware
 	try {
-		const authorization = req.header('Authorization').slice()
+		if (!req.header('Authorization')) {
+			throw new Error('Authorization Header required for route')
+		}
+		const authorization = req.header('Authorization')
 		if (verifyToken(extractToken(authorization))) {
+			const jwtObject = jwt.decode(extractToken(authorization))
+			req.email = jwtObject.email
 			next()
 		} else {
-			res.status(401).send({ success: false })
+			res.status(401).json({ success: false })
 		}
 	} catch (error) {
-		throw error
+		res
+			.status(400)
+			.send({ success: false, error: error.name, reason: error.message })
 	}
 }
 

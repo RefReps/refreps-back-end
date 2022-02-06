@@ -34,6 +34,14 @@ const userSchema = new Schema(
 			enum: ['user', 'admin'],
 			default: 'user',
 		},
+		authorCourses: {
+			type: Array,
+			default: [],
+		},
+		studentCourses: {
+			type: Array,
+			default: [],
+		},
 	},
 	{ timestamps: true }
 )

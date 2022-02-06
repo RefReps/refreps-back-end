@@ -8,7 +8,7 @@ const useCases = require('../use-cases/index')
 router.route('/').post(videoUpload.single('video'), async (req, res) => {
 	try {
 		const { file } = req
-		const video = await useCases.video.addVideo(file)
+		const video = await useCases.Video.addVideo(file)
 		res.send(video)
 	} catch (error) {
 		res.status(400).send(error)
@@ -28,7 +28,7 @@ router
 			}
 
 			// Find the video document in the db
-			const video = await useCases.video.findVideoById(videoId)
+			const video = await useCases.Video.findVideoById(videoId)
 
 			const { path } = video
 			const videoSize = fs.statSync(path).size
@@ -63,7 +63,7 @@ router
 	.get(async (req, res) => {
 		try {
 			const { videoId } = req.params
-			const video = await useCases.video.findVideoById(videoId)
+			const video = await useCases.Video.findVideoById(videoId)
 			res.send(video)
 		} catch (error) {
 			res.status(400).send(error)
