@@ -7,7 +7,7 @@ const { authorizeAdmin } = require('./userRole')
  * @param {*} res response
  * @param {*} next next middleware
  */
-const authorizeStudentInCourse = (req, res, next) => {
+const authorizeStudentInCourse = async (req, res, next) => {
 	try {
 		const { email, courseId } = req
 		if (!email) {
