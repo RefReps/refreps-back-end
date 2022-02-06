@@ -13,7 +13,7 @@ router
 			if (!sectionId) {
 				throw new ReferenceError('query for sectionId must be provided')
 			}
-			const result = await useCases.module_.findAllModules(sectionId)
+			const result = await useCases.Module_.findAllModules(sectionId)
 			res.send(result.modules)
 		} catch (error) {
 			res.status(400).send(error.message)
@@ -22,8 +22,8 @@ router
 	// addModule
 	.post(multer.none(), async (req, res) => {
 		try {
-			const result = await useCases.module_.addModule(req.body)
-			await useCases.module_.collapseModule(req.body.sectionId)
+			const result = await useCases.Module_.addModule(req.body)
+			await useCases.Module_.collapseModule(req.body.sectionId)
 			res.status(204).send()
 		} catch (error) {
 			res.status(400).send(error)
@@ -36,7 +36,7 @@ router
 	.get(async (req, res) => {
 		try {
 			const { moduleId } = req.params
-			const result = await useCases.module_.findModuleById(moduleId)
+			const result = await useCases.Module_.findModuleById(moduleId)
 			res.send(result)
 		} catch (error) {
 			res.status(400).send(error)
@@ -46,9 +46,9 @@ router
 	.delete(async (req, res) => {
 		const { moduleId } = req.params
 		try {
-			const module = await useCases.module_.findModuleById(moduleId)
-			await useCases.module_.deleteModule(moduleId)
-			await useCases.module_.collapseModule(module.sectionId)
+			const module = await useCases.Module_.findModuleById(moduleId)
+			await useCases.Module_.deleteModule(moduleId)
+			await useCases.Module_.collapseModule(module.sectionId)
 			res.status(204).send()
 		} catch (error) {
 			res.status(400).send(error)
@@ -61,16 +61,16 @@ router
 		try {
 			// Update order if req.body.moduleOrder
 			if (moduleOrder) {
-				await useCases.module_.moveModuleOrder(moduleId, moduleOrder)
-				const module = await useCases.module_.findModuleById(moduleId)
-				await useCases.module_.collapseModule(module.sectionId)
+				await useCases.Module_.moveModuleOrder(moduleId, moduleOrder)
+				const module = await useCases.Module_.findModuleById(moduleId)
+				await useCases.Module_.collapseModule(module.sectionId)
 			}
 
 			const moduleInfo = {}
 			moduleInfo['name'] = name ? name : undefined
 			moduleInfo['isPublished'] = isPublished ? isPublished : undefined
 			moduleInfo['dropDate'] = dropDate ? dropDate : undefined
-			const result = await useCases.module_.updateModule(moduleId, moduleInfo)
+			const result = await useCases.Module_.updateModule(moduleId, moduleInfo)
 			res.send(result)
 		} catch (error) {
 			res.status(400).send(error.toString())

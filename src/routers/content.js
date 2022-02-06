@@ -13,7 +13,7 @@ router
 			if (!moduleId) {
 				throw new ReferenceError('query for moduleId must be provided')
 			}
-			const result = await useCases.content.findAllContents(moduleId)
+			const result = await useCases.Content.findAllContents(moduleId)
 			res.send(result.contents)
 		} catch (error) {
 			res.status(400).send(error.message)
@@ -32,8 +32,8 @@ router
 				dropDate,
 			} = req.body
 			const contentData = req.body
-			const result = await useCases.content.addContent(contentData)
-			await useCases.content.collapseContent(moduleId)
+			const result = await useCases.Content.addContent(contentData)
+			await useCases.Content.collapseContent(moduleId)
 			res.status(204).send()
 		} catch (error) {
 			res.status(400).send(error)
@@ -46,7 +46,7 @@ router
 	.get(async (req, res) => {
 		try {
 			const { contentId } = req.params
-			const result = await useCases.content.findContentById(contentId)
+			const result = await useCases.Content.findContentById(contentId)
 			res.send(result)
 		} catch (error) {
 			res.status(400).send(error)
@@ -56,9 +56,9 @@ router
 	.delete(async (req, res) => {
 		const { contentId } = req.params
 		try {
-			const content = await useCases.content.findContentById(contentId)
-			await useCases.content.deleteContent(contentId)
-			await useCases.content.collapseContent(content.moduleId)
+			const content = await useCases.Content.findContentById(contentId)
+			await useCases.Content.deleteContent(contentId)
+			await useCases.Content.collapseContent(content.moduleId)
 			res.status(204).send()
 		} catch (error) {
 			res.status(400).send(error)
@@ -71,16 +71,16 @@ router
 		const { name, moduleId, isPublished, contentOrder, dropDate } = req.body
 		try {
 			if (contentOrder) {
-				await useCases.content.moveContentOrder(contentId, contentOrder)
-				const content = await useCases.content.findContentById(contentId)
-				await useCases.content.collapseContent(content.moduleId)
+				await useCases.Content.moveContentOrder(contentId, contentOrder)
+				const content = await useCases.Content.findContentById(contentId)
+				await useCases.Content.collapseContent(content.moduleId)
 			}
 
 			const contentInfo = {}
 			contentInfo['name'] = name ? name : undefined
 			contentInfo['isPublished'] = isPublished ? isPublished : undefined
 			contentInfo['dropDate'] = dropDate ? dropDate : undefined
-			const result = await useCases.content.updateContent(
+			const result = await useCases.Content.updateContent(
 				contentId,
 				contentInfo
 			)
