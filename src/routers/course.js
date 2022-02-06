@@ -4,7 +4,10 @@ const multer = require('multer')()
 
 const useCases = require('../use-cases/index')
 const { User, Course } = require('../use-cases/index')
+
+// Middleware Imports
 const { isAuthenticated } = require('../utils/middleware/auth')
+const { authorizeAdmin } = require('../utils/middleware/userRole')
 
 router.use(isAuthenticated)
 
@@ -26,7 +29,9 @@ router
 				.json({ success: false, error: error.name, reason: error.message })
 		}
 	})
-	.post(multer.none(), async (req, res) => {
+	// Post a new course.
+	// Admin only route
+	.post(multer.none(), authorizeAdmin, async (req, res) => {
 		try {
 			const course = await Course.addCourse(req.body)
 			res.send(course)
@@ -40,13 +45,17 @@ router
 	.get(async (req, res) => {
 		try {
 			const { courseId } = req.params
-			const result = await Course.findCourseById(courseId)
+			const result = await Course.findCourseById(courseId, {
+				userEmail: req.email,
+			})
 			res.send(result.course)
 		} catch (error) {
 			res.status(400).send(error)
 		}
 	})
-	.delete(async (req, res) => {
+	// Delete a course
+	// Admin route only
+	.delete(authorizeAdmin, async (req, res) => {
 		try {
 			const { courseId } = req.params
 			const result = await Course.deleteCourse(courseId)
@@ -69,7 +78,8 @@ router
 router
 	.route('/:courseId/author/:email')
 	// Adds a user as an author to the course
-	.post(async (req, res) => {
+	// Admin route only
+	.post(authorizeAdmin, async (req, res) => {
 		try {
 			const { email, courseId } = req.params
 			const user = await User.findUserByEmail(email)
@@ -82,7 +92,8 @@ router
 		}
 	})
 	// Removes a user as an author to the course
-	.delete(async (req, res) => {
+	// Admin route only
+	.delete(authorizeAdmin, async (req, res) => {
 		try {
 			const { email, courseId } = req.params
 			const user = await User.findUserByEmail(email)
@@ -95,7 +106,7 @@ router
 		}
 	})
 
-// Admin route, and for authors that are in that course
+// Admin route, and Author route that are in that course
 router
 	.route('/:courseId/student/:email')
 	// Adds a user as a student to the course
@@ -125,61 +136,63 @@ router
 		}
 	})
 
-router.route('/:courseId/copy').post(multer.none(), async (req, res) => {
-	try {
-		const { courseId } = req.params
-		const overrides = req.body
+router
+	.route('/:courseId/copy')
+	.post(authorizeAdmin, multer.none(), async (req, res) => {
+		try {
+			const { courseId } = req.params
+			const overrides = req.body
 
-		const course = await Course.copyCourse(courseId, overrides)
+			const course = await Course.copyCourse(courseId, overrides)
 
-		const { sections } = await useCases.Section.findAllSections(courseId)
-		sections.forEach(async (section) => {
-			// Copy all sections and bind them to the new course
-			let sectionCopy = await useCases.Section.copySection(
-				section._id,
-				course._id
-			)
-
-			let { modules } = await useCases.Module_.findAllModules(section._id)
-			modules.forEach(async (module_) => {
-				// Copy all modules and bind them to the new section, resp.
-				let moduleCopy = await useCases.Module_.copyModule(
-					module_._id,
-					sectionCopy._id
+			const { sections } = await useCases.Section.findAllSections(courseId)
+			sections.forEach(async (section) => {
+				// Copy all sections and bind them to the new course
+				let sectionCopy = await useCases.Section.copySection(
+					section._id,
+					course._id
 				)
-				let { contents } = await useCases.Content.findAllContents(module_._id)
-				contents.forEach(async (content) => {
-					// Copy the document that the Content points to (if needed)
-					let bindDocumentId
-					switch (content.onModel) {
-						case 'Video':
-							bindDocumentId = content.toDocument
-							break
-						case 'Quiz':
-							const quiz = await useCases.Quiz.copyQuiz(content.toDocument)
-							bindDocumentId = quiz._id
-						default:
-							bindDocumentId = content.toDocument
-					}
 
-					// Copy the Content, bind the Content to its resp Module, and
-					// bind the document
-					await useCases.Content.copyContent(
-						content._id,
-						moduleCopy._id,
-						bindDocumentId
+				let { modules } = await useCases.Module_.findAllModules(section._id)
+				modules.forEach(async (module_) => {
+					// Copy all modules and bind them to the new section, resp.
+					let moduleCopy = await useCases.Module_.copyModule(
+						module_._id,
+						sectionCopy._id
 					)
+					let { contents } = await useCases.Content.findAllContents(module_._id)
+					contents.forEach(async (content) => {
+						// Copy the document that the Content points to (if needed)
+						let bindDocumentId
+						switch (content.onModel) {
+							case 'Video':
+								bindDocumentId = content.toDocument
+								break
+							case 'Quiz':
+								const quiz = await useCases.Quiz.copyQuiz(content.toDocument)
+								bindDocumentId = quiz._id
+							default:
+								bindDocumentId = content.toDocument
+						}
 
-					// TODO: If video -> dont do anything else
-					// If quiz -> copy the quiz (change toDocument in content) so that it can be edited
+						// Copy the Content, bind the Content to its resp Module, and
+						// bind the document
+						await useCases.Content.copyContent(
+							content._id,
+							moduleCopy._id,
+							bindDocumentId
+						)
+
+						// TODO: If video -> dont do anything else
+						// If quiz -> copy the quiz (change toDocument in content) so that it can be edited
+					})
 				})
 			})
-		})
 
-		res.status(201).send()
-	} catch (error) {
-		res.status(400).send(error)
-	}
-})
+			res.status(201).send()
+		} catch (error) {
+			res.status(400).send(error)
+		}
+	})
 
 module.exports = router
