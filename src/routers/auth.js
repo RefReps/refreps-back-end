@@ -26,14 +26,12 @@ router
 
 			if (user && (await compareEncrypted(password, user.password))) {
 				const { access_token, refresh_token } = await generateUserTokens(email)
-				return res
-					.status(200)
-					.json({
-						success: true,
-						access_token,
-						refresh_token,
-						userType: user.role,
-					})
+				return res.status(200).json({
+					success: true,
+					access_token,
+					refresh_token,
+					userRole: user.role,
+				})
 			}
 
 			throw new Error('Failed to login')
@@ -54,14 +52,12 @@ router
 			const { email, password } = req.body
 			await createUser({ email, password })
 			const { access_token, refresh_token } = await generateUserTokens(email)
-			return res
-				.status(200)
-				.json({
-					success: true,
-					access_token,
-					refresh_token,
-					userType: getUserByEmail(email).role,
-				})
+			return res.status(200).json({
+				success: true,
+				access_token,
+				refresh_token,
+				userRole: getUserByEmail(email).role,
+			})
 		} catch (error) {
 			res
 				.status(400)
