@@ -15,6 +15,6 @@ module.exports = {
 	deleteCourse: makeDeleteCourse({ Course }),
 	findAllCourses: makeFindAllCourses({ Course }),
 	findAllCoursesForUser: makeFindAllCoursesForUser({ Course, User }),
-	findCourseById: makeFindCourseById({ Course }),
+	findCourseById: makeFindCourseById({ Course, User }),
 	updateCourse: makeUpdateCourse({ Course }),
 }
