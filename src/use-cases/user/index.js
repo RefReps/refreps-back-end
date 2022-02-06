@@ -6,6 +6,7 @@ const makeAddStudentInCourse = require('./addStudentInCourse')
 const makeAddUser = require('./addUser')
 const makeAppendRefreshToken = require('./appendRefreshToken')
 const makeCompareRefreshToken = require('./compareRefreshToken')
+const makeFindAllUsersInCourse = require('./findAllUsersInCourse')
 const makeFindUserByEmail = require('./findUserByEmail')
 const makeRemoveAuthorInCourse = require('./removeAuthorInCourse')
 const makeRemoveRefreshToken = require('./removeRefreshToken')
@@ -16,6 +17,7 @@ const addStudentInCourse = makeAddStudentInCourse({ User })
 const addUser = makeAddUser({ User, Encryption: bcrypt })
 const appendRefreshToken = makeAppendRefreshToken({ User })
 const compareRefreshToken = makeCompareRefreshToken({ User })
+const findAllUsersInCourse = makeFindAllUsersInCourse({ User })
 const findUserByEmail = makeFindUserByEmail({ User })
 const removeAuthorInCourse = makeRemoveAuthorInCourse({ User })
 const removeRefreshToken = makeRemoveRefreshToken({ User })
@@ -27,6 +29,7 @@ module.exports = {
 	addUser,
 	appendRefreshToken,
 	compareRefreshToken,
+	findAllUsersInCourse,
 	findUserByEmail,
 	removeAuthorInCourse,
 	removeRefreshToken,
