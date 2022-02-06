@@ -30,7 +30,7 @@ router
 					success: true,
 					access_token,
 					refresh_token,
-					userRole: user.role,
+					user_role: user.role,
 				})
 			}
 
@@ -56,7 +56,7 @@ router
 				success: true,
 				access_token,
 				refresh_token,
-				userRole: await User.findUserByEmail(email).role,
+				user_role: await User.findUserByEmail(email).role,
 			})
 		} catch (error) {
 			res
