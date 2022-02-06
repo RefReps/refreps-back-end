@@ -106,35 +106,62 @@ router
 		}
 	})
 
-// Adds multiple authors to a course
-// Reads Json body
-// Requires req.body.emails = ['user@email.com', ...]
-router.route('/:courseId/authors').post(async (req, res) => {
+router.route('/:courseId/members').get(async (req, res) => {
 	try {
-		const { emails } = req.body
 		const { courseId } = req.params
-		if (!emails) {
-			throw ReferenceError('req.body.email is required')
-		}
-		if ((await Course.findCourseById(courseId)).found === 0) {
-			throw ReferenceError('Course is not in db')
-		}
-
-		emails.forEach(async (email) => {
-			try {
-				let user = await User.findUserByEmail(email)
-				await User.addAuthorInCourse(user._id, courseId)
-			} catch (error) {
-				console.log({ error: error.name, message: error.message })
-			}
-		})
-		res.status(204).send()
+		const users = await User.findAllUsersInCourse(courseId)
+		res.status(200).json(users)
 	} catch (error) {
 		res
 			.status(400)
 			.json({ success: false, error: error.name, reason: error.message })
 	}
 })
+
+router
+	.route('/:courseId/authors')
+	.get(async (req, res) => {
+		try {
+			const { courseId } = req.params
+			const users = await User.findAllUsersInCourse(courseId, {
+				includeStudents: false,
+			})
+			res.status(200).json(users)
+		} catch (error) {
+			res
+				.status(400)
+				.json({ success: false, error: error.name, reason: error.message })
+		}
+	})
+	// Adds multiple authors to a course
+	// Reads Json body
+	// Requires req.body.emails = ['user@email.com', ...]
+	.post(async (req, res) => {
+		try {
+			const { emails } = req.body
+			const { courseId } = req.params
+			if (!emails) {
+				throw ReferenceError('req.body.email is required')
+			}
+			if ((await Course.findCourseById(courseId)).found === 0) {
+				throw ReferenceError('Course is not in db')
+			}
+
+			emails.forEach(async (email) => {
+				try {
+					let user = await User.findUserByEmail(email)
+					await User.addAuthorInCourse(user._id, courseId)
+				} catch (error) {
+					console.log({ error: error.name, message: error.message })
+				}
+			})
+			res.status(204).send()
+		} catch (error) {
+			res
+				.status(400)
+				.json({ success: false, error: error.name, reason: error.message })
+		}
+	})
 
 // Removes batch of authors from course
 // Requires req.body to be json
@@ -196,35 +223,51 @@ router
 		}
 	})
 
-// Adds multiple students to a course
-// Reads Json body
-// Requires req.body.emails = ['user@email.com', ...]
-router.route('/:courseId/students').post(async (req, res) => {
-	try {
-		const { emails } = req.body
-		const { courseId } = req.params
-		if (!emails) {
-			throw ReferenceError('req.body.email is required')
+router
+	.route('/:courseId/students')
+	// Get all students in the course
+	.get(async (req, res) => {
+		try {
+			const { courseId } = req.params
+			const users = await User.findAllUsersInCourse(courseId, {
+				includeAuthors: false,
+			})
+			res.status(200).json(users)
+		} catch (error) {
+			res
+				.status(400)
+				.json({ success: false, error: error.name, reason: error.message })
 		}
-		if ((await Course.findCourseById(courseId)).found === 0) {
-			throw ReferenceError('Course is not in db')
-		}
-
-		emails.forEach(async (email) => {
-			try {
-				let user = await User.findUserByEmail(email)
-				await User.addStudentInCourse(user._id, courseId)
-			} catch (error) {
-				console.log({ error: error.name, message: error.message })
+	})
+	// Adds multiple students to a course
+	// Reads Json body
+	// Requires req.body.emails = ['user@email.com', ...]
+	.post(async (req, res) => {
+		try {
+			const { emails } = req.body
+			const { courseId } = req.params
+			if (!emails) {
+				throw ReferenceError('req.body.email is required')
 			}
-		})
-		res.status(204).send()
-	} catch (error) {
-		res
-			.status(400)
-			.json({ success: false, error: error.name, reason: error.message })
-	}
-})
+			if ((await Course.findCourseById(courseId)).found === 0) {
+				throw ReferenceError('Course is not in db')
+			}
+
+			emails.forEach(async (email) => {
+				try {
+					let user = await User.findUserByEmail(email)
+					await User.addStudentInCourse(user._id, courseId)
+				} catch (error) {
+					console.log({ error: error.name, message: error.message })
+				}
+			})
+			res.status(204).send()
+		} catch (error) {
+			res
+				.status(400)
+				.json({ success: false, error: error.name, reason: error.message })
+		}
+	})
 
 // Removes multiple students from a course
 // Reads Json body
