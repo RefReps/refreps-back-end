@@ -12,7 +12,7 @@ module.exports = makeRemoveAuthorInCourse = ({ User }) => {
 				if (!userId) {
 					throw new ReferenceError('`id` is required to update')
 				}
-				if (!usercourseIdId) {
+				if (!courseId) {
 					throw new ReferenceError('`courseId` is required to update')
 				}
 
