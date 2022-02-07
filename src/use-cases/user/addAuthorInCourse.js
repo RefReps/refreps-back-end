@@ -15,6 +15,13 @@ module.exports = makeAppendAuthorInCourse = ({ User }) => {
 				if (!courseId) {
 					throw new ReferenceError('`courseId` is required to update')
 				}
+				if (typeof courseId != 'string') {
+					try {
+						courseId = courseId.toString()
+					} catch (error) {
+						throw error
+					}
+				}
 
 				// Remove user from being a student in the course if applicable
 				const user = await User.findById(userId)
