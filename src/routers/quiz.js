@@ -175,6 +175,24 @@ router
 
 router
 	.route('/:quizId/grade')
+	// Get grade for a user
+	.get(isAuthenticated, async (req, res) => {
+		try {
+			const { email } = req
+			const { quizId } = req.params
+			if (!email) {
+				throw ReferenceError('req.email needs to be provided')
+			}
+			const user = await User.findUserByEmail(email)
+			const result = await Quiz.getSubmissionGrade(quizId, user._id)
+
+			res.status(200).json(result)
+		} catch (error) {
+			res
+				.status(400)
+				.json({ success: false, error: error.name, reason: error.message })
+		}
+	})
 	// Grade and finish a quiz that was in progress
 	.post(isAuthenticated, async (req, res) => {
 		try {
@@ -187,6 +205,26 @@ router
 			const graded = await Quiz.gradeSubmission(quizId, user._id)
 
 			res.status(200).json({ grade: graded })
+		} catch (error) {
+			res
+				.status(400)
+				.json({ success: false, error: error.name, reason: error.message })
+		}
+	})
+
+router
+	.route('/:quizId/view-grades')
+	// Get all grades for the quiz
+	.get(isAuthenticated, async (req, res) => {
+		try {
+			const { quizId } = req.params
+			let result = await Quiz.getAllSubmissionGrades(quizId)
+
+			for await (let ele of result) {
+				ele.email = (await User.findUserById(ele.userId)).email
+			}
+
+			res.status(200).json(result)
 		} catch (error) {
 			res
 				.status(400)
