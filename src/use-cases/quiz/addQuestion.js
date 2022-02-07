@@ -16,7 +16,7 @@ module.exports = makeAddQuestion = ({ Quiz, QuizJson }) => {
 
 			// Incoming question is valid
 			if (!QuizJson.validateQuizQuestionData(questionData)) {
-				return reject(new TypeError('Question data is not valid'))
+				return resolve(false)
 			}
 
 			// Save questionData
