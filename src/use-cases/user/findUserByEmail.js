@@ -1,10 +1,10 @@
 require('dotenv').config({ path: '.env' })
 
-module.exports = makeFindUserById = ({ User }) => {
+module.exports = makeFindUserByEmail = ({ User }) => {
 	// Finds a user by an ObjectId
 	// Resolve -> user document
 	// Reject -> error
-	return async function findUserById(email) {
+	return async function findUserByEmail(email) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				const userDoc = await User.findOne({ email })
