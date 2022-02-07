@@ -82,6 +82,36 @@ router
 		}
 	})
 
+router
+	.route('/:quizId/batch')
+	// Update a quiz in batch
+	// req.body = {name: '', questions: [{quizQuestion}, ...]}
+	.put(isAuthenticated, async (req, res) => {
+		try {
+			const { quizId } = req.params
+			const { questions } = req.body
+			if (!questions) {
+				throw ReferenceError('req.body.quizRoot.questions must be provided')
+			}
+
+			const quiz = await useCases.Quiz.findQuizById(quizId)
+			for (const question of questions) {
+				await Quiz.addQuestion(
+					quiz._id,
+					question.questionNumber || 100,
+					question
+				)
+			}
+
+			// TODO: Send all successful additions, and failures
+			res.send({ success: true })
+		} catch (error) {
+			res
+				.status(400)
+				.send({ success: false, error: error.name, reason: error.message })
+		}
+	})
+
 router.route('/:quizId/number/:questionNumber').delete(async (req, res) => {
 	try {
 		const { quizId, questionNumber } = req.params
@@ -115,7 +145,7 @@ router
 	})
 
 router
-	.route('/:quizId/save')
+	.route('/:quizId/submission-save')
 	// Save incoming userAnswers to the quiz
 	// req.body = {"1": "ABC", "2": "A", ...} must be provided (json)
 	.put(isAuthenticated, async (req, res) => {
@@ -156,7 +186,7 @@ router
 			const user = await User.findUserByEmail(email)
 			const graded = await Quiz.gradeSubmission(quizId, user._id)
 
-			res.status(200).json(graded)
+			res.status(200).json({ grade: graded })
 		} catch (error) {
 			res
 				.status(400)
