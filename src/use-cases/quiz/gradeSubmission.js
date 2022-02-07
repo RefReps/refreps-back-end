@@ -36,8 +36,14 @@ module.exports = makeGradeSubmission = ({ Quiz, QuizJson, QuizSubmission }) => {
 				)
 
 				// save submitted=true
-				// submissionInProgress.submitted = true
-				// submissionInProgress.markModified('submitted')
+				submissionInProgress.submitted = true
+				submissionInProgress.markModified('submitted')
+				// save isGraded=true
+				submissionInProgress.isGraded = true
+				submissionInProgress.markModified('isGraded')
+				// save submitted=true
+				submissionInProgress.grade = grade
+				submissionInProgress.markModified('grade')
 				// Save the date finished
 				submissionInProgress.dateFinished = Date.now()
 				submissionInProgress.markModified('dateFinished')
