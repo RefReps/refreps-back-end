@@ -44,7 +44,7 @@ const stripQuestionData = (data) => {
 					type: data.type,
 					question: data.question,
 					responses: data.responses,
-					answers: data.asnwers ? data.answers.split('') : undefined,
+					answers: data.answers,
 				}
 			)
 		case 'MULTI_CHOICE':
@@ -54,7 +54,7 @@ const stripQuestionData = (data) => {
 					type: data.type,
 					question: data.question,
 					responses: data.responses,
-					answers: data.asnwers ? data.answers.split('') : undefined,
+					answers: data.answers,
 				}
 			)
 		case 'TRUE_FALSE':
@@ -72,7 +72,7 @@ const stripQuestionData = (data) => {
 				{
 					type: data.type,
 					question: data.question,
-					answers: [data.answers],
+					answers: data.answers,
 				}
 			)
 		default:
