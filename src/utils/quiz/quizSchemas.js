@@ -239,7 +239,7 @@ const trueFalseSchema = {
 		{
 			type: 'TRUE_FALSE',
 			question: 'Blue is my favorite color.',
-			answer: 'true',
+			answer: true,
 		},
 	],
 	required: ['type', 'question', 'answer'],
@@ -262,11 +262,11 @@ const trueFalseSchema = {
 		},
 		answer: {
 			$id: '#/properties/answer',
-			type: 'string',
+			type: 'boolean',
 			title: 'The answer schema',
 			description: 'An explanation about the purpose of this instance.',
-			default: '',
-			examples: ['true'],
+			default: false,
+			examples: [true],
 		},
 	},
 	additionalProperties: false,

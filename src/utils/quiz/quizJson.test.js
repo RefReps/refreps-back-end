@@ -45,7 +45,6 @@ describe('loadQuiz Test Suite', () => {
 		let error = 'Nothing'
 		try {
 			const quiz = await loadLocalQuiz(`${testDir}no-quiz-here.json`)
-			console.log(quiz)
 		} catch (err) {
 			error = err.name
 		}
@@ -123,7 +122,7 @@ describe('validateQuizQuestionData Test Suite', () => {
 		const questionData = {
 			type: 'TRUE_FALSE',
 			question: 'My favorite number is 6.',
-			answer: 'true',
+			answer: true,
 		}
 		expect(validateQuizQuestionData(questionData)).toBe(true)
 	})

@@ -70,9 +70,6 @@ const validateQuizQuestionData = (questionObjectData) => {
 	if (!questionType) {
 		return false
 	}
-	console.log(
-		v.validate(questionObjectData, questionSchemas[questionType]).valid
-	)
 	return v.validate(questionObjectData, questionSchemas[questionType]).valid
 }
 
