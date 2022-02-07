@@ -63,7 +63,7 @@ const stripQuestionData = (data) => {
 				{
 					type: data.type,
 					question: data.question,
-					answer: data.answer,
+					answer: data.answer == 'true' ? true : false,
 				}
 			)
 		case 'FREE_RESPONSE':
