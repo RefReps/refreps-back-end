@@ -305,6 +305,7 @@ router
 		try {
 			const { courseId } = req.params
 			const overrides = req.body
+			const { authorEmail } = req.body
 
 			const course = await Course.copyCourse(courseId, overrides)
 
@@ -351,6 +352,12 @@ router
 					})
 				})
 			})
+
+			// Add author if provided
+			if (authorEmail) {
+				const user = await User.findUserByEmail(authorEmail)
+				await User.addAuthorInCourse(user._id, course._id)
+			}
 
 			res.status(201).send()
 		} catch (error) {
