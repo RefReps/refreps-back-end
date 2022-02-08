@@ -87,7 +87,7 @@ const compareAnswer = (type, userAnswer, actualAnswer) => {
 		case 'FREE_RESPONSE':
 			return actualAnswer.includes(userAnswer)
 		case 'TRUE_FALSE':
-			return userAnswer == actualAnswer
+			return (userAnswer == 'true' ? true : false) == actualAnswer
 		default:
 			return false
 	}
