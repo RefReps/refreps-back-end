@@ -191,6 +191,7 @@ router
 			}
 			const user = await User.findUserByEmail(email)
 			const result = await Quiz.getSubmissionGrade(quizId, user._id)
+			result.grade = parseFloat(result.grade.toString()).toFixed(4)
 
 			res.status(200).json(result)
 		} catch (error) {
@@ -228,6 +229,7 @@ router
 
 			for await (let ele of result) {
 				ele.email = (await User.findUserById(ele.userId)).email
+				ele.grade = parseFloat(ele.grade.toString()).toFixed(4)
 			}
 
 			res.status(200).json(result)
