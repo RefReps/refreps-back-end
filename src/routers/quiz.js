@@ -38,6 +38,9 @@ router
 			const json = await quizJson.loadLocalQuiz(
 				`${process.env.LOCAL_UPLOAD_PATH}${quiz.filename}`
 			)
+
+			json.questions = await addQuestionNumber(json.questions)
+
 			res.send(json)
 		} catch (error) {
 			res.status(400).send(error)
@@ -136,6 +139,9 @@ router
 			}
 			const user = await User.findUserByEmail(email)
 			const quizData = await Quiz.startQuiz(quizId, user._id)
+
+			quizData.questions = await addQuestionNumber(quizData.questions)
+
 			res.status(200).json(quizData)
 		} catch (error) {
 			res
@@ -231,5 +237,12 @@ router
 				.json({ success: false, error: error.name, reason: error.message })
 		}
 	})
+
+const addQuestionNumber = async (questions) => {
+	for await (const key of Object.keys(questions)) {
+		questions[key].questionNumber = key
+	}
+	return questions
+}
 
 module.exports = router
