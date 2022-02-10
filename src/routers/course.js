@@ -335,6 +335,7 @@ router
 							case 'Quiz':
 								const quiz = await useCases.Quiz.copyQuiz(content.toDocument)
 								bindDocumentId = quiz._id
+								break
 							default:
 								bindDocumentId = content.toDocument
 						}
