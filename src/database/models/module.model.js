@@ -27,6 +27,12 @@ const moduleSchema = new Schema(
 			type: Date,
 			default: null,
 		},
+		contents: [
+			{
+				type: Types.ObjectId,
+				ref: 'Content',
+			},
+		],
 	},
 	{ timestamps: true }
 )
