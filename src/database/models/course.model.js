@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose')
+const { Schema, model, Types } = require('mongoose')
 
 const courseSchema = new Schema(
 	{
@@ -50,6 +50,24 @@ const courseSchema = new Schema(
 				required: true,
 			},
 		},
+		authors: [
+			{
+				type: Types.ObjectId,
+				ref: 'User',
+			},
+		],
+		students: [
+			{
+				type: Types.ObjectId,
+				ref: 'User',
+			},
+		],
+		sections: [
+			{
+				type: Types.ObjectId,
+				ref: 'Section',
+			},
+		],
 	},
 	{ timestamps: true }
 )
