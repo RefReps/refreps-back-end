@@ -1,4 +1,5 @@
 const Module = require('../../database/models/module.model')
+const Section = require('../../database/models/section.model')
 
 const makeAddModule = require('./addModule')
 const makeCollapseModule = require('./collapseModules')
@@ -9,10 +10,10 @@ const makeFindModuleById = require('./findModuleById')
 const makeMoveModuleOrder = require('./moveModuleOrder')
 const makeUpdateModule = require('./updateModule')
 
-const addModule = makeAddModule({ Module })
+const addModule = makeAddModule({ Module, Section })
 const collapseModule = makeCollapseModule({ Module })
 const copyModule = makeCopyModule({ Module })
-const deleteModule = makeDeleteModule({ Module })
+const deleteModule = makeDeleteModule({ Module, Section })
 const findAllModules = makeFindAllModules({ Module })
 const findModuleById = makeFindModuleById({ Module })
 const moveModuleOrder = makeMoveModuleOrder({ Module })
