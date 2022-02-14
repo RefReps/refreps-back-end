@@ -4,6 +4,7 @@ const quizSubmission = new Schema(
 	{
 		userId: {
 			type: Types.ObjectId,
+			ref: 'User',
 			required: true,
 		},
 		quizId: {
@@ -18,10 +19,19 @@ const quizSubmission = new Schema(
 			type: Number,
 			required: true,
 		},
-		userAnswers: {
-			type: Object,
-			default: {},
-		},
+		userAnswers: [
+			{
+				questionNumber: {
+					type: Number,
+					required: true,
+				},
+				answers: [
+					{
+						type: String,
+					},
+				],
+			},
+		],
 		isGraded: {
 			type: Boolean,
 			default: false,
