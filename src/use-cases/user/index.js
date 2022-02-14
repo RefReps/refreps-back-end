@@ -1,4 +1,5 @@
 const User = require('../../database/models/user.model')
+const Course = require('../../database/models/course.model')
 const bcrypt = require('bcryptjs')
 
 const makeAddAuthorInCourse = require('./addAuthorInCourse')
@@ -13,17 +14,17 @@ const makeRemoveAuthorInCourse = require('./removeAuthorInCourse')
 const makeRemoveRefreshToken = require('./removeRefreshToken')
 const makeRemoveStudentInCourse = require('./removeStudentInCourse')
 
-const addAuthorInCourse = makeAddAuthorInCourse({ User })
-const addStudentInCourse = makeAddStudentInCourse({ User })
+const addAuthorInCourse = makeAddAuthorInCourse({ User, Course })
+const addStudentInCourse = makeAddStudentInCourse({ User, Course })
 const addUser = makeAddUser({ User, Encryption: bcrypt })
 const appendRefreshToken = makeAppendRefreshToken({ User })
 const compareRefreshToken = makeCompareRefreshToken({ User })
 const findAllUsersInCourse = makeFindAllUsersInCourse({ User })
 const findUserByEmail = makeFindUserByEmail({ User })
 const findUserById = makeFindUserById({ User })
-const removeAuthorInCourse = makeRemoveAuthorInCourse({ User })
+const removeAuthorInCourse = makeRemoveAuthorInCourse({ User, Course })
 const removeRefreshToken = makeRemoveRefreshToken({ User })
-const removeStudentInCourse = makeRemoveStudentInCourse({ User })
+const removeStudentInCourse = makeRemoveStudentInCourse({ User, Course })
 
 module.exports = {
 	addAuthorInCourse,

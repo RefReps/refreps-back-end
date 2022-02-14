@@ -1,4 +1,4 @@
-module.exports = makeRemoveAuthorInCourse = ({ User }) => {
+module.exports = makeRemoveAuthorInCourse = ({ User, Course }) => {
 	// Removes an Author from a course
 	// Resolve -> updated user document
 	// Rejects -> error
@@ -16,15 +16,33 @@ module.exports = makeRemoveAuthorInCourse = ({ User }) => {
 					throw new ReferenceError('`courseId` is required to update')
 				}
 
-				const updated = await User.findByIdAndUpdate(
+				const user = await User.findById(userId)
+				const course = await Course.findById(courseId)
+
+				if (user == null) {
+					throw ReferenceError('User not found.')
+				}
+				if (course == null) {
+					throw ReferenceError('Course not found.')
+				}
+
+				// Remove courseId from user.authorCourses
+				const updatedUser = await User.findByIdAndUpdate(
 					userId,
 					{ $pull: { authorCourses: courseId } },
 					options
 				).exec()
-				if (updated == null) {
-					throw ReferenceError('User not found')
-				}
-				return resolve(updated.toObject())
+				// Remove userId from course.authors
+				const updatedCourse = await Course.findByIdAndUpdate(
+					courseId,
+					{ $pull: { authors: userId } },
+					options
+				)
+
+				return resolve({
+					user: updatedUser.toObject(),
+					course: updatedCourse.toObject(),
+				})
 			} catch (error) {
 				return reject(error)
 			}
