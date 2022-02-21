@@ -11,6 +11,10 @@ const quizSubmission = new Schema(
 			type: Types.ObjectId,
 			required: true,
 		},
+		quizVersionId: {
+			type: Types.ObjectId,
+			required: true,
+		},
 		submitted: {
 			type: Boolean,
 			required: true,
@@ -32,13 +36,33 @@ const quizSubmission = new Schema(
 				],
 			},
 		],
+		answerOverrides: [
+			{
+				questionNumber: {
+					type: Number,
+					required: true,
+				},
+				isCorrect: {
+					type: Boolean,
+					required: true,
+				},
+				isPointDifferent: {
+					type: Boolean,
+					default: false,
+				},
+				pointAward: {
+					type: Number,
+					default: 0,
+				}
+			}
+		],
 		isGraded: {
 			type: Boolean,
 			default: false,
 		},
 		grade: {
-			type: Types.Decimal128,
-			default: 0.0,
+			type: Number,
+			default: 0,
 		},
 		dateStarted: {
 			type: Date,
