@@ -9,10 +9,12 @@ const quizSubmission = new Schema(
 		},
 		quizId: {
 			type: Types.ObjectId,
+			ref: 'Quiz',
 			required: true,
 		},
 		quizVersionId: {
 			type: Types.ObjectId,
+			ref: 'QuizVersion',
 			required: true,
 		},
 		submitted: {
@@ -29,11 +31,9 @@ const quizSubmission = new Schema(
 					type: Number,
 					required: true,
 				},
-				answers: [
-					{
-						type: String,
-					},
-				],
+				answers: {
+					type: [String],
+				},
 			},
 		],
 		answerOverrides: [
@@ -53,8 +53,8 @@ const quizSubmission = new Schema(
 				pointAward: {
 					type: Number,
 					default: 0,
-				}
-			}
+				},
+			},
 		],
 		isGraded: {
 			type: Boolean,
