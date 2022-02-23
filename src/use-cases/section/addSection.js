@@ -16,9 +16,9 @@ module.exports = makeAddSection = ({ Section, Course }) => {
 					},
 					options
 				)
-				if (course == null) {
-					throw ReferenceError('Course not found.')
-				}
+				// if (course == null) {
+				// 	throw ReferenceError('Course not found.')
+				// }
 
 				const saved = await section.save()
 				return resolve(saved.toObject())

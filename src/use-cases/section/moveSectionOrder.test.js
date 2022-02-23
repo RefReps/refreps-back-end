@@ -1,4 +1,5 @@
 const Section = require('../../database/models/section.model')
+const Course = require('../../database/models/course.model')
 const { makeFakeSection } = require('../../../__test__/fixtures')
 const {
 	dbConnect,
@@ -8,7 +9,7 @@ const makeAddSection = require('./addSection')
 const makeMoveSectionOrder = require('./moveSectionOrder')
 
 describe('moveSectionOrder Test Suite', () => {
-	const addSection = makeAddSection({ Section })
+	const addSection = makeAddSection({ Section, Course })
 	const moveSectionOrder = makeMoveSectionOrder({ Section })
 
 	beforeAll(async () => {
