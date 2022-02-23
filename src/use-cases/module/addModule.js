@@ -8,6 +8,8 @@ module.exports = makeAddModule = ({ Module, Section }) => {
 
 			const module = new Module(moduleInfo)
 			try {
+				await module.validate()
+
 				// Add module to section.modules
 				const section = await Section.findByIdAndUpdate(
 					moduleInfo.sectionId,
@@ -16,9 +18,9 @@ module.exports = makeAddModule = ({ Module, Section }) => {
 					},
 					options
 				)
-				if (section == null) {
-					throw ReferenceError('Section not found.')
-				}
+				// if (section == null) {
+				// 	throw ReferenceError('Section not found.')
+				// }
 
 				const saved = await module.save()
 				return resolve(saved.toObject())
