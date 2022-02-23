@@ -36,7 +36,7 @@ describe('addQuestion Test Suite', () => {
 		expect(errorName).toBe('ReferenceError')
 	})
 
-	it('fails to add a question that does not have valid properties', async () => {
+	it.skip('fails to add a question that does not have valid properties', async () => {
 		let errorName = 'nothing'
 		try {
 			await addQuestion('quizId', 1, { badQuestion: 'very Bad' })
