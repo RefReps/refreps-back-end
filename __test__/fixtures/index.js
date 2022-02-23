@@ -10,6 +10,7 @@ module.exports.makeFakeCourse = (overrides) => {
 			isGradedQuizAdvance: true,
 			maximumQuizAttempts: 4,
 		},
+		sections: [],
 	}
 	return {
 		...course,
@@ -24,6 +25,7 @@ module.exports.makeFakeSection = (overrides) => {
 		isPublished: true,
 		sectionOrder: 1,
 		dropDate: null,
+		modules: [],
 	}
 	return {
 		...section,
@@ -38,6 +40,7 @@ module.exports.makeFakeModule = (overrides) => {
 		isPublished: true,
 		moduleOrder: 1,
 		dropDate: null,
+		contents: [],
 	}
 	return {
 		...module,
@@ -81,6 +84,8 @@ module.exports.makeFakeQuiz = (overrides) => {
 	const quiz = {
 		name: 'fake-quiz-name',
 		filename: 'fake-quiz-filename.json',
+		quizVersions: [],
+		activeVersion: 0,
 	}
 	return {
 		...quiz,
@@ -102,6 +107,25 @@ module.exports.makeFakeQuestion = (overrides) => {
 	}
 	return {
 		...question,
+		...overrides,
+	}
+}
+
+module.exports.makeFakeQuizSubmission = (overrides) => {
+	const values = {
+		userId: '62126c51249f4356abc36608',
+		quizId: '62126c51249f4356abc36610',
+		quizVersionId: '62126c51249f4356abc36612',
+		submitted: false,
+		submissionNumber: 1,
+		userAnswers: [],
+		isGraded: false,
+		grade: 0,
+		dateStarted: Date.now(),
+		dateFinished: undefined,
+	}
+	return {
+		...values,
 		...overrides,
 	}
 }
