@@ -8,15 +8,17 @@ module.exports = makeAddContent = ({ Content, Module }) => {
 
 			const content = new Content(contentInfo)
 			try {
+				await content.validate()
+
 				// Add content to module.contents
 				const module = await Module.findByIdAndUpdate(
 					contentInfo.moduleId,
 					{ $push: { contents: content._id } },
 					options
 				)
-				if (module == null) {
-					throw ReferenceError('Module not found.')
-				}
+				// if (module == null) {
+				// 	throw ReferenceError('Module not found.')
+				// }
 
 				const saved = await content.save()
 				return resolve(saved.toObject())

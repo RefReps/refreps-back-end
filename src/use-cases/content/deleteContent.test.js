@@ -1,4 +1,5 @@
 const Content = require('../../database/models/content.model')
+const Module = require('../../database/models/module.model')
 const { makeFakeContent } = require('../../../__test__/fixtures')
 const {
 	dbConnect,
@@ -8,8 +9,8 @@ const makeAddContent = require('./addContent')
 const makeDeleteContent = require('./deleteContent')
 
 describe('deleteContent Test Suite', () => {
-	const addContent = makeAddContent({ Content })
-	const deleteContent = makeDeleteContent({ Content })
+	const addContent = makeAddContent({ Content, Module })
+	const deleteContent = makeDeleteContent({ Content, Module })
 
 	beforeAll(async () => {
 		await dbConnect()

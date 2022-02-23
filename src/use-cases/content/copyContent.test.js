@@ -1,4 +1,5 @@
 const Content = require('../../database/models/content.model')
+const Module = require('../../database/models/module.model')
 const { makeFakeContent } = require('../../../__test__/fixtures')
 const {
 	dbConnect,
@@ -8,7 +9,7 @@ const makeAddContent = require('./addContent')
 const makeCopyContent = require('./copyContent')
 
 describe('copyContent Test Suite', () => {
-	const addContent = makeAddContent({ Content })
+	const addContent = makeAddContent({ Content, Module })
 	const copyContent = makeCopyContent({ Content })
 
 	beforeAll(async () => {
