@@ -22,6 +22,8 @@ module.exports = makeCopyQuiz = ({ Quiz, QuizJson }) => {
 					{
 						name: oldQuiz.name,
 						filename: newFilename,
+						activeVersion: 0,
+						quizVersions: [],
 					}
 				)
 
