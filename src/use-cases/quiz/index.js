@@ -20,7 +20,7 @@ const getAllSubmissionGrades = makeGetAllSubmissionGrades({
 	Quiz,
 	QuizSubmission,
 })
-const startQuiz = makeStartQuiz({ Quiz, QuizSubmission, QuizJson })
+const startQuiz = makeStartQuiz({ Quiz, QuizVersion, QuizSubmission })
 
 module.exports = {
 	addQuestions,
