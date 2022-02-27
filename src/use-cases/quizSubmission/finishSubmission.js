@@ -1,3 +1,5 @@
+const QuestionType = require('../../utils/enums/QuestionType')
+
 module.exports = makeFinishSubmission = ({ QuizSubmission }) => {
 	return async function createSubmission(submissionId) {
 		try {
@@ -101,13 +103,13 @@ function pushAnswerToOverrides(
 
 function isCorrectAnswer(userAnswer, quizQuestion) {
 	switch (quizQuestion.questionType) {
-		case '1_CHOICE':
+		case QuestionType.CHOICE_1:
 			return grade1Choice(userAnswer.answers, quizQuestion.answers)
-		case 'MULTI_CHOICE':
+		case QuestionType.MULTI_CHOICE:
 			return gradeMultiChoice(userAnswer.answers, quizQuestion.answers)
-		case 'FREE_RESPONSE':
+		case QuestionType.FREE_RESPONSE:
 			return gradeFreeResponse(userAnswer.answers, quizQuestion.answers)
-		case 'TRUE_FALSE':
+		case QuestionType.TRUE_FALSE:
 			return gradeTrueFalse(userAnswer.answers, quizQuestion.answers)
 	}
 }
@@ -119,7 +121,7 @@ function isCorrectAnswer(userAnswer, quizQuestion) {
  * @returns boolean
  */
 function grade1Choice(actualAnswer, expectedAnswer) {
-	return expectedAnswer.includes(actualAnswer.shift())
+	return expectedAnswer.includes(actualAnswer.slice().shift())
 }
 
 /**
@@ -139,7 +141,7 @@ function gradeMultiChoice(actualAnswer, expectedAnswer) {
  * @returns boolean
  */
 function gradeFreeResponse(actualAnswer, expectedAnswer) {
-	return expectedAnswer.includes(actualAnswer.shift())
+	return expectedAnswer.includes(actualAnswer.slice().shift())
 }
 
 /**
@@ -149,7 +151,7 @@ function gradeFreeResponse(actualAnswer, expectedAnswer) {
  * @returns boolean
  */
 function gradeTrueFalse(actualAnswer, expectedAnswer) {
-	return expectedAnswer.includes(actualAnswer.shift())
+	return expectedAnswer.includes(actualAnswer.slice().shift())
 }
 
 const arraysParseToSameSet = (a, b) => {
