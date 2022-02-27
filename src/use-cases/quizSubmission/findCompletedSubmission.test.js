@@ -5,6 +5,7 @@ const {
 	dbConnect,
 	dbDisconnect,
 } = require('../../utils/test-utils/dbHandler.utils')
+const { CastError } = require('mongoose').Error
 const makeCreateSubmission = require('./createSubmission')
 const makeAddAnswers = require('./addAnswers')
 const makeFinishSubmission = require('./finishSubmission')
@@ -151,10 +152,48 @@ describe('createSubmission Test Suite', () => {
 		await addAnswers(submission._id, answers)
 		await finishSubmission(submission._id)
 		submission = await findCompletedSubmission(submission._id)
-		console.log(submission)
 
 		expect(typeof submission.userAnswers).toBe('object')
 		expect(typeof submission.quizQuestions).toBe('object')
+	})
+
+	it('rejects a ReferenceError when the submission is not yet submitted', async () => {
+		let submission = await createSubmission(userId, quizId, quizVersionId)
+		await expect(findCompletedSubmission(submission._id)).rejects.toThrow(
+			ReferenceError
+		)
+	})
+
+	it('rejects a ReferenceError when quizVersionId is not populated', async () => {
+		let errorName = 'nothing'
+		let errorMessage = 'nothing'
+		try {
+			let submission = await createSubmission(userId, quizId, quizVersionId)
+			await addAnswers(submission._id, answers)
+			await finishSubmission(submission._id)
+			await QuizVersion.deleteMany({})
+			await findCompletedSubmission(submission._id)
+		} catch (error) {
+			errorName = error.name
+			errorMessage = error.message
+		}
+		expect(errorName).toBe('ReferenceError')
+		expect(errorMessage).toBe('Quiz Version doc not found.')
+	})
+
+	it('rejects a ReferenceError when no submissionId is provided', async () => {
+		await expect(findCompletedSubmission()).rejects.toThrow(ReferenceError)
+	})
+
+	it('rejects a ReferenceError when no submission doc is found', async () => {
+		await QuizSubmission.deleteMany({})
+		await expect(findCompletedSubmission()).rejects.toThrow(ReferenceError)
+	})
+
+	it('rejects a CastError (Mongoose.Error) when no submissionId is not ObjectId parsable', async () => {
+		await expect(
+			findCompletedSubmission('621bb65bec82708f31f403f4')
+		).rejects.toThrow(ReferenceError)
 	})
 
 	// it('grades correctly when there are all incorrect answers', async () => {
