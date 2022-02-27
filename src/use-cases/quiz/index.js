@@ -16,7 +16,10 @@ const addQuiz = makeAddQuiz({ Quiz, QuizVersion })
 const copyQuiz = makeCopyQuiz({ Quiz, QuizVersion })
 const deleteQuestions = makeDeleteQuestions({ Quiz, QuizVersion })
 const findQuizById = makeFindQuizById({ Quiz, QuizVersion })
-const getAllSubmissionGrades = makeGetAllSubmissionGrades({ QuizSubmission })
+const getAllSubmissionGrades = makeGetAllSubmissionGrades({
+	Quiz,
+	QuizSubmission,
+})
 const startQuiz = makeStartQuiz({ Quiz, QuizSubmission, QuizJson })
 
 module.exports = {
