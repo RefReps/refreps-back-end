@@ -75,7 +75,6 @@ describe('questionValidator Test Suite', () => {
 
 	it('returns false when a multi choice question is invalid', async () => {
 		const question = fakeValidMultiChoice({ responses: ['A', 'B'] })
-		console.log(question)
 		expect(validateQuestion(question)).toBe(false)
 	})
 
