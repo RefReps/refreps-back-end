@@ -1,6 +1,9 @@
 const Quiz = require('../../database/models/quiz.model')
-const QuizJsonMock = require('../../../__test__/fixtures/QuizJson')
-const { makeFakeQuiz } = require('../../../__test__/fixtures')
+const QuizVersion = require('../../database/models/quizVersion.model')
+const {
+	makeFakeQuiz,
+	makeFakeQuizVersion,
+} = require('../../../__test__/fixtures')
 const {
 	dbConnect,
 	dbDisconnect,
@@ -9,18 +12,22 @@ const makeAddQuiz = require('./addQuiz')
 const makeFindQuizById = require('./findQuizById')
 
 describe('findQuizById Test Suite', () => {
-	const addQuiz = makeAddQuiz({ Quiz, QuizJson: QuizJsonMock })
-	const findQuizById = makeFindQuizById({ Quiz, QuizJson: QuizJsonMock })
-
-	let mockQuizData
-
-	beforeAll(async () => {
-		await dbConnect()
-	})
+	const addQuiz = makeAddQuiz({ Quiz, QuizVersion })
+	const findQuizById = makeFindQuizById({ Quiz, QuizVersion })
+	let quiz1
 
 	beforeEach(async () => {
+		await dbConnect()
+		// Remove all quiz and quizVersion docs
+		await QuizVersion.deleteMany({})
 		await Quiz.deleteMany({})
-		mockQuizData = await QuizJsonMock.loadLocalQuiz()
+
+		// Add quizVersion doc
+		const version = new QuizVersion(makeFakeQuizVersion())
+		await version.save()
+		// Add quiz doc (bind with quizVersion doc)
+		quiz1 = new Quiz(makeFakeQuiz({ quizVersions: [version._id] }))
+		await quiz1.save()
 	})
 
 	afterAll(async () => {
@@ -28,19 +35,16 @@ describe('findQuizById Test Suite', () => {
 	})
 
 	it('successfully finds a quiz by id', async () => {
-		const quiz1 = await addQuiz(makeFakeQuiz({ name: 'quiz1' }))
-
-		const found = await findQuizById(quiz1._id)
-		expect(found).toMatchObject(quiz1)
+		const { quiz, quizVersion } = await findQuizById(quiz1._id)
+		expect(quiz.name).toBe(quiz1.name)
 	})
 
 	it('finds the right quiz given multiple entries', async () => {
-		const quiz1 = await addQuiz(makeFakeQuiz({ name: 'quiz1' }))
-		const quiz2 = await addQuiz(makeFakeQuiz({ name: 'quiz2' }))
-		const quiz3 = await addQuiz(makeFakeQuiz({ name: 'quiz3' }))
+		const { quiz: quiz2 } = await addQuiz(makeFakeQuiz({ name: 'quiz2' }))
+		const { quiz: quiz3 } = await addQuiz(makeFakeQuiz({ name: 'quiz3' }))
 
-		const found = await findQuizById(quiz2._id)
-		expect(found.name).toEqual(quiz2.name)
+		const { quiz, quizVersion } = await findQuizById(quiz2._id)
+		expect(quiz.name).toEqual(quiz2.name)
 	})
 
 	it('successfully finds only if the quiz is in the db', async () => {
@@ -49,15 +53,8 @@ describe('findQuizById Test Suite', () => {
 		)
 	})
 
-	it('CastError when the id is not an ObjectId', async () => {
-		let errorMessage = 'nothing'
-		try {
-			await findQuizById('123')
-		} catch (error) {
-			errorMessage = error.message
-		}
-		expect(errorMessage).toBe(
-			'Cast to ObjectId failed for value "123" (type string) at path "_id" for model "Quiz"'
-		)
+	it('successfully finds only if the quiz is in the db', async () => {
+		await QuizVersion.deleteMany({})
+		await expect(findQuizById(quiz1._id)).rejects.toThrow(ReferenceError)
 	})
 })
