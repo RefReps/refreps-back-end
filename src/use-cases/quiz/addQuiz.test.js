@@ -1,5 +1,5 @@
 const Quiz = require('../../database/models/quiz.model')
-const QuizJsonMock = require('../../../__test__/fixtures/QuizJson')
+const QuizVersion = require('../../database/models/quizVersion.model')
 const { makeFakeQuiz } = require('../../../__test__/fixtures')
 const {
 	dbConnect,
@@ -8,7 +8,7 @@ const {
 const makeAddQuiz = require('./addQuiz')
 
 describe('addQuiz Test Suite', () => {
-	const addQuiz = makeAddQuiz({ Quiz, QuizJson: QuizJsonMock })
+	const addQuiz = makeAddQuiz({ Quiz, QuizVersion })
 
 	beforeAll(async () => {
 		await dbConnect()
@@ -16,6 +16,7 @@ describe('addQuiz Test Suite', () => {
 
 	beforeEach(async () => {
 		await Quiz.deleteMany({})
+		await QuizVersion.deleteMany({})
 	})
 
 	afterAll(async () => {
@@ -23,24 +24,21 @@ describe('addQuiz Test Suite', () => {
 	})
 
 	it('successfully adds a quiz', async () => {
-		const quiz = await addQuiz(makeFakeQuiz(), true)
+		const { quiz } = await addQuiz(makeFakeQuiz())
 		expect(quiz.name).toBe(makeFakeQuiz().name)
+		expect(quiz.activeVersion).toBe(1)
 	})
 
-	it('fails to add quiz when required properties are not passed', async () => {
-		let errorName = 'nothing'
-		try {
-			await addQuiz()
-		} catch (error) {
-			errorName = error.name
-		}
-		expect(errorName).toBe('ValidationError')
+	it('successfully adds a quiz when no params are passed', async () => {
+		const { quiz } = await addQuiz()
+		expect(quiz.name).toBe('New Quiz')
+		expect(quiz.activeVersion).toBe(1)
 	})
 
-	it('fails to add a quiz that does not have valid properties', async () => {
+	it('fails to add quiz when cannot validate properties', async () => {
 		let errorName = 'nothing'
 		try {
-			await addQuiz(makeFakeQuiz({ name: '' }), true)
+			await addQuiz({ name: ['hello'] })
 		} catch (error) {
 			errorName = error.name
 		}
