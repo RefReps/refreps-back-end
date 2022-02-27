@@ -2,7 +2,7 @@ require('dotenv').config({ path: '.env' })
 const quizDir = process.env.LOCAL_UPLOAD_PATH
 const path = require('path')
 
-module.exports = makeFindQuizById = ({ Quiz, QuizSubmission }) => {
+module.exports = makeFindQuizById = ({ Quiz, QuizVersion }) => {
 	// Finds a quiz by an ObjectId
 	// Resolve -> {found: #, quiz: {object}}
 	// Reject -> error
