@@ -60,11 +60,15 @@ describe('createSubmission Test Suite', () => {
 
 	it('successfully adds questions to a submission by overriding when needed', async () => {
 		const sub = await createSubmission(userId, quizId, quizVersionId)
+		const oldAnswer = {
+			questionNumber: 1,
+			answers: ['true'],
+		}
 		const newAnswer = {
 			questionNumber: 1,
 			answers: ['false'],
 		}
-		await addAnswers(sub._id, [answers[0]])
+		await addAnswers(sub._id, [oldAnswer])
 		const submission = await addAnswers(sub._id, [answers[1], newAnswer])
 		expect(submission.userAnswers).not.toBeNull()
 		expect(submission.userAnswers.length).toBe(2)
