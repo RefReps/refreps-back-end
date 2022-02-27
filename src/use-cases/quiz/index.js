@@ -10,8 +10,6 @@ const makeDeleteQuestions = require('./deleteQuestions')
 const makeFindQuizById = require('./findQuizById')
 const makeGradeSubmission = require('./gradeSubmission')
 const makeGetAllSubmissionGrades = require('./getAllSubmissionGrades')
-const makeGetSubmissionGrade = require('./getSubmissionGrade')
-const makeSaveAnswersInSubmission = require('./saveAnswersInSubmission')
 const makeStartQuiz = require('./startQuiz')
 
 const addQuestions = makeAddQuestions({ Quiz, QuizVersion })
@@ -21,8 +19,6 @@ const deleteQuestions = makeDeleteQuestions({ Quiz, QuizVersion })
 const findQuizById = makeFindQuizById({ Quiz, QuizVersion })
 const gradeSubmission = makeGradeSubmission({ Quiz, QuizJson, QuizSubmission })
 const getAllSubmissionGrades = makeGetAllSubmissionGrades({ QuizSubmission })
-const getSubmissionGrade = makeGetSubmissionGrade({ QuizSubmission })
-const saveAnswersInSubmission = makeSaveAnswersInSubmission({ QuizSubmission })
 const startQuiz = makeStartQuiz({ Quiz, QuizSubmission, QuizJson })
 
 module.exports = {
@@ -33,7 +29,5 @@ module.exports = {
 	findQuizById,
 	gradeSubmission,
 	getAllSubmissionGrades,
-	getSubmissionGrade,
-	saveAnswersInSubmission,
 	startQuiz,
 }
