@@ -63,6 +63,21 @@ module.exports.makeFakeContent = (overrides) => {
 	}
 }
 
+module.exports.makeFakeUser = (overrides) => {
+	const user = {
+		email: 'example@email.com',
+		password: '111111',
+		refreshTokens: [],
+		role: 'user',
+		authorCourses: [],
+		studentCourses: [],
+	}
+	return {
+		...user,
+		...overrides,
+	}
+}
+
 module.exports.makeFakeVideo = (overrides) => {
 	const video = {
 		fieldname: 'video',
