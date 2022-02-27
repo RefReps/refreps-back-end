@@ -97,7 +97,6 @@ function collapseQuestions(questions) {
 			questionNumber: currentQuestionNum,
 		})
 	})
-	console.log(questions)
 	return questions
 }
 
