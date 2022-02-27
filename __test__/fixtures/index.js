@@ -83,9 +83,8 @@ module.exports.makeFakeVideo = (overrides) => {
 module.exports.makeFakeQuiz = (overrides) => {
 	const quiz = {
 		name: 'fake-quiz-name',
-		filename: 'fake-quiz-filename.json',
 		quizVersions: [],
-		activeVersion: 0,
+		activeVersion: 1,
 	}
 	return {
 		...quiz,
@@ -95,7 +94,8 @@ module.exports.makeFakeQuiz = (overrides) => {
 
 module.exports.makeFakeQuestion = (overrides) => {
 	const question = {
-		type: '1_CHOICE',
+		questionType: '1_CHOICE',
+		questionNumber: 1,
 		question: 'What is my favorite number?',
 		responses: {
 			A: '1',
@@ -104,6 +104,7 @@ module.exports.makeFakeQuestion = (overrides) => {
 			D: '6',
 		},
 		answers: ['A', 'D'],
+		points: 1,
 	}
 	return {
 		...question,
@@ -126,6 +127,18 @@ module.exports.makeFakeQuizSubmission = (overrides) => {
 	}
 	return {
 		...values,
+		...overrides,
+	}
+}
+
+module.exports.makeFakeQuizVersion = (overrides) => {
+	const quizVersion = {
+		questions: [],
+		versionNumber: 1,
+		quizSubmissions: [],
+	}
+	return {
+		...quizVersion,
 		...overrides,
 	}
 }
