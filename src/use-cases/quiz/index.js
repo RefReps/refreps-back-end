@@ -31,7 +31,6 @@ module.exports = {
 	copyQuiz,
 	deleteQuestions,
 	findQuizById,
-	gradeSubmission,
 	getAllSubmissionGrades,
 	startQuiz,
 }
