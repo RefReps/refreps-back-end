@@ -14,12 +14,6 @@ module.exports = makeFindAllCompletedInQuiz = ({ QuizSubmission }) => {
 				.populate('quizVersionId')
 				.exec()
 
-			if (submission.submitted != true)
-				throw new ReferenceError('Submission is not yet submitted.')
-
-			if (!submission.quizVersionId)
-				throw new ReferenceError('Quiz Version doc not found.')
-
 			const results = []
 			for (const submission of submissions) {
 				if (submission.submitted != true) continue
