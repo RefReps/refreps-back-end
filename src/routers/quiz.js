@@ -3,7 +3,7 @@ require('dotenv').config({ path: '.env' })
 const multer = require('multer')()
 
 const useCases = require('../use-cases/index')
-const { User, Quiz, QuizSubmission } = require('../use-cases/index')
+const { User, Quiz, QuizSubmission } = useCases
 const quizJson = require('../utils/quiz/quizJson')
 
 // Middleware Imports
@@ -15,7 +15,8 @@ router
 	.post(multer.none(), async (req, res) => {
 		try {
 			const { name } = req.body
-			const { quiz } = await useCases.Quiz.addQuiz({ name })
+			const { quiz } = await Quiz.addQuiz({ name })
+			// const { quiz: quiz2 } = await Quiz.addQuiz({ name })
 			res.status(200).send({ _id: quiz._id })
 		} catch (error) {
 			res.status(400).send(error)
@@ -145,7 +146,7 @@ router
 
 router
 	.route('/:quizId/grade')
-	// Get all grades for a user
+	// Get all grades for a user (Mainly for student seeing their own quiz)
 	// Response -> {submissions: [{userId, submissionId, quizId, submissionsNumbger, grade, userAnswers, quizQuestions, quizVersionNumber, dateStarted, dateFinished},...]}
 	.get(isAuthenticated, async (req, res) => {
 		try {
@@ -192,7 +193,7 @@ router
 router
 	.route('/:quizId/view-grades')
 	// Get all grades for the quiz
-	// Response -> {submissions: [{submissionId, userId, email, grade, dateStarted, dateFinished},...]}
+	// Response -> {submissions: [{submissionId, userId, email, grade, submissionNumber, dateStarted, dateFinished},...]}
 	.get(isAuthenticated, async (req, res) => {
 		try {
 			const { quizId } = req.params
