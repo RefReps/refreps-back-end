@@ -26,6 +26,7 @@ module.exports = makeGetAllSubmissionGrades = ({ Quiz, QuizSubmission }) => {
 					userId: submission.userId._id,
 					email: submission.userId.email,
 					grade: submission.grade,
+					submissionNumber: submission.submissionNumber,
 					dateStarted: submission.dateStarted,
 					dateFinished: submission.dateFinished,
 				})
