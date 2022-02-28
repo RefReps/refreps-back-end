@@ -1,7 +1,3 @@
-const path = require('path')
-require('dotenv').config({ path: '.env' })
-const quizDir = process.env.LOCAL_UPLOAD_PATH
-
 // Quiz: mongoose model
 // QuizVersion: mongoose model
 // QuizSubmission: mongoose model
