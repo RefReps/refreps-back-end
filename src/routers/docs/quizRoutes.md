@@ -314,7 +314,7 @@ NONE
 
 ```json
 {
-    questions: [{questionNumber, question, responses: {A: '', B: '', ...}}, ...],
+    quizQuestions: [{questionNumber, question, responses: {A: '', B: '', ...}}, ...],
     quizSubmission: object (mongoose model, look at database/models/quizSubmission.model)
 }
 ```

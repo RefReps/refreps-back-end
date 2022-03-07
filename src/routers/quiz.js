@@ -65,7 +65,7 @@ router
 router
 	.route('/:quizId/start')
 	// Start a quiz
-	// Response -> {questions: object, quizSubmission: object}
+	// Response -> {quizQuestions: object, quizSubmission: object}
 	.get(isAuthenticated, async (req, res) => {
 		try {
 			const { email } = req
@@ -80,7 +80,7 @@ router
 				user._id
 			)
 
-			res.status(200).json({ questions, quizSubmission })
+			res.status(200).json({ quizQuestions: questions, quizSubmission })
 		} catch (error) {
 			res
 				.status(400)
@@ -93,7 +93,7 @@ router
 	// Resume a quiz (WARNING!!!!! THIS IS BASICALLY JUST START QUIZ)
 	// This route uses the same code as /:quizId/start because of internal
 	// functionality of how Quiz.startQuiz() works
-	// Response -> {questions: object, quizSubmission: object}
+	// Response -> {quizQuestions: object, quizSubmission: object}
 	.get(isAuthenticated, async (req, res) => {
 		try {
 			const { email } = req
@@ -108,7 +108,7 @@ router
 				user._id
 			)
 
-			res.status(200).json({ questions, quizSubmission })
+			res.status(200).json({ quizQuestions: questions, quizSubmission })
 		} catch (error) {
 			res
 				.status(400)
