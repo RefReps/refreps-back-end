@@ -15,9 +15,11 @@ module.exports = makeFindQuizById = ({ Quiz, QuizVersion }) => {
 			if (!quizVersionDoc)
 				throw new ReferenceError('No quizVersion doc found on quiz doc.')
 
+			quizDoc.depopulate('quizVersions')
+
 			return Promise.resolve({
 				quiz: quizDoc.toObject(),
-				quizVersion: quizVersionDoc.toObject(),
+				quizVersion: quizVersionDoc.toObject({ flattenMaps: true }),
 			})
 		} catch (error) {
 			return Promise.reject(error)
