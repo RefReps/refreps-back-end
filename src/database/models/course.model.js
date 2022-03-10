@@ -24,6 +24,20 @@ const courseSchema = new Schema(
 			default: false,
 			required: true,
 		},
+		studentCourseCode: {
+			code: {
+				type: String,
+				default: '',
+			},
+			isActive: {
+				type: Boolean,
+				default: false,
+			},
+			isLocked: {
+				type: Boolean,
+				default: false,
+			},
+		},
 		settings: {
 			isEnforcements: {
 				type: Boolean,
@@ -48,6 +62,11 @@ const courseSchema = new Schema(
 				min: 1,
 				max: 99,
 				required: true,
+			},
+			courseCapacity: {
+				type: Number,
+				default: 30,
+				min: 0,
 			},
 		},
 		authors: [

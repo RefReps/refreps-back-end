@@ -4,6 +4,11 @@ module.exports.makeFakeCourse = (overrides) => {
 		isTemplate: true,
 		isPublished: true,
 		isDeleted: false,
+		studentCourseCode: {
+			code: 'AAAAAA',
+			isLocked: false,
+			isActive: true,
+		},
 		settings: {
 			isEnforcements: true,
 			enforcementPercent: 50,

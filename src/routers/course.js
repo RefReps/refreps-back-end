@@ -8,8 +8,10 @@ const { User, Course } = require('../use-cases/index')
 // Middleware Imports
 const { isAuthenticated } = require('../utils/middleware/auth')
 const { authorizeAdmin } = require('../utils/middleware/userRole')
+const courseMiddleware = require('../middleware/course')
 
 router.use(isAuthenticated)
+router.use(courseMiddleware.bindUserIdFromEmail)
 
 router
 	.route('/')
@@ -364,6 +366,12 @@ router
 		} catch (error) {
 			res.status(400).send(error)
 		}
+	})
+
+router
+	.route('/code/:courseCode')
+	.put(courseMiddleware.appendStudentOnCourseByCode, (req, res) => {
+		res.status(200).json({ success: true })
 	})
 
 module.exports = router
