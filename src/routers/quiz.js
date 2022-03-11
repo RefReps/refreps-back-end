@@ -4,10 +4,10 @@ const multer = require('multer')()
 
 const useCases = require('../use-cases/index')
 const { User, Quiz, QuizSubmission } = useCases
-const quizJson = require('../utils/quiz/quizJson')
 
 // Middleware Imports
 const { isAuthenticated } = require('../utils/middleware/auth')
+const { buildErrorResponse } = require('../utils/responses/index')
 
 router
 	.route('/')
@@ -56,9 +56,7 @@ router
 
 			res.send({ quiz, quizVersion })
 		} catch (error) {
-			res
-				.status(400)
-				.send({ success: false, error: error.name, reason: error.message })
+			res.status(400).send(buildErrorResponse(error))
 		}
 	})
 
@@ -82,9 +80,7 @@ router
 
 			res.status(200).json({ quizQuestions: questions, quizSubmission })
 		} catch (error) {
-			res
-				.status(400)
-				.json({ success: false, error: error.name, reason: error.message })
+			res.status(400).json(buildErrorResponse(error))
 		}
 	})
 
@@ -110,9 +106,7 @@ router
 
 			res.status(200).json({ quizQuestions: questions, quizSubmission })
 		} catch (error) {
-			res
-				.status(400)
-				.json({ success: false, error: error.name, reason: error.message })
+			res.status(400).json(buildErrorResponse(error))
 		}
 	})
 
@@ -138,9 +132,7 @@ router
 			)
 			res.status(200).json(submission)
 		} catch (error) {
-			res
-				.status(400)
-				.json({ success: false, error: error.name, reason: error.message })
+			res.status(400).json(buildErrorResponse(error))
 		}
 	})
 
@@ -163,9 +155,7 @@ router
 
 			res.status(200).json({ submissions })
 		} catch (error) {
-			res
-				.status(400)
-				.json({ success: false, error: error.name, reason: error.message })
+			res.status(400).json(buildErrorResponse(error))
 		}
 	})
 router
@@ -184,9 +174,7 @@ router
 
 			res.status(200).json({ submission })
 		} catch (error) {
-			res
-				.status(400)
-				.json({ success: false, error: error.name, reason: error.message })
+			res.status(400).json(buildErrorResponse(error))
 		}
 	})
 
@@ -201,9 +189,7 @@ router
 
 			res.status(200).json({ submissions })
 		} catch (error) {
-			res
-				.status(400)
-				.json({ success: false, error: error.name, reason: error.message })
+			res.status(400).json(buildErrorResponse(error))
 		}
 	})
 
