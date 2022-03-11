@@ -4,6 +4,14 @@ const multer = require('multer')()
 
 const useCases = require('../use-cases/index')
 
+const { updateContentDropDate } = require('../middleware/content')
+const {
+	isAuthenticated,
+	bindUserIdFromEmail,
+} = require('../utils/middleware/index')
+
+router.use(isAuthenticated, bindUserIdFromEmail)
+
 router
 	.route('/')
 	// findAllContents
@@ -88,6 +96,12 @@ router
 		} catch (error) {
 			res.status(400).send(error.toString())
 		}
+	})
+
+router
+	.route('/:contentId/date')
+	.put(multer.none(), updateContentDropDate, (req, res) => {
+		return res.status(201).json({ success: true })
 	})
 
 module.exports = router
