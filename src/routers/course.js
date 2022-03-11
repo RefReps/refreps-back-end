@@ -6,12 +6,15 @@ const useCases = require('../use-cases/index')
 const { User, Course } = require('../use-cases/index')
 
 // Middleware Imports
-const { isAuthenticated } = require('../utils/middleware/auth')
-const { authorizeAdmin } = require('../utils/middleware/userRole')
+const {
+	isAuthenticated,
+	authorizeAdmin,
+	bindUserIdFromEmail,
+} = require('../utils/middleware/index')
 const courseMiddleware = require('../middleware/course')
 
 router.use(isAuthenticated)
-router.use(courseMiddleware.bindUserIdFromEmail)
+router.use(bindUserIdFromEmail)
 
 router
 	.route('/')
@@ -335,7 +338,9 @@ router
 								bindDocumentId = content.toDocument
 								break
 							case 'Quiz':
-								const quiz = await useCases.Quiz.copyQuiz(content.toDocument)
+								const { quiz } = await useCases.Quiz.copyQuiz(
+									content.toDocument
+								)
 								bindDocumentId = quiz._id
 								break
 							default:
