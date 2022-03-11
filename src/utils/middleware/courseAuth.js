@@ -1,5 +1,4 @@
 const { User } = require('../../use-cases/index')
-const { authorizeAdmin } = require('./userRole')
 
 /**
  * Authorizes a student in the course.
@@ -7,7 +6,7 @@ const { authorizeAdmin } = require('./userRole')
  * @param {*} res response
  * @param {*} next next middleware
  */
-const authorizeStudentInCourse = async (req, res, next) => {
+module.exports.authorizeStudentInCourse = async (req, res, next) => {
 	try {
 		const { email, courseId } = req
 		if (!email) {
