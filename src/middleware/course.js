@@ -1,20 +1,5 @@
 const { Course, User } = require('../use-cases/index')
-
-// requires req.email
-// updates req.userId
-module.exports.bindUserIdFromEmail = async (req, res, next) => {
-	try {
-		const { email } = req
-		if (!email) throw new ReferenceError('req.email must be provided')
-
-		const user = await User.findUserByEmail(email)
-		req.userId = user._id
-
-		next()
-	} catch (error) {
-		return res.status(400).json(buildErrorResponse(error))
-	}
-}
+const { buildErrorResponse } = require('../utils/responses/index')
 
 // requires req.userId
 // requires req.params.courseCode
@@ -42,8 +27,4 @@ module.exports.appendStudentOnCourseByCode = async (req, res, next) => {
 	} catch (error) {
 		return res.status(400).json(buildErrorResponse(error))
 	}
-}
-
-const buildErrorResponse = (error) => {
-	return { success: false, error: { name: error.name, message: error.message } }
 }
