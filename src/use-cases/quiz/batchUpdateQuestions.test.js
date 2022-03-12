@@ -54,34 +54,17 @@ describe('deleteQuestion Test Suite', () => {
 		])
 
 		expect(quiz.activeVersion).toBe(3)
-		expect(quizVersion.questions.length).toBe(3)
-	})
-
-	it('successfully deletes a question by questionNumber', async () => {
-		await batchUpdateQuestions(quiz1._id, [
-			makeFakeQuestion({ questionNumber: 1 }),
-			makeFakeQuestion({ questionNumber: 2 }),
-			makeFakeQuestion({ questionNumber: 3 }),
-		])
-		const { quiz, quizVersion } = await batchUpdateQuestions(quiz1._id, [], [2])
-
-		expect(quiz.activeVersion).toBe(3)
-
 		expect(quizVersion.questions.length).toBe(2)
 	})
 
-	it('successfully adds and deletes questions at the same time.', async () => {
+	it('successfully overwrites questions at the same time.', async () => {
 		await batchUpdateQuestions(quiz1._id, [
 			makeFakeQuestion({ questionNumber: 1, question: 'q1' }),
 		])
-		const { quiz, quizVersion } = await batchUpdateQuestions(
-			quiz1._id,
-			[
-				makeFakeQuestion({ questionNumber: 2, question: 'q2' }),
-				makeFakeQuestion({ questionNumber: 3, question: 'q3' }),
-			],
-			[1]
-		)
+		const { quiz, quizVersion } = await batchUpdateQuestions(quiz1._id, [
+			makeFakeQuestion({ questionNumber: 2, question: 'q2' }),
+			makeFakeQuestion({ questionNumber: 3, question: 'q3' }),
+		])
 
 		expect(quiz.activeVersion).toBe(3)
 
@@ -91,19 +74,10 @@ describe('deleteQuestion Test Suite', () => {
 		}
 	})
 
-	it('rejects an Error if addQuestionList and deleteQuestionsList are both empty', async () => {
-		let errorName = 'nothing'
-		let errorMessage = 'nothing'
-		try {
-			await Quiz.deleteMany({})
-			await batchUpdateQuestions(quiz1._id)
-		} catch (error) {
-			errorName = error.name
-			errorMessage = error.message
-		}
-		expect(errorName).toBe('Error')
-		expect(errorMessage).toBe(
-			'A question must at least be added or deleted in `batchUpdateQuestions`.'
+	it('rejects an Error if addQuestionList is empty', async () => {
+		await Quiz.deleteMany({})
+		await expect(batchUpdateQuestions(quiz1._id)).rejects.toThrow(
+			Error('At least 1 question must be added in `batchUpdateQuestions`.')
 		)
 	})
 
@@ -126,63 +100,18 @@ describe('deleteQuestion Test Suite', () => {
 	})
 
 	it('rejects a ReferenceError when no quiz doc is found.', async () => {
-		let errorName = 'nothing'
-		let errorMessage = 'nothing'
-		try {
-			await Quiz.deleteMany({})
-			await batchUpdateQuestions(quiz1._id, [], [1])
-		} catch (error) {
-			errorName = error.name
-			errorMessage = error.message
-		}
-		expect(errorName).toBe('ReferenceError')
-		expect(errorMessage).toBe('Quiz not found.')
+		await Quiz.deleteMany({})
+		await expect(
+			batchUpdateQuestions(quiz1._id, [makeFakeQuestion()])
+		).rejects.toThrow(ReferenceError('Quiz not found.'))
 	})
 
 	it('rejects a ReferenceError when no quiz version doc is found.', async () => {
-		let errorName = 'nothing'
-		let errorMessage = 'nothing'
-		try {
-			await QuizVersion.deleteMany({})
-			await batchUpdateQuestions(quiz1._id, [], [1])
-		} catch (error) {
-			errorName = error.name
-			errorMessage = error.message
-		}
-		expect(errorName).toBe('ReferenceError')
-		expect(errorMessage).toBe(
-			'`oldQuizVersion` not found in `addQuestionsList`.'
-		)
-	})
-
-	it.skip('fails to delete questions when the old quiz version is not found', async () => {
-		let errorName = 'nothing'
-		let errorMessage = 'nothing'
-		try {
-			await QuizVersion.deleteMany({})
-			await deleteQuestion(quiz1._id, [1, 3])
-		} catch (error) {
-			errorName = error.name
-			errorMessage = error.message
-		}
-		expect(errorName).toBe('ReferenceError')
-		expect(errorMessage).toBe(
-			'`oldQuizVersion` not found in `deleteQuestions`.'
-		)
-	})
-
-	it.skip('fails to delete questions when no questions are specified to be deleted', async () => {
-		let errorName = 'nothing'
-		let errorMessage = 'nothing'
-		try {
-			await deleteQuestion(quiz1._id)
-		} catch (error) {
-			errorName = error.name
-			errorMessage = error.message
-		}
-		expect(errorName).toBe('Error')
-		expect(errorMessage).toBe(
-			'`questionNumbers` must be greater than 0 in `deleteQuestions`.'
+		await QuizVersion.deleteMany({})
+		await expect(
+			batchUpdateQuestions(quiz1._id, [makeFakeQuestion()])
+		).rejects.toThrow(
+			ReferenceError('`oldQuizVersion` not found in `addQuestionsList`.')
 		)
 	})
 })

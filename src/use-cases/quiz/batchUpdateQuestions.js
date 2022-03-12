@@ -8,19 +8,15 @@ const QuestionTypes = [
 ]
 
 module.exports = makeBatchUpdateQuestions = ({ Quiz, QuizVersion }) => {
-	// Remove questions in a quiz then add new questions
+	// Overwrites a quiz's questions with completely new ones
 	// Resolve -> {quiz: doc, quizVersion: doc}
 	// Reject -> error name
-	return async function batchUpdateQuestions(
-		quizId,
-		addQuestionsList = [],
-		deleteQuestionsList = []
-	) {
+	return async function batchUpdateQuestions(quizId, addQuestionsList = []) {
 		try {
-			// Something must be either added or deleted
-			if (!(addQuestionsList.length > 0 || deleteQuestionsList.length > 0))
+			// Something must be added
+			if (!(addQuestionsList.length > 0))
 				throw new Error(
-					'A question must at least be added or deleted in `batchUpdateQuestions`.'
+					'At least 1 question must be added in `batchUpdateQuestions`.'
 				)
 
 			// TODO: Validate incoming questions (if needed)
@@ -42,24 +38,14 @@ module.exports = makeBatchUpdateQuestions = ({ Quiz, QuizVersion }) => {
 
 			// TODO: Create a new quizVersion based on the old quizVersion
 			const newQuizVersion = new QuizVersion({
-				questions: oldQuizVersion.questions,
+				// questions: oldQuizVersion.questions,
+				questions: [],
 				versionNumber: oldQuizVersion.versionNumber + 1,
 				quizSubmissions: [],
 			})
 
-			// TODO: Delete questions
-			if (deleteQuestionsList.length > 0) {
-				newQuizVersion.questions = removedQuestions(
-					oldQuizVersion,
-					deleteQuestionsList
-				)
-			}
-
 			// TODO: Add questions (Overwirte if needed)
-			newQuizVersion.questions = await removeOldQuestionsOnOverride(
-				newQuizVersion.questions,
-				stripAllQuestions(addQuestionsList)
-			)
+			newQuizVersion.questions = stripAllQuestions(addQuestionsList)
 
 			// TODO: Collapse questions
 			newQuizVersion.questions = collapseQuestions(newQuizVersion.questions)
@@ -78,7 +64,7 @@ module.exports = makeBatchUpdateQuestions = ({ Quiz, QuizVersion }) => {
 
 			return Promise.resolve({
 				quiz: quiz.toObject(),
-				quizVersion: newQuizVersion.toObject(),
+				quizVersion: newQuizVersion.toObject({ flattenMaps: true }),
 			})
 		} catch (error) {
 			return Promise.reject(error)
@@ -90,12 +76,6 @@ function getActiveVersion(quiz) {
 	return quiz.quizVersions
 		.filter((quizVersion) => quiz.activeVersion == quizVersion.versionNumber)
 		.shift()
-}
-
-function removedQuestions(quizVersion, removeNumbers) {
-	return quizVersion.questions.filter(
-		(question) => !removeNumbers.includes(question.questionNumber)
-	)
 }
 
 const validateAllQuestions = (questions) => {
@@ -149,26 +129,4 @@ const stripQuestionData = (data) => {
 		responses: data.responses,
 		answers: data.answers,
 	}
-}
-
-/**
- * Removes question duplicates (favoring newQuestions)
- * @param {[]} oldQuestions
- * @param {[]} newQuestions
- */
-const removeOldQuestionsOnOverride = async (oldQuestions, newQuestions) => {
-	const answers = []
-	for (const oldAnswer of oldQuestions) {
-		let isIn = false
-		for (const newAnswer of newQuestions) {
-			if (oldAnswer.questionNumber == newAnswer.questionNumber) {
-				isIn = true
-			}
-		}
-		if (!isIn) {
-			answers.push(oldAnswer)
-		}
-	}
-	answers.push(...newQuestions)
-	return answers
 }
