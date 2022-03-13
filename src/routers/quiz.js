@@ -8,6 +8,9 @@ const { User, Quiz, QuizSubmission } = useCases
 // Middleware Imports
 const { isAuthenticated } = require('../utils/middleware/auth')
 const { buildErrorResponse } = require('../utils/responses/index')
+const quizMiddleware = require('../middleware/quiz')
+
+router.use(isAuthenticated)
 
 router
 	.route('/')
@@ -192,5 +195,9 @@ router
 			res.status(400).json(buildErrorResponse(error))
 		}
 	})
+
+router
+	.route('/:quizId/submission/:submissionId')
+	.get(quizMiddleware.getStudentQuizAttempt)
 
 module.exports = router
