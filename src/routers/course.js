@@ -392,13 +392,17 @@ router
 
 router
 	.route('/:courseId/settings/admin')
-	.put(courseMiddleware.updateCourseSettingsAdmin, async (req, res) => {
-		try {
-			const { course } = await Course.findCourseById(req.params.courseId)
-			res.status(200).json({ success: true, course: course })
-		} catch (error) {
-			res.status(400).json({ success: false })
+	.put(
+		authorizeAdmin,
+		courseMiddleware.updateCourseSettingsAdmin,
+		async (req, res) => {
+			try {
+				const { course } = await Course.findCourseById(req.params.courseId)
+				res.status(200).json({ success: true, course: course })
+			} catch (error) {
+				res.status(400).json({ success: false })
+			}
 		}
-	})
+	)
 
 module.exports = router
