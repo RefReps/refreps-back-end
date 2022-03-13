@@ -106,7 +106,22 @@ module.exports.updateCourseSettingsAdmin = async (req, res, next) => {
 			throw new ReferenceError('req.body is required')
 		}
 
+		let courseWithCodeAlready
+		try {
+			const { course: courseWithSameCode } = await Course.findCourseByCode(
+				couponCodeName
+			)
+			courseWithCodeAlready = courseWithSameCode
+		} catch (error) {}
+
 		const { course } = await Course.findCourseById(courseId)
+
+		if (courseWithCodeAlready) {
+			if (!courseWithCodeAlready._id.equals(course._id)) {
+				throw new Error('Course Code already exists.')
+			}
+		}
+
 		const payload = {}
 		payload.settings = Object.assign({}, course.settings, {
 			courseCapacity: studentCapacity,
@@ -119,7 +134,7 @@ module.exports.updateCourseSettingsAdmin = async (req, res, next) => {
 
 		next()
 	} catch (error) {
-		return res.status(400).json(buildErrorResponse(error))
+		return res.status(200).json(buildErrorResponse(error))
 	}
 }
 
