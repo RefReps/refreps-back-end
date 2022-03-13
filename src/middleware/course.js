@@ -1,9 +1,14 @@
 const { Course, User } = require('../use-cases/index')
 const { buildErrorResponse } = require('../utils/responses/index')
+const { request, response } = require('express')
 
-// requires req.userId
-// requires req.params.courseCode
-// puts the userId into the course from the  given code
+/**
+ * puts the userId into the course from the  given code
+ * @param {request} req - requires req.userId, req.params.courseCode
+ * @param {response} res
+ * @param {next} next
+ * @returns
+ */
 module.exports.appendStudentOnCourseByCode = async (req, res, next) => {
 	try {
 		const { userId } = req
@@ -27,4 +32,97 @@ module.exports.appendStudentOnCourseByCode = async (req, res, next) => {
 	} catch (error) {
 		return res.status(400).json(buildErrorResponse(error))
 	}
+}
+
+/**
+ *
+ * @param {request} req - requires req.body = {courseEnforcemnts, enforcementPercent, maxQuizAttempts, couponLocked}, req.params.courseId
+ * @param {response} res
+ * @param {next} next
+ */
+module.exports.updateCourseSettingsAuthor = async (req, res, next) => {
+	try {
+		const { courseId } = req.params
+		const {
+			courseEnforcements,
+			enforcementPercent,
+			maxQuizAttempts,
+			couponLocked,
+		} = req.body
+
+		if (!courseId) {
+			throw new ReferenceError('`req.params.courseId` is required')
+		}
+		if (
+			checkUndefinedInArray([
+				courseEnforcements,
+				enforcementPercent,
+				maxQuizAttempts,
+				couponLocked,
+			])
+		) {
+			throw new ReferenceError('req.body is required')
+		}
+
+		const { course } = await Course.findCourseById(courseId)
+		const payload = {}
+		payload.settings = Object.assign({}, course.settings, {
+			isEnforcements: courseEnforcements,
+			enforcementPercent: enforcementPercent,
+			maximumQuizAttempts: maxQuizAttempts,
+		})
+		payload.studentCourseCode = Object.assign({}, course.studentCourseCode, {
+			isLocked: couponLocked,
+		})
+		await Course.updateCourse(courseId, payload)
+
+		next()
+	} catch (error) {
+		return res.status(400).json(buildErrorResponse(error))
+	}
+}
+
+/**
+ *
+ * @param {request} req - requires req.body = {studentCapacity, couponCodeName, couponCodeExpDate}, req.params.courseId
+ * @param {response} res
+ * @param {next} next
+ */
+module.exports.updateCourseSettingsAdmin = async (req, res, next) => {
+	try {
+		const { courseId } = req.params
+		const { studentCapacity, couponCodeName, couponCodeExpDate } = req.body
+
+		if (!courseId) {
+			throw new ReferenceError('`req.params.courseId` is required')
+		}
+		if (
+			checkUndefinedInArray([
+				studentCapacity,
+				couponCodeName,
+				couponCodeExpDate,
+			])
+		) {
+			throw new ReferenceError('req.body is required')
+		}
+
+		const { course } = await Course.findCourseById(courseId)
+		const payload = {}
+		payload.settings = Object.assign({}, course.settings, {
+			courseCapacity: studentCapacity,
+		})
+		payload.studentCourseCode = Object.assign({}, course.studentCourseCode, {
+			code: couponCodeName,
+			activeUntil: couponCodeExpDate,
+		})
+		await Course.updateCourse(courseId, payload)
+
+		next()
+	} catch (error) {
+		return res.status(400).json(buildErrorResponse(error))
+	}
+}
+
+const checkUndefinedInArray = (lst = []) => {
+	return lst.filter((ele) => ele === undefined).length > 0
 }

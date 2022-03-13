@@ -29,9 +29,9 @@ const courseSchema = new Schema(
 				type: String,
 				default: '',
 			},
-			isActive: {
-				type: Boolean,
-				default: false,
+			activeUntil: {
+				type: Date,
+				default: Date.now(),
 			},
 			isLocked: {
 				type: Boolean,
