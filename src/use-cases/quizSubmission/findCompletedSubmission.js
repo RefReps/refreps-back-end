@@ -25,6 +25,7 @@ module.exports = makeFindCompletedSubmission = ({ QuizSubmission }) => {
 				submissionNumber: submission.submissionNumber,
 				grade: submission.grade,
 				userAnswers: submission.userAnswers,
+				answerOverrides: submission.answerOverrides,
 				quizQuestions: submission.quizVersionId.questions,
 				quizVersionNumber: submission.quizVersionId.versionNumber,
 				dateStarted: submission.dateStarted,
