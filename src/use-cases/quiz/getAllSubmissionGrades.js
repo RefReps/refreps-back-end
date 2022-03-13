@@ -24,6 +24,7 @@ module.exports = makeGetAllSubmissionGrades = ({ Quiz, QuizSubmission }) => {
 				result.push({
 					submissionId: submission._id,
 					userId: submission.userId._id,
+					quizId: submission.quizId,
 					email: submission.userId.email,
 					grade: submission.grade,
 					submissionNumber: submission.submissionNumber,
