@@ -34,6 +34,13 @@ module.exports.appendStudentOnCourseByCode = async (req, res, next) => {
 				.json(buildErrorResponse(Error('Student already in course.')))
 		}
 
+		// Check if coupon code is locked
+		if (isCouponLocked(course)) {
+			return res
+				.status(200)
+				.json(buildErrorResponse(Error('Course coupon is locked.')))
+		}
+
 		// Check if course is full
 		if (course.students.length >= course.settings.courseCapacity) {
 			return res.status(200).json(buildErrorResponse(Error('Course is full.')))
@@ -51,11 +58,21 @@ module.exports.appendStudentOnCourseByCode = async (req, res, next) => {
 /**
  *
  * @param {course} course - course object
+ * @returns boolean
  */
 const isCouponExpired = (course) => {
 	const currentTime = new Date().getTime()
 	const couponExpTime = new Date(course.studentCourseCode.activeUntil).getTime()
 	return currentTime > couponExpTime
+}
+
+/**
+ *
+ * @param {course} course - course object
+ * @returns boolean
+ */
+const isCouponLocked = (course) => {
+	return course.studentCourseCode.isLocked
 }
 
 /**
