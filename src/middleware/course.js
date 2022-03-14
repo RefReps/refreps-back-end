@@ -21,11 +21,19 @@ module.exports.appendStudentOnCourseByCode = async (req, res, next) => {
 		const { course } = await Course.findCourseByCode(courseCode)
 		const user = await User.findUserById(userId)
 
+		// Check if student is already in course
 		if (user.studentCourses.filter((id) => id.equals(course._id)).length > 0) {
 			return res
 				.status(200)
 				.json(buildErrorResponse(Error('Student already in course.')))
 		}
+
+		// Check if course is full
+		if (course.students.length >= course.settings.courseCapacity) {
+			return res.status(200).json(buildErrorResponse(Error('Course is full.')))
+		}
+
+		// Append user
 		await User.addStudentInCourse(userId, course._id)
 
 		next()
@@ -116,8 +124,13 @@ module.exports.updateCourseSettingsAdmin = async (req, res, next) => {
 
 		const { course } = await Course.findCourseById(courseId)
 
+		// Check if there is another course with the same coupon name
 		if (courseWithCodeAlready) {
-			if (!courseWithCodeAlready._id.equals(course._id)) {
+			// Check if the coupon is empty (allowed). Check if the the courses have different id's
+			if (
+				couponCodeName !== '' &&
+				!courseWithCodeAlready._id.equals(course._id)
+			) {
 				throw new Error('Course Code already exists.')
 			}
 		}
