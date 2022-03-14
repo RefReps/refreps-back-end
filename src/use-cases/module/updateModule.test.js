@@ -1,4 +1,5 @@
 const Module = require('../../database/models/module.model')
+const Section = require('../../database/models/section.model')
 const { makeFakeModule } = require('../../../__test__/fixtures')
 const {
 	dbConnect,
@@ -8,7 +9,7 @@ const makeAddModule = require('./addModule')
 const makeUpdateModule = require('./updateModule')
 
 describe('updateModule Test Suite', () => {
-	const addModule = makeAddModule({ Module })
+	const addModule = makeAddModule({ Module, Section })
 	const updateModule = makeUpdateModule({ Module })
 
 	beforeAll(async () => {

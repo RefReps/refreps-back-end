@@ -1,5 +1,5 @@
 const Quiz = require('../../database/models/quiz.model')
-const QuizJsonMock = require('../../../__test__/fixtures/QuizJson')
+const QuizVersion = require('../../database/models/quizVersion.model')
 const { makeFakeQuiz } = require('../../../__test__/fixtures')
 const {
 	dbConnect,
@@ -9,8 +9,8 @@ const makeAddQuiz = require('./addQuiz')
 const makeCopyQuiz = require('./copyQuiz')
 
 describe('copyQuiz Test Suite', () => {
-	const addQuiz = makeAddQuiz({ Quiz, QuizJson: QuizJsonMock })
-	const copyQuiz = makeCopyQuiz({ Quiz, QuizJson: QuizJsonMock })
+	const addQuiz = makeAddQuiz({ Quiz, QuizVersion })
+	const copyQuiz = makeCopyQuiz({ Quiz, QuizVersion })
 
 	beforeAll(async () => {
 		await dbConnect()
@@ -25,42 +25,41 @@ describe('copyQuiz Test Suite', () => {
 	})
 
 	it('successfully copies a quiz', async () => {
-		const quiz = await addQuiz(makeFakeQuiz())
-		const copy = await copyQuiz(quiz._id)
-		expect({ _id: copy._id, filename: copy.filename }).not.toEqual({
-			_id: quiz._id,
-			filename: quiz.filename,
+		const { quiz: quizOriginal } = await addQuiz({ name: 'New Quiz' })
+		const { quiz: quizCopy } = await copyQuiz(quizOriginal._id)
+		expect({ _id: quizCopy._id }).not.toEqual({
+			_id: quizOriginal._id,
 		})
-		expect(copy.name).toEqual(quiz.name)
+		expect(quizCopy._id).not.toEqual(quizOriginal._id)
+
+		expect(quizCopy.name).toBe(quizOriginal.name)
 	})
 
-	it('fails to copy if cannot find the quiz', async () => {
+	it('fails when the active version cannot be found', async () => {
 		let errorName = 'nothing'
+		let errorMessage = 'nothing'
 		try {
-			await copyQuiz('61f9c07a5b333683766bae70')
+			const { quiz: quizOriginal } = await addQuiz({ name: 'New Quiz' })
+			await QuizVersion.deleteMany({})
+			await copyQuiz(quizOriginal._id)
 		} catch (error) {
 			errorName = error.name
+			errorMessage = error.message
 		}
 		expect(errorName).toBe('ReferenceError')
+		expect(errorMessage).toBe('QuizVersion not found.')
 	})
 
-	it('fails to copy if invalid id', async () => {
+	it('fails when the target quiz cannot be found to copy', async () => {
 		let errorName = 'nothing'
+		let errorMessage = 'nothing'
 		try {
-			await copyQuiz('123')
+			await copyQuiz('621acd9d3bb45e8fcec4c9ea')
 		} catch (error) {
 			errorName = error.name
+			errorMessage = error.message
 		}
-		expect(errorName).toBe('CastError')
+		expect(errorName).toBe('ReferenceError')
+		expect(errorMessage).toBe('Quiz not found to copy.')
 	})
-
-	// it('fails to add a quiz that does not have valid properties', async () => {
-	// 	let errorName = 'nothing'
-	// 	try {
-	// 		await addQuiz(makeFakeQuiz({ name: '' }))
-	// 	} catch (error) {
-	// 		errorName = error.name
-	// 	}
-	// 	expect(errorName).toBe('ValidationError')
-	// })
 })

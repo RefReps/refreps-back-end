@@ -1,37 +1,41 @@
-// QuizSubmission: mongoose model
-module.exports = makeGetSubmissionGrade = ({ QuizSubmission }) => {
+module.exports = makeGetAllSubmissionGrades = ({ Quiz, QuizSubmission }) => {
 	// Get the grade of a user
 	// Resolve -> quiz questions json
 	// Reject -> error name
-	return async function getSubmissionGrade(quizId) {
-		return new Promise(async (resolve, reject) => {
-			try {
-				// Find the quiz in progress
-				const submissionInProgress = await QuizSubmission.find()
-					.where('quizId')
-					.equals(quizId)
-					.where('submitted')
-					.equals(true)
-					.sort('dateFinished')
-					.exec()
-				if (!submissionInProgress) {
-					resolve([])
-				}
+	return async function getAllSubmissionGrades(quizId) {
+		try {
+			if (!quizId)
+				throw new ReferenceError(
+					'`quizId` must be provided in `getAllSubmissionGrades`.'
+				)
 
-				const result = []
-				submissionInProgress.forEach((submission) => {
-					result.push({
-						userId: submission.userId,
-						grade: submission.grade,
-						dateStarted: submission.dateStarted,
-						dateFinished: submission.dateFinished,
-					})
+			// Find the quiz in progress
+			const submissions = await QuizSubmission.find()
+				.where('quizId')
+				.equals(quizId)
+				.where('submitted')
+				.equals(true)
+				.sort('dateFinished')
+				.populate('userId')
+				.exec()
+
+			const result = []
+			submissions.forEach((submission) => {
+				result.push({
+					submissionId: submission._id,
+					userId: submission.userId._id,
+					quizId: submission.quizId,
+					email: submission.userId.email,
+					grade: submission.grade,
+					submissionNumber: submission.submissionNumber,
+					dateStarted: submission.dateStarted,
+					dateFinished: submission.dateFinished,
 				})
+			})
 
-				return resolve(result)
-			} catch (error) {
-				return reject(error)
-			}
-		})
+			return Promise.resolve({ submissions: result })
+		} catch (error) {
+			return Promise.reject(error)
+		}
 	}
 }

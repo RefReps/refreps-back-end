@@ -6,10 +6,15 @@ const quizSchema = new Schema(
 			type: String,
 			required: true,
 		},
-		filename: {
-			type: String,
+		quizVersions: [
+			{
+				type: Types.ObjectId,
+				ref: 'QuizVersion',
+			},
+		],
+		activeVersion: {
+			type: Number,
 			required: true,
-			unique: true,
 		},
 	},
 	{ timestamps: true }

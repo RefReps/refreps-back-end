@@ -35,14 +35,18 @@ const userSchema = new Schema(
 			enum: ['user', 'admin'],
 			default: 'user',
 		},
-		authorCourses: {
-			type: Array,
-			default: [],
-		},
-		studentCourses: {
-			type: Array,
-			default: [],
-		},
+		authorCourses: [
+			{
+				type: Types.ObjectId,
+				ref: 'Course',
+			},
+		],
+		studentCourses: [
+			{
+				type: Types.ObjectId,
+				ref: 'Course',
+			},
+		],
 	},
 	{ timestamps: true }
 )

@@ -4,12 +4,18 @@ module.exports.makeFakeCourse = (overrides) => {
 		isTemplate: true,
 		isPublished: true,
 		isDeleted: false,
+		studentCourseCode: {
+			code: 'AAAAAA',
+			isLocked: false,
+			isActive: true,
+		},
 		settings: {
 			isEnforcements: true,
 			enforcementPercent: 50,
 			isGradedQuizAdvance: true,
 			maximumQuizAttempts: 4,
 		},
+		sections: [],
 	}
 	return {
 		...course,
@@ -24,6 +30,7 @@ module.exports.makeFakeSection = (overrides) => {
 		isPublished: true,
 		sectionOrder: 1,
 		dropDate: null,
+		modules: [],
 	}
 	return {
 		...section,
@@ -38,6 +45,7 @@ module.exports.makeFakeModule = (overrides) => {
 		isPublished: true,
 		moduleOrder: 1,
 		dropDate: null,
+		contents: [],
 	}
 	return {
 		...module,
@@ -56,6 +64,21 @@ module.exports.makeFakeContent = (overrides) => {
 	}
 	return {
 		...content,
+		...overrides,
+	}
+}
+
+module.exports.makeFakeUser = (overrides) => {
+	const user = {
+		email: 'example@email.com',
+		password: '111111',
+		refreshTokens: [],
+		role: 'user',
+		authorCourses: [],
+		studentCourses: [],
+	}
+	return {
+		...user,
 		...overrides,
 	}
 }
@@ -80,7 +103,8 @@ module.exports.makeFakeVideo = (overrides) => {
 module.exports.makeFakeQuiz = (overrides) => {
 	const quiz = {
 		name: 'fake-quiz-name',
-		filename: 'fake-quiz-filename.json',
+		quizVersions: [],
+		activeVersion: 1,
 	}
 	return {
 		...quiz,
@@ -90,7 +114,8 @@ module.exports.makeFakeQuiz = (overrides) => {
 
 module.exports.makeFakeQuestion = (overrides) => {
 	const question = {
-		type: '1_CHOICE',
+		questionType: '1_CHOICE',
+		questionNumber: 1,
 		question: 'What is my favorite number?',
 		responses: {
 			A: '1',
@@ -99,9 +124,41 @@ module.exports.makeFakeQuestion = (overrides) => {
 			D: '6',
 		},
 		answers: ['A', 'D'],
+		points: 1,
 	}
 	return {
 		...question,
+		...overrides,
+	}
+}
+
+module.exports.makeFakeQuizSubmission = (overrides) => {
+	const values = {
+		userId: '62126c51249f4356abc36608',
+		quizId: '62126c51249f4356abc36610',
+		quizVersionId: '62126c51249f4356abc36612',
+		submitted: false,
+		submissionNumber: 1,
+		userAnswers: [],
+		isGraded: false,
+		grade: 0,
+		dateStarted: Date.now(),
+		dateFinished: undefined,
+	}
+	return {
+		...values,
+		...overrides,
+	}
+}
+
+module.exports.makeFakeQuizVersion = (overrides) => {
+	const quizVersion = {
+		questions: [],
+		versionNumber: 1,
+		quizSubmissions: [],
+	}
+	return {
+		...quizVersion,
 		...overrides,
 	}
 }

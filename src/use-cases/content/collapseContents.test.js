@@ -1,4 +1,5 @@
 const Content = require('../../database/models/content.model')
+const Module = require('../../database/models/module.model')
 const { makeFakeContent } = require('../../../__test__/fixtures')
 const {
 	dbConnect,
@@ -8,7 +9,7 @@ const makeAddContent = require('./addContent')
 const makeCollapseContents = require('./collapseContents')
 
 describe('findAllContents Test Suite', () => {
-	const addContent = makeAddContent({ Content })
+	const addContent = makeAddContent({ Content, Module })
 	const collapseContents = makeCollapseContents({ Content })
 
 	beforeAll(async () => {

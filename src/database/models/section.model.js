@@ -27,6 +27,12 @@ const sectionSchema = new Schema(
 			type: Date,
 			default: null,
 		},
+		modules: [
+			{
+				type: Types.ObjectId,
+				ref: 'Module',
+			},
+		],
 	},
 	{ timestamps: true }
 )

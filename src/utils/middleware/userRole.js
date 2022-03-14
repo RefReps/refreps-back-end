@@ -7,7 +7,7 @@ const { User } = require('../../use-cases/index')
  * @param {*} res response
  * @param {*} next next middleware
  */
-const authorizeAdmin = async (req, res, next) => {
+module.exports.authorizeAdmin = async (req, res, next) => {
 	try {
 		const email = req.email
 		if (!email) {
@@ -25,5 +25,3 @@ const authorizeAdmin = async (req, res, next) => {
 			.send({ success: false, error: error.name, reason: error.message })
 	}
 }
-
-module.exports = { authorizeAdmin }

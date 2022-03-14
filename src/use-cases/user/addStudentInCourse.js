@@ -1,4 +1,4 @@
-module.exports = makeAppendStudentInCourse = ({ User }) => {
+module.exports = makeAppendStudentInCourse = ({ User, Course }) => {
 	// Appends the course in the list of courses that the User will be a Student of
 	// Resolve -> updated user document
 	// Rejects -> error
@@ -16,22 +16,44 @@ module.exports = makeAppendStudentInCourse = ({ User }) => {
 					throw new ReferenceError('`courseId` is required to update')
 				}
 
+				// Find user and course by id
 				const user = await User.findById(userId)
-				if (user.authorCourses.includes(courseId)) {
+				const course = await Course.findById(courseId)
+
+				if (user == null) {
+					throw ReferenceError('User not found.')
+				}
+				if (course == null) {
+					throw ReferenceError('Course not found.')
+				}
+
+				// Throw error if author is trying to be added as a student
+				if (
+					user.authorCourses.includes(courseId) ||
+					course.authors.includes(userId)
+				) {
 					throw new Error(
 						'User is already an Author in the course. User cannot be demoted to Student in course they are already an Author in.'
 					)
 				}
 
-				const updated = await User.findByIdAndUpdate(
+				// Add courseId to user.studentCourses
+				const updatedUser = await User.findByIdAndUpdate(
 					userId,
 					{ $addToSet: { studentCourses: courseId } },
 					options
 				).exec()
-				if (updated == null) {
-					throw ReferenceError('User not found')
-				}
-				return resolve(updated.toObject())
+				// Add userId to course.students
+				const updatedCourse = await Course.findByIdAndUpdate(
+					courseId,
+					{ $addToSet: { students: userId } },
+					options
+				).exec()
+
+				return resolve({
+					user: updatedUser.toObject(),
+					course: updatedCourse.toObject(),
+				})
 			} catch (error) {
 				return reject(error)
 			}

@@ -1,4 +1,4 @@
-module.exports = makeAppendAuthorInCourse = ({ User }) => {
+module.exports = makeAppendAuthorInCourse = ({ User, Course }) => {
 	// Appends the course in the list of courses that the User will be an Author of
 	// Resolve -> updated user document
 	// Rejects -> error
@@ -23,23 +23,47 @@ module.exports = makeAppendAuthorInCourse = ({ User }) => {
 					}
 				}
 
-				// Remove user from being a student in the course if applicable
+				// Find user and course by id
 				const user = await User.findById(userId)
+				const course = await Course.findById(courseId)
+
+				if (user == null) {
+					throw ReferenceError('User not found.')
+				}
+				if (course == null) {
+					throw ReferenceError('Course not found.')
+				}
+
+				// Remove user from being a student in the user.studentCourses if applicable
 				if (user.studentCourses.includes(courseId)) {
 					await User.findByIdAndUpdate(userId, {
 						$pull: { studentCourses: courseId },
 					})
 				}
+				// Remove user from being a student in the course.students if applicable
+				if (course.students.includes(userId)) {
+					await Course.findByIdAndUpdate(courseId, {
+						$pull: { students: userId },
+					})
+				}
 
-				const updated = await User.findByIdAndUpdate(
+				// Add user to being an author in user.authorCourses
+				const updatedUser = await User.findByIdAndUpdate(
 					userId,
 					{ $addToSet: { authorCourses: courseId } },
 					options
 				).exec()
-				if (updated == null) {
-					throw ReferenceError('User not found')
-				}
-				return resolve(updated.toObject())
+				// Add user to being an author in course.authors
+				const updatedCourse = await Course.findByIdAndUpdate(
+					courseId,
+					{ $addToSet: { authors: userId } },
+					options
+				).exec()
+
+				return resolve({
+					user: updatedUser.toObject(),
+					course: updatedCourse.toObject(),
+				})
 			} catch (error) {
 				return reject(error)
 			}

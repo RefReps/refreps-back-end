@@ -1,4 +1,5 @@
 const Module = require('../../database/models/module.model')
+const Section = require('../../database/models/section.model')
 const { makeFakeModule } = require('../../../__test__/fixtures')
 const {
 	dbConnect,
@@ -7,7 +8,7 @@ const {
 const makeAddModule = require('./addModule')
 
 describe('addModule Test Suite', () => {
-	const addModule = makeAddModule({ Module })
+	const addModule = makeAddModule({ Module, Section })
 
 	beforeAll(async () => {
 		await dbConnect()
@@ -15,6 +16,18 @@ describe('addModule Test Suite', () => {
 
 	beforeEach(async () => {
 		await Module.deleteMany({})
+		await Section.deleteMany({})
+		await Section.insertMany([
+			{
+				_id: makeFakeModule().sectionId,
+				name: 'Section 1',
+				courseId: '6215a6cfecd53fdc1db41f31',
+				isPublished: true,
+				sectionOrder: 1,
+				dropDate: null,
+				modules: [],
+			},
+		])
 	})
 
 	afterAll(async () => {

@@ -6,10 +6,15 @@ const useCases = require('../use-cases/index')
 const { User, Course } = require('../use-cases/index')
 
 // Middleware Imports
-const { isAuthenticated } = require('../utils/middleware/auth')
-const { authorizeAdmin } = require('../utils/middleware/userRole')
+const {
+	isAuthenticated,
+	authorizeAdmin,
+	bindUserIdFromEmail,
+} = require('../utils/middleware/index')
+const courseMiddleware = require('../middleware/course')
 
 router.use(isAuthenticated)
+router.use(bindUserIdFromEmail)
 
 router
 	.route('/')
@@ -253,14 +258,23 @@ router
 				throw ReferenceError('Course is not in db')
 			}
 
-			emails.forEach(async (email) => {
+			const { course } = await Course.findCourseById(courseId)
+			let studentsLength =
+				course.students.length != undefined ? course.students.length : 999
+
+			// Add emails until course is full (if applicable)
+			for (email of emails) {
 				try {
-					let user = await User.findUserByEmail(email)
-					await User.addStudentInCourse(user._id, courseId)
+					if (!isCourseFull(course, studentsLength)) {
+						let user = await User.findUserByEmail(email)
+						await User.addStudentInCourse(user._id, courseId)
+						studentsLength++
+					}
 				} catch (error) {
 					console.log({ error: error.name, message: error.message })
 				}
-			})
+			}
+
 			res.status(204).send()
 		} catch (error) {
 			res
@@ -268,6 +282,10 @@ router
 				.json({ success: false, error: error.name, reason: error.message })
 		}
 	})
+
+const isCourseFull = (course, studentLength) => {
+	return studentLength >= course.settings.courseCapacity
+}
 
 // Removes multiple students from a course
 // Reads Json body
@@ -333,7 +351,9 @@ router
 								bindDocumentId = content.toDocument
 								break
 							case 'Quiz':
-								const quiz = await useCases.Quiz.copyQuiz(content.toDocument)
+								const { quiz } = await useCases.Quiz.copyQuiz(
+									content.toDocument
+								)
 								bindDocumentId = quiz._id
 								break
 							default:
@@ -365,5 +385,37 @@ router
 			res.status(400).send(error)
 		}
 	})
+
+router
+	.route('/code/:courseCode')
+	.put(courseMiddleware.appendStudentOnCourseByCode, (req, res) => {
+		res.status(200).json({ success: true })
+	})
+
+router
+	.route('/:courseId/settings/author')
+	.put(courseMiddleware.updateCourseSettingsAuthor, async (req, res) => {
+		try {
+			const { course } = await Course.findCourseById(req.params.courseId)
+			res.status(200).json({ success: true, course: course })
+		} catch (error) {
+			res.status(400).json({ success: false })
+		}
+	})
+
+router
+	.route('/:courseId/settings/admin')
+	.put(
+		authorizeAdmin,
+		courseMiddleware.updateCourseSettingsAdmin,
+		async (req, res) => {
+			try {
+				const { course } = await Course.findCourseById(req.params.courseId)
+				res.status(200).json({ success: true, course: course })
+			} catch (error) {
+				res.status(400).json({ success: false })
+			}
+		}
+	)
 
 module.exports = router

@@ -1,45 +1,43 @@
-const uuid = require('uuid').v4
-require('dotenv').config({ path: '.env' })
-const quizDir = process.env.LOCAL_UPLOAD_PATH
-
-module.exports = makeCopyQuiz = ({ Quiz, QuizJson }) => {
+module.exports = makeCopyQuiz = ({ Quiz, QuizVersion }) => {
 	// Copy a quiz
 	// Resolve -> quiz object
 	// Reject -> error name
 	return async function copyQuiz(quizId) {
-		return new Promise(async (resolve, reject) => {
-			try {
-				const oldQuiz = await Quiz.findById(quizId)
+		try {
+			const oldQuiz = await Quiz.findById(quizId)
+				.populate('quizVersions')
+				.exec()
+			if (!oldQuiz) throw ReferenceError('Quiz not found to copy.')
 
-				if (!oldQuiz) {
-					throw ReferenceError('Not Found')
-				}
+			// Get latest quizVersion on oldQuiz.quizVersions
+			const latestQuizVersionDoc = getActiveVersion(oldQuiz)
+			if (!latestQuizVersionDoc) throw ReferenceError('QuizVersion not found.')
 
-				const newFilename = `${uuid()}.json`
+			// Create new QuizVersion for the new Quiz
+			const newQuizVersion = new QuizVersion({
+				questions: latestQuizVersionDoc.questions,
+				versionNumber: 1,
+				quizSubmissions: [],
+			})
+			await newQuizVersion.save()
 
-				const newQuiz = Object.assign(
-					{},
-					{
-						name: oldQuiz.name,
-						filename: newFilename,
-					}
-				)
+			// Save old quiz contents in new quiz
+			const newQuiz = new Quiz({
+				name: oldQuiz.name,
+				quizVersions: [newQuizVersion._id],
+				activeVersion: newQuizVersion.versionNumber,
+			})
+			await newQuiz.save()
 
-				// Get contents of old quiz
-				const oldQuizPath = `${quizDir}${oldQuiz.filename}`
-				const oldQuizData = await QuizJson.loadLocalQuiz(oldQuizPath)
-
-				// Save old quiz contents in new quiz
-				const newQuizPath = `${quizDir}${newQuiz.filename}`
-				await QuizJson.saveLocalQuiz(newQuizPath, oldQuizData)
-
-				const copyQuiz = new Quiz(newQuiz)
-
-				const saved = await copyQuiz.save()
-				return resolve(saved.toObject())
-			} catch (err) {
-				return reject(err)
-			}
-		})
+			return Promise.resolve({ quiz: newQuiz.toObject() })
+		} catch (err) {
+			return Promise.reject(err)
+		}
 	}
+}
+
+function getActiveVersion(quiz) {
+	return quiz.quizVersions
+		.filter((quizVersion) => quiz.activeVersion == quizVersion.versionNumber)
+		.shift()
 }

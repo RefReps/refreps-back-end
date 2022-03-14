@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose')
+const { Schema, model, Types } = require('mongoose')
 
 const courseSchema = new Schema(
 	{
@@ -23,6 +23,20 @@ const courseSchema = new Schema(
 			type: Boolean,
 			default: false,
 			required: true,
+		},
+		studentCourseCode: {
+			code: {
+				type: String,
+				default: '',
+			},
+			activeUntil: {
+				type: Date,
+				default: Date.now(),
+			},
+			isLocked: {
+				type: Boolean,
+				default: false,
+			},
 		},
 		settings: {
 			isEnforcements: {
@@ -49,7 +63,30 @@ const courseSchema = new Schema(
 				max: 99,
 				required: true,
 			},
+			courseCapacity: {
+				type: Number,
+				default: 30,
+				min: 0,
+			},
 		},
+		authors: [
+			{
+				type: Types.ObjectId,
+				ref: 'User',
+			},
+		],
+		students: [
+			{
+				type: Types.ObjectId,
+				ref: 'User',
+			},
+		],
+		sections: [
+			{
+				type: Types.ObjectId,
+				ref: 'Section',
+			},
+		],
 	},
 	{ timestamps: true }
 )

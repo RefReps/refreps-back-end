@@ -2,25 +2,33 @@ require('dotenv').config({ path: '.env' })
 const quizDir = process.env.LOCAL_UPLOAD_PATH
 const path = require('path')
 
-module.exports = makeFindQuizById = ({ Quiz, QuizJson }) => {
+module.exports = makeFindQuizById = ({ Quiz, QuizVersion }) => {
 	// Finds a quiz by an ObjectId
 	// Resolve -> {found: #, quiz: {object}}
 	// Reject -> error
 	return async function findQuizById(id) {
-		return new Promise(async (resolve, reject) => {
-			try {
-				let query = {}
+		try {
+			const quizDoc = await Quiz.findById(id).populate('quizVersions').exec()
+			if (!quizDoc) throw new ReferenceError('No quiz doc found in db.')
 
-				const quizDoc = await Quiz.findById(id)
-				if (quizDoc == null) {
-					return reject(ReferenceError('No quiz found in db'))
-				}
-				const found = quizDoc.toObject()
+			const quizVersionDoc = getActiveVersion(quizDoc)
+			if (!quizVersionDoc)
+				throw new ReferenceError('No quizVersion doc found on quiz doc.')
 
-				return resolve(found)
-			} catch (error) {
-				return reject(error)
-			}
-		})
+			quizDoc.depopulate('quizVersions')
+
+			return Promise.resolve({
+				quiz: quizDoc.toObject(),
+				quizVersion: quizVersionDoc.toObject({ flattenMaps: true }),
+			})
+		} catch (error) {
+			return Promise.reject(error)
+		}
 	}
+}
+
+function getActiveVersion(quiz) {
+	return quiz.quizVersions
+		.filter((quizVersion) => quiz.activeVersion == quizVersion.versionNumber)
+		.shift()
 }

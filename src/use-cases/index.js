@@ -2,6 +2,7 @@ const Content = require('./content/index')
 const Course = require('./course/index')
 const Module_ = require('./module/index')
 const Quiz = require('./quiz/index')
+const QuizSubmission = require('./quizSubmission')
 const Section = require('./section/index')
 const User = require('./user/index')
 const Video = require('./video/index')
@@ -11,6 +12,7 @@ module.exports = {
 	Course,
 	Module_,
 	Quiz,
+	QuizSubmission,
 	Section,
 	User,
 	Video,

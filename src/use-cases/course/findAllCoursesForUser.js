@@ -40,9 +40,12 @@ module.exports = makeFindAllCoursesForUser = ({ Course, User }) => {
 				let courseObjects = []
 				courseDocs.forEach((doc) => {
 					docObject = doc.toObject()
-					docObject.isAuthor = courseAuthorIds.includes(
-						docObject._id.toString()
+					docObject.isAuthor = courseAuthorIds.find((objId) =>
+						objId.equals(docObject._id)
 					)
+						? true
+						: false
+					console.log(docObject)
 					courseObjects.push(docObject)
 				})
 				return resolve({
