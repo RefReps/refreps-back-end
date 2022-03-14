@@ -45,7 +45,6 @@ module.exports = makeFindAllCoursesForUser = ({ Course, User }) => {
 					)
 						? true
 						: false
-					console.log(docObject)
 					courseObjects.push(docObject)
 				})
 				return resolve({

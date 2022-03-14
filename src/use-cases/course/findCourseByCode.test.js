@@ -49,7 +49,6 @@ describe('findCourseById Test Suite', () => {
 		)
 
 		const found = await findCourseByCode(COURSE_CODE)
-		console.log(found)
 		expect(found).toMatchObject({
 			course: course2,
 		})
