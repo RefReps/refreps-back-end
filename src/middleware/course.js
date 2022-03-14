@@ -21,6 +21,12 @@ module.exports.appendStudentOnCourseByCode = async (req, res, next) => {
 		const { course } = await Course.findCourseByCode(courseCode)
 		const user = await User.findUserById(userId)
 
+		if (isCouponExpired(course)) {
+			return res
+				.status(200)
+				.json(buildErrorResponse(Error('Course coupon is expired.')))
+		}
+
 		// Check if student is already in course
 		if (user.studentCourses.filter((id) => id.equals(course._id)).length > 0) {
 			return res
@@ -40,6 +46,16 @@ module.exports.appendStudentOnCourseByCode = async (req, res, next) => {
 	} catch (error) {
 		return res.status(400).json(buildErrorResponse(error))
 	}
+}
+
+/**
+ *
+ * @param {course} course - course object
+ */
+const isCouponExpired = (course) => {
+	const currentTime = new Date().getTime()
+	const couponExpTime = new Date(course.studentCourseCode.activeUntil).getTime()
+	return currentTime > couponExpTime
 }
 
 /**
