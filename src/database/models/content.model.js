@@ -21,6 +21,7 @@ const moduleSchema = new Schema(
 		},
 		moduleId: {
 			type: Types.ObjectId,
+			ref: 'Module',
 			required: true,
 		},
 		isPublished: {

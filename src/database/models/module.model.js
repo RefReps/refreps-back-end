@@ -11,6 +11,7 @@ const moduleSchema = new Schema(
 		},
 		sectionId: {
 			type: Types.ObjectId,
+			ref: 'Section',
 			required: true,
 		},
 		isPublished: {

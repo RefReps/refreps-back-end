@@ -11,6 +11,7 @@ const sectionSchema = new Schema(
 		},
 		courseId: {
 			type: Types.ObjectId,
+			ref: 'Course',
 			required: true,
 		},
 		isPublished: {
