@@ -77,7 +77,7 @@ const isCouponLocked = (course) => {
 
 /**
  *
- * @param {request} req - requires req.body = {courseEnforcemnts, enforcementPercent, maxQuizAttempts, couponLocked}, req.params.courseId
+ * @param {request} req - requires req.body = {courseEnforcements, enforcementPercent, maxQuizAttempts, couponLocked}, req.params.courseId
  * @param {response} res
  * @param {next} next
  */
