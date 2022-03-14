@@ -41,7 +41,7 @@ describe('createSubmission Test Suite', () => {
 
 	it('successfully adds questions to a submission that has none to start', async () => {
 		const sub = await createSubmission(userId, quizId, quizVersionId)
-		const { submission } = await addAnswers(sub._id, answers)
+		const submission = await addAnswers(sub._id, answers)
 		expect(submission.userAnswers).not.toBeNull()
 		expect(submission.userAnswers[0].questionNumber).toBe(1)
 		expect(submission.userAnswers[1].questionNumber).toBe(2)
@@ -51,7 +51,7 @@ describe('createSubmission Test Suite', () => {
 	it('successfully adds questions to a submission in small increments', async () => {
 		const sub = await createSubmission(userId, quizId, quizVersionId)
 		await addAnswers(sub._id, [answers[0]])
-		const { submission } = await addAnswers(sub._id, [answers[1], answers[2]])
+		const submission = await addAnswers(sub._id, [answers[1], answers[2]])
 		expect(submission.userAnswers).not.toBeNull()
 		expect(submission.userAnswers[0].questionNumber).toBe(1)
 		expect(submission.userAnswers[1].questionNumber).toBe(2)
@@ -69,7 +69,7 @@ describe('createSubmission Test Suite', () => {
 			answers: ['false'],
 		}
 		await addAnswers(sub._id, [oldAnswer])
-		const { submission } = await addAnswers(sub._id, [answers[1], newAnswer])
+		const submission = await addAnswers(sub._id, [answers[1], newAnswer])
 		expect(submission.userAnswers).not.toBeNull()
 		expect(submission.userAnswers.length).toBe(2)
 	})
@@ -87,7 +87,7 @@ describe('createSubmission Test Suite', () => {
 	it('resolves submission when there are no questions to add', async () => {
 		const sub = await createSubmission(userId, quizId, quizVersionId)
 		await addAnswers(sub._id, [answers[0]])
-		const { submission } = await addAnswers(sub._id)
+		const submission = await addAnswers(sub._id)
 		await expect(addAnswers(submission._id)).resolves.toMatchObject({})
 	})
 

@@ -20,9 +20,7 @@ module.exports = makeAddAnswers = ({ QuizSubmission }) => {
 			}
 
 			if (answers.length === 0)
-				return Promise.resolve({
-					submission: submission.toObject({ flattenMaps: true }),
-				})
+				return Promise.resolve(submission.toObject({ flattenMaps: true }))
 
 			// TODO: validate incoming answers check (compare with versioned quiz for choice type)
 
@@ -33,9 +31,7 @@ module.exports = makeAddAnswers = ({ QuizSubmission }) => {
 			submission.markModified('userAnswers')
 			await submission.save()
 
-			return Promise.resolve({
-				submission: submission.toObject({ flattenMaps: true }),
-			})
+			return Promise.resolve(submission.toObject({ flattenMaps: true }))
 		} catch (error) {
 			return Promise.reject(error)
 		}
