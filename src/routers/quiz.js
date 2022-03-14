@@ -76,6 +76,14 @@ router
 			}
 			const user = await useCases.User.findUserByEmail(email)
 
+			const { submissions } = await useCases.Quiz.getAllSubmissionGrades(quizId)
+			const { course } = await useCases.Course.findCourseByQuizId()
+			if (submissions.length >= course.settings.maximumQuizAttempts) {
+				throw new Error('Maximum Quiz Attempts Exhausted')
+			}
+
+			// if (submissions.length >=)
+
 			const { questions, quizSubmission } = await useCases.Quiz.startQuiz(
 				quizId,
 				user._id
