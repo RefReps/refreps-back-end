@@ -1,5 +1,6 @@
 const Course = require('../../database/models/course.model')
 const User = require('../../database/models/user.model')
+const Content = require('../../database/models/content.model')
 
 const makeAddCourse = require('./addCourse')
 const makeAddCourseCode = require('./addCourseCode')
@@ -9,6 +10,7 @@ const makeFindAllCourses = require('./findAllCourses')
 const makeFindAllCoursesForUser = require('./findAllCoursesForUser')
 const makeFindCourseByCode = require('./findCourseByCode')
 const makeFindCourseById = require('./findCourseById')
+const makeFindCourseByQuizId = require('./findCourseByQuizId')
 const makeUpdateCourse = require('./updateCourse')
 
 module.exports = {
@@ -20,5 +22,6 @@ module.exports = {
 	findAllCoursesForUser: makeFindAllCoursesForUser({ Course, User }),
 	findCourseByCode: makeFindCourseByCode({ Course }),
 	findCourseById: makeFindCourseById({ Course, User }),
+	findCourseByQuizId: makeFindCourseByQuizId({ Course, Content }),
 	updateCourse: makeUpdateCourse({ Course }),
 }
