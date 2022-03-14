@@ -82,7 +82,6 @@ router
 				throw new Error('Maximum Quiz Attempts Exhausted')
 			}
 
-			// if (submissions.length >=)
 
 			const { questions, quizSubmission } = await useCases.Quiz.startQuiz(
 				quizId,
