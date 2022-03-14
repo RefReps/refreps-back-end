@@ -9,8 +9,6 @@ module.exports = makeAddAnswers = ({ QuizSubmission }) => {
 				throw new ReferenceError(
 					'`submissionId` must be provided in addAnswers.'
 				)
-			if (answers.length === 0)
-				throw new ReferenceError('`answers` list must be greater than 0.')
 
 			// Find the submission and make sure that it is not already submitted
 			const submission = await QuizSubmission.findById(submissionId)
@@ -21,6 +19,11 @@ module.exports = makeAddAnswers = ({ QuizSubmission }) => {
 				throw new ReferenceError('Submission doc not found.')
 			}
 
+			if (answers.length === 0)
+				return Promise.resolve({
+					submission: submission.toObject({ flattenMaps: true }),
+				})
+
 			// TODO: validate incoming answers check (compare with versioned quiz for choice type)
 
 			submission.set(
@@ -30,7 +33,9 @@ module.exports = makeAddAnswers = ({ QuizSubmission }) => {
 			submission.markModified('userAnswers')
 			await submission.save()
 
-			return Promise.resolve(submission)
+			return Promise.resolve({
+				submission: submission.toObject({ flattenMaps: true }),
+			})
 		} catch (error) {
 			return Promise.reject(error)
 		}
