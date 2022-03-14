@@ -258,14 +258,23 @@ router
 				throw ReferenceError('Course is not in db')
 			}
 
-			emails.forEach(async (email) => {
+			const { course } = await Course.findCourseById(courseId)
+			let studentsLength =
+				course.students.length != undefined ? course.students.length : 999
+
+			// Add emails until course is full (if applicable)
+			for (email of emails) {
 				try {
-					let user = await User.findUserByEmail(email)
-					await User.addStudentInCourse(user._id, courseId)
+					if (!isCourseFull(course, studentsLength)) {
+						let user = await User.findUserByEmail(email)
+						await User.addStudentInCourse(user._id, courseId)
+						studentsLength++
+					}
 				} catch (error) {
 					console.log({ error: error.name, message: error.message })
 				}
-			})
+			}
+
 			res.status(204).send()
 		} catch (error) {
 			res
@@ -273,6 +282,10 @@ router
 				.json({ success: false, error: error.name, reason: error.message })
 		}
 	})
+
+const isCourseFull = (course, studentLength) => {
+	return studentLength >= course.settings.courseCapacity
+}
 
 // Removes multiple students from a course
 // Reads Json body
