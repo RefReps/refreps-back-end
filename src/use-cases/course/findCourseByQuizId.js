@@ -6,12 +6,16 @@ module.exports = makeFindCourseByQuizId = ({ Course, Content }) => {
 	// Reject -> error
 	return async function findCourseByQuizId(quizId) {
 		try {
+			if (!quizId)
+				throw new ReferenceError(
+					'`quizId` in findCourseByQuizId was not provided.'
+				)
 			// Find content with quizId
 			const contentDoc = await Content.findOne()
 				.where('onModel')
 				.equals('Quiz')
 				.where('toDocument')
-				.equals('622d8a08d3c3fb82110ae91e')
+				.equals(quizId)
 				.populate({
 					path: 'moduleId',
 					populate: {
