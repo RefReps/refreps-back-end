@@ -68,8 +68,6 @@ router
 
 			const moduleInfo = {}
 			moduleInfo['name'] = name ? name : undefined
-			moduleInfo['isPublished'] = isPublished ? isPublished : undefined
-			moduleInfo['dropDate'] = dropDate ? dropDate : undefined
 			const result = await useCases.Module_.updateModule(moduleId, moduleInfo)
 			res.send(result)
 		} catch (error) {

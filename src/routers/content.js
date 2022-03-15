@@ -86,8 +86,6 @@ router
 
 			const contentInfo = {}
 			contentInfo['name'] = name ? name : undefined
-			contentInfo['isPublished'] = isPublished ? isPublished : undefined
-			contentInfo['dropDate'] = dropDate ? dropDate : undefined
 			const result = await useCases.Content.updateContent(
 				contentId,
 				contentInfo

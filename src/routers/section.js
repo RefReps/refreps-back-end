@@ -68,8 +68,6 @@ router
 
 			const sectionInfo = {}
 			sectionInfo['name'] = name ? name : undefined
-			sectionInfo['isPublished'] = isPublished ? isPublished : undefined
-			sectionInfo['dropDate'] = dropDate ? dropDate : undefined
 			const result = await useCases.Section.updateSection(
 				sectionId,
 				sectionInfo
