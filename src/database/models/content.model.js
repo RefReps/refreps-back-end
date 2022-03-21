@@ -38,6 +38,7 @@ const moduleSchema = new Schema(
 			type: Date,
 			default: null,
 		},
+		studentsCompleted: [{ type: Types.ObjectId, ref: 'User' }],
 	},
 	{ timestamps: true }
 )
