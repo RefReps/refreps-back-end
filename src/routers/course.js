@@ -46,6 +46,10 @@ router
 	})
 
 router
+	.route('/:courseId/complete')
+	.get(courseMiddleware.studentFullCourseStructure)
+
+router
 	.route('/:courseId')
 	.get(async (req, res) => {
 		try {
