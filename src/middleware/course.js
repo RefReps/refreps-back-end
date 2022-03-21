@@ -187,3 +187,24 @@ module.exports.updateCourseSettingsAdmin = async (req, res, next) => {
 const checkUndefinedInArray = (lst = []) => {
 	return lst.filter((ele) => ele === undefined).length > 0
 }
+
+/**
+ *
+ * @param {request} req - req.userId, req.params.courseId
+ * @param {response} res
+ * @param {next} next
+ */
+module.exports.studentFullCourseStructure = async (req, res, next) => {
+	try {
+		const { userId } = req
+		if (!userId) throw new ReferenceError('req.userId is required')
+
+		const { courseId } = req.params
+		if (!courseId) throw new ReferenceError('req.params.courseId is required')
+
+		const { course } = await Course.findCourseForStudent(courseId, userId)
+		return res.status(200).json({ course })
+	} catch (error) {
+		return res.status(400).json(buildErrorResponse(error))
+	}
+}
