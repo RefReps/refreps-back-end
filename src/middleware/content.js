@@ -37,3 +37,24 @@ const getDateIfValid = (date) => {
 	if (date == 'Invalid Date') throw dateError
 	return date
 }
+
+/**
+ *
+ * @param {request} req - requires req.params.contentId, req.studentId
+ * @param {response} res
+ * @param {next} next
+ */
+module.exports.completeContentForStudent = async (req, res, next) => {
+	try {
+		const { contentId } = req.params
+		if (!contentId)
+			throw new ReferenceError('`req.params.contentId` is required')
+		const { studentId } = req
+		if (!studentId) throw new ReferenceError('`req.studentId` is required')
+
+		await Content.markCompleteForStudent(contentId, studentId)
+		next()
+	} catch (error) {
+		return res.status(400).json(buildErrorResponse(error))
+	}
+}
