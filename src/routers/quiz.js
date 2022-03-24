@@ -182,12 +182,12 @@ router
 			const user = await User.findUserByEmail(email)
 			const submission = await QuizSubmission.finishSubmission(submissionId)
 
-			const { course } = await Course.findCourseByQuizId(quizId)
-
-			if (submission.grade > course.settings.enforcementPercent * 0.01) {
-				const { content } = await Quiz.findContentQuizBelongsTo(quizId)
-				await Content.markCompleteForStudent(content._id, user._id)
-			}
+			const { content } = await Quiz.findContentQuizBelongsTo(quizId)
+			await Content.markCompleteForStudent(
+				content._id,
+				user._id,
+				submission.grade * 100
+			)
 
 			res.status(200).json({ submission })
 		} catch (error) {

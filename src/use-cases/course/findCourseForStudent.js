@@ -2,7 +2,11 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 	// Finds a course for a student and lets the student know if the content is accessible
 	// Resolve -> {course: course doc}
 	// Reject -> error
-	return async function findCourseForStudent(courseId, studentId) {
+	return async function findCourseForStudent(
+		courseId,
+		studentId,
+		forceShowAll = false
+	) {
 		try {
 			console.log(studentId)
 			// Check for params being used
@@ -45,18 +49,25 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 			course.sections.forEach((section) => {
 				section.modules.forEach((module) => {
 					module.contents.forEach((content) => {
+						if (forceShowAll) {
+							content.isCompleted = true
+							return
+						}
 						// if (content.isResource) {
 						// 	content.isCompleted = true
 						// 	return
 						// }
+						let studentComplete = content.studentsCompleted.find(
+							(studentCompleted) => studentCompleted.student.equals(studentId)
+						)
 						if (disableRemainder) {
 							content.isCompleted = false
 							return
 						}
 						if (
-							content.studentsCompleted
-								.map((objId) => objId.toString())
-								.includes(studentId.toString())
+							studentComplete &&
+							studentComplete.percentComplete >=
+								course.settings.enforcementPercent
 						) {
 							content.isCompleted = true
 						} else {

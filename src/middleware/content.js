@@ -52,7 +52,7 @@ module.exports.completeContentForStudent = async (req, res, next) => {
 		const { studentId } = req
 		if (!studentId) throw new ReferenceError('`req.studentId` is required')
 
-		await Content.markCompleteForStudent(contentId, studentId)
+		await Content.markCompleteForStudent(contentId, studentId, 100)
 		next()
 	} catch (error) {
 		return res.status(400).json(buildErrorResponse(error))

@@ -2,7 +2,12 @@ module.exports = makeMarkCompleteForStudent = ({ Content, User }) => {
 	// Marks a content complete for the user
 	// Resolve -> {content Object}
 	// Reject -> error
-	return async function markCompleteForStudent(contentId, studentId) {
+	return async function markCompleteForStudent(
+		contentId,
+		studentId,
+		percentCompleted = 0,
+		forcePercent = false
+	) {
 		try {
 			if (!contentId) throw new ReferenceError('`contentId` is required.')
 			if (!studentId) throw new ReferenceError('`studentId` is required.')
@@ -12,13 +17,28 @@ module.exports = makeMarkCompleteForStudent = ({ Content, User }) => {
 				throw new ReferenceError('Content doc not found.')
 			}
 
-			// Check if student is in course
-			if (studentAlreadyCompleted(contentDoc, studentId))
-				return Promise.resolve({ content: contentDoc.toObject() })
-
 			// TODO: Add checking to see if student is in course
 
-			contentDoc.studentsCompleted.push(studentId)
+			// Check if student has a completed already
+			if (studentAlreadyCompleted(contentDoc, studentId)) {
+				let idx = contentDoc.studentsCompleted.findIndex((stuComplete) =>
+					stuComplete.student.equals(studentId)
+				)
+				contentDoc.studentsCompleted.splice(idx, 1, {
+					student: studentId,
+					percentComplete: makePercentCompleted(
+						contentDoc.studentsCompleted[idx].percentComplete,
+						percentCompleted,
+						forcePercent
+					),
+				})
+			} else {
+				contentDoc.studentsCompleted.push({
+					student: studentId,
+					percentComplete: makePercentCompleted(0, percentCompleted, true),
+				})
+			}
+
 			contentDoc.markModified('studentsCompleted')
 
 			await contentDoc.save()
@@ -31,5 +51,16 @@ module.exports = makeMarkCompleteForStudent = ({ Content, User }) => {
 }
 
 const studentAlreadyCompleted = (contentDoc, studentId) => {
-	return contentDoc.studentsCompleted.find((objId) => objId.equals(studentId))
+	return contentDoc.studentsCompleted.find((studentCompleted) =>
+		studentCompleted.student.equals(studentId)
+	)
+}
+
+const makePercentCompleted = (oldPercent, newPercent, isForced) => {
+	if (isForced) {
+		return newPercent
+	} else if (newPercent >= oldPercent) {
+		return newPercent
+	}
+	return oldPercent
 }
