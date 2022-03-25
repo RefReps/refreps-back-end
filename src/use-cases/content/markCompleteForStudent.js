@@ -20,30 +20,36 @@ module.exports = makeMarkCompleteForStudent = ({ Content, User }) => {
 			// TODO: Add checking to see if student is in course
 
 			// Check if student has a completed already
+			let studentComplete
 			if (studentAlreadyCompleted(contentDoc, studentId)) {
 				let idx = contentDoc.studentsCompleted.findIndex((stuComplete) =>
 					stuComplete.student.equals(studentId)
 				)
-				contentDoc.studentsCompleted.splice(idx, 1, {
+				studentComplete = {
 					student: studentId,
 					percentComplete: makePercentCompleted(
 						contentDoc.studentsCompleted[idx].percentComplete,
 						percentCompleted,
 						forcePercent
 					),
-				})
+				}
+				contentDoc.studentsCompleted.splice(idx, 1, studentComplete)
 			} else {
-				contentDoc.studentsCompleted.push({
+				studentComplete = {
 					student: studentId,
 					percentComplete: makePercentCompleted(0, percentCompleted, true),
-				})
+				}
+				contentDoc.studentsCompleted.push(studentComplete)
 			}
 
 			contentDoc.markModified('studentsCompleted')
 
 			await contentDoc.save()
 
-			return Promise.resolve({ content: contentDoc.toObject() })
+			return Promise.resolve({
+				content: contentDoc.toObject(),
+				studentComplete,
+			})
 		} catch (error) {
 			return Promise.reject(error)
 		}

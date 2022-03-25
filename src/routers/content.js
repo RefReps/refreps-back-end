@@ -3,11 +3,13 @@ require('dotenv').config({ path: '.env' })
 const multer = require('multer')()
 
 const useCases = require('../use-cases/index')
+const { Course, User, Content } = useCases
 
 const { updateContentDropDate } = require('../middleware/content')
 const {
 	isAuthenticated,
 	bindUserIdFromEmail,
+	authorizeAdmin,
 } = require('../utils/middleware/index')
 
 router.use(isAuthenticated, bindUserIdFromEmail)
@@ -101,5 +103,52 @@ router
 	.put(multer.none(), updateContentDropDate, (req, res) => {
 		return res.status(201).json({ success: true })
 	})
+
+// JSON BODY
+// updates the authenticated user's content progression.
+// Returns the percentComplete for the content
+router.route('/:contentId/progress/video').put(async (req, res) => {
+	try {
+		const { contentId } = req.params
+		const { percentComplete } = req.body
+		if (!percentComplete)
+			throw new ReferenceError('req.body.percentComplete is required.')
+		const content = await Content.findContentById(contentId)
+		if (!(content.onModel == 'Video')) {
+			throw new Error('Only video progress is allowed to be updated.')
+		}
+		const { studentComplete } = await Content.markCompleteForStudent(
+			contentId,
+			req.userId,
+			percentComplete
+		)
+		return res
+			.status(200)
+			.json({ percentComplete: studentComplete.percentComplete })
+	} catch (error) {
+		return res.status(400).json({ success: false })
+	}
+})
+
+// Admin only route
+// update a student's progress on a content
+// acts as a force complete for a content if percentComplete=100
+router.route('/:contentId/progress').put(authorizeAdmin, async (req, res) => {
+	try {
+		const { contentId } = req.params
+		const { userId, percentComplete } = req.body
+		const { studentComplete } = await Content.markCompleteForStudent(
+			contentId,
+			userId,
+			percentComplete,
+			true
+		)
+		return res
+			.status(200)
+			.json({ percentComplete: studentComplete.percentComplete })
+	} catch (error) {
+		return res.status(400).json({ success: false })
+	}
+})
 
 module.exports = router
