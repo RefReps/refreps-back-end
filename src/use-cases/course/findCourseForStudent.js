@@ -2,16 +2,11 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 	// Finds a course for a student and lets the student know if the content is accessible
 	// Resolve -> {course: course doc}
 	// Reject -> error
-	return async function findCourseForStudent(
-		courseId,
-		studentId,
-		forceShowAll = false
-	) {
+	return async function findCourseForStudent(courseId, userId) {
 		try {
-			console.log(studentId)
 			// Check for params being used
 			if (!courseId) throw new ReferenceError('`courseId` must be provided.')
-			if (!studentId) throw new ReferenceError('`studentId` must be provided.')
+			if (!userId) throw new ReferenceError('`userId` must be provided.')
 
 			// Find course doc based on courseId
 			const courseDoc = await Course.findById(courseId)
@@ -29,11 +24,23 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 				throw new ReferenceError('No course doc found.')
 			}
 
-			// TODO: Check if user is in course
-			if (!courseDoc.students.includes(studentId))
-				throw new ReferenceError('`studentId` is not in course')
+			const user = await User.findById(userId).exec()
 
 			const course = courseDoc.toObject()
+
+			// Check if user is author or admin and is in course
+			let forceShowAll = false
+			if (user.role == 'admin') {
+				forceShowAll = true
+			} else if (user.authorCourses.find((objId) => objId.equals(course._id))) {
+				forceShowAll = true
+			} else if (
+				user.studentCourses.find((objId) => objId.equals(course._id))
+			) {
+				forceShowAll = false
+			} else {
+				throw new ReferenceError('`userId` is not related to course')
+			}
 
 			// Filter out non-published content
 			course.sections.forEach((section) => {
@@ -58,7 +65,7 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 						// 	return
 						// }
 						let studentComplete = content.studentsCompleted.find(
-							(studentCompleted) => studentCompleted.student.equals(studentId)
+							(studentCompleted) => studentCompleted.student.equals(userId)
 						)
 						if (disableRemainder) {
 							content.isCompleted = false
