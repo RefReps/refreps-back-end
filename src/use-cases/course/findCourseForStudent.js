@@ -78,7 +78,7 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 						) {
 							content.isCompleted = true
 						} else {
-							content.isCompleted = false
+							content.isCompleted = true
 							disableRemainder = true
 						}
 					})
