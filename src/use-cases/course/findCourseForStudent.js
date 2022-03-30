@@ -43,13 +43,15 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 			}
 
 			// Filter out non-published content
-			course.sections.forEach((section) => {
-				section.modules.forEach((module) => {
-					module.contents = module.contents.filter(
-						(content) => content.isPublished
-					)
+			if (!forceShowAll) {
+				course.sections.forEach((section) => {
+					section.modules.forEach((module) => {
+						module.contents = module.contents.filter(
+							(content) => content.isPublished
+						)
+					})
 				})
-			})
+			}
 
 			// Append a new field on content -> .isCompleted
 			let disableRemainder = false
