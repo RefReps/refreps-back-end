@@ -183,11 +183,20 @@ router
 			const submission = await QuizSubmission.finishSubmission(submissionId)
 
 			const { content } = await Quiz.findContentQuizBelongsTo(quizId)
+			const { course } = await Course.findCourseByQuizId(quizId)
+
+			// mark the student as having completed the quiz
 			await Content.markCompleteForStudent(
 				content._id,
 				user._id,
 				submission.grade * 100
 			)
+
+			// check if submission.submissionNumber is equal to course.settings.maximumQuizAttempts
+			if (submission.submissionNumber === course.settings.maximumQuizAttempts) {
+				// if so, mark complete for the student
+				await Content.markCompleteForStudent(content._id, user._id, 100, true)
+			}
 
 			res.status(200).json({ submission })
 		} catch (error) {
