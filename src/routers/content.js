@@ -10,7 +10,8 @@ const {
 	isAuthenticated,
 	bindUserIdFromEmail,
 	authorizeAdmin,
-} = require('../utils/middleware/index')
+} = require('../utils/middleware/index');
+const { buildErrorResponse } = require('../utils/responses');
 
 router.use(isAuthenticated, bindUserIdFromEmail)
 
@@ -111,8 +112,12 @@ router.route('/:contentId/progress/video').put(async (req, res) => {
 	try {
 		const { contentId } = req.params
 		const { percentComplete } = req.body
-		if (!percentComplete)
-			throw new ReferenceError('req.body.percentComplete is required.')
+
+		// check if percentComplete is a number
+		if (isNaN(percentComplete)) {
+			throw new Error('req.percentComplete must be a number')
+		}
+
 		const content = await Content.findContentById(contentId)
 		if (!(content.onModel == 'Video')) {
 			throw new Error('Only video progress is allowed to be updated.')
@@ -126,7 +131,7 @@ router.route('/:contentId/progress/video').put(async (req, res) => {
 			.status(200)
 			.json({ percentComplete: studentComplete.percentComplete })
 	} catch (error) {
-		return res.status(400).json({ success: false })
+		return res.status(400).json(buildErrorResponse(error))
 	}
 })
 
