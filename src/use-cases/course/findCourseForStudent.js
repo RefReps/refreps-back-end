@@ -71,10 +71,21 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 							content.isCompleted = true
 							return
 						}
-						// if (content.isResource) {
-						// 	content.isCompleted = true
-						// 	return
-						// }
+						
+						// If the content is a resource, then it is always completed
+						if (content.onModel == 'Resource') {
+							content.isCompleted = true
+							return
+						}
+
+						// If the content's date is in the past, it is completed
+						if (content.dropDate) {
+							if (content.dropDate < Date.now()) {
+								content.isCompleted = true
+								return
+							}
+						}
+
 						let studentComplete = content.studentsCompleted.find(
 							(studentCompleted) => studentCompleted.student.equals(userId)
 						)
