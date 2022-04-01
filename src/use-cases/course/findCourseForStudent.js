@@ -53,6 +53,15 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 				})
 			}
 
+			// Arrange contents in order in place
+			course.sections.forEach((section) => {
+				section.modules.forEach((module) => {
+					module.contents.sort((a, b) => {
+						return a.contentOrder - b.contentOrder
+					})
+				})
+			})
+
 			// Append a new field on content -> .isCompleted
 			let disableRemainder = false
 			course.sections.forEach((section) => {
