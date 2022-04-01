@@ -77,9 +77,9 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 							return
 						}
 
-						// If the content is in the past, mark it as completed
-						if (content.dropDate != null && content.dropDate < Date.now()) {
-							content.isCompleted = true
+						// If the content's date is not passed, mark it as not completed
+						if (content.dropDate && content.dropDate > Date.now()) {
+							content.isCompleted = false
 							return
 						}
 
