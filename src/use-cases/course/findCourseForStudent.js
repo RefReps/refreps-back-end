@@ -42,6 +42,12 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 				throw new ReferenceError('`userId` is not related to course')
 			}
 
+			// Check if userId is in the course.authors array
+			if (course.authors.find((objId) => objId.equals(userId))) {
+				// set course.isAuthor to true
+				course.isAuthor = true
+			}
+
 			// if course.sections is empty, set course.section to empty array
 			if (course.sections.length == 0) {
 				course.sections = []
@@ -117,6 +123,7 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 				})
 			})
 
+			console.log(course)
 			return Promise.resolve({ course })
 		} catch (error) {
 			return Promise.reject(error)
