@@ -67,6 +67,7 @@ module.exports = makeGetAllBestQuizzesInACourse = ({
 					if (quizSubmissions.length > 0) {
                         const submission = quizSubmissions[0].toObject()
 						result.push({
+                            quizName: quiz.name,
 							submissionId: submission._id,
 							userId: userId,
 							quizId: submission.quizId,
@@ -79,6 +80,7 @@ module.exports = makeGetAllBestQuizzesInACourse = ({
 						})
 					} else {
 						result.push({
+                            quizName: quiz.name,
 							quizId: quiz._id,
 							userId: userId,
 							email: user.email,
