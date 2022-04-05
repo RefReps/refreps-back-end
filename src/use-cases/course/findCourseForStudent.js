@@ -123,7 +123,6 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 				})
 			})
 
-			console.log(course)
 			return Promise.resolve({ course })
 		} catch (error) {
 			return Promise.reject(error)
