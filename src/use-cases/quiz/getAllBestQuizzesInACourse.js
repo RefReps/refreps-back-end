@@ -60,6 +60,7 @@ module.exports = makeGetAllBestQuizzesInACourse = ({
 					const quizSubmissions = await QuizSubmission.find({
 						quizId: quiz._id,
 						userId: userId,
+						isGraded: true,
 					})
 						.sort({ grade: -1, submissionNumber: -1 })
 						.limit(1)
