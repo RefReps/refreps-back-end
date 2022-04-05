@@ -18,13 +18,14 @@ router.use(isAuthenticated, bindUserIdFromEmail)
 router
 	.route('/')
 	// findAllContents
+	// TODO: add is author route only
 	.get(async (req, res) => {
 		try {
 			const { moduleId } = req.query
 			if (!moduleId) {
 				throw new ReferenceError('query for moduleId must be provided')
 			}
-			const result = await useCases.Content.findAllContents(moduleId)
+			const result = await useCases.Content.findAllContents(moduleId, {publishedOnly: false})
 			res.send(result.contents)
 		} catch (error) {
 			res.status(400).send(error.message)
