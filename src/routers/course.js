@@ -443,12 +443,28 @@ router.route('/:courseId/grades-student').get(async (req, res) => {
 	}
 })
 
+
+// TODO: Add author only route
+router.route('/:courseId/grades-student/:studentId').get(async (req, res) => {
+	try {
+		const { courseId, studentId } = req.params
+		const { submissions } = await Quiz.getAllBestQuizzesInACourse(
+			courseId,
+			studentId
+		)
+
+		res.status(200).json({ submissions })
+	} catch (error) {
+		res.status(400).json(buildErrorResponse(error))
+	}
+})
+
 // Author routes for course grades
 router.route('/:courseId/grades-all').get(async (req, res) => {
 	try {
 		const { course } = await Course.findCourseById(req.params.courseId)
-		const {overviews} = await Quiz.getCourseQuizzesOverview(course._id)
-		res.status(200).json({overviews})
+		const { overviews } = await Quiz.getCourseQuizzesOverview(course._id)
+		res.status(200).json({ overviews })
 	} catch (error) {
 		res.status(400).json(buildErrorResponse(error))
 	}
