@@ -79,9 +79,18 @@ module.exports = makeGetCourseQuizzesOverview = ({
                     ]).exec()
 
                     // Calculate the average score from the best quiz submissions
-                    const averageScore = bestQuizSubmissions.reduce((acc, curr) => {
-                        return acc + curr.bestSubmission.grade
-                    }, 0) / bestQuizSubmissions.length
+                    let averageScore
+                    if (bestQuizSubmissions.length > 0) {
+                        averageScore = bestQuizSubmissions.reduce((acc, curr) => {
+                            return acc + curr.bestSubmission.grade
+                        }, 0) / bestQuizSubmissions.length
+                    } else {
+                        averageScore = 1
+                    }
+
+                    if (!averageScore) {
+                        averageScore = 0
+                    }
 
                     result.push({
                         user: {_id: student._id, email: student.email},
