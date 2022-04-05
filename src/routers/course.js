@@ -3,7 +3,7 @@ require('dotenv').config({ path: '.env' })
 const multer = require('multer')()
 
 const useCases = require('../use-cases/index')
-const { User, Course } = require('../use-cases/index')
+const { User, Course, Quiz } = require('../use-cases/index')
 
 // Middleware Imports
 const {
@@ -12,6 +12,7 @@ const {
 	bindUserIdFromEmail,
 } = require('../utils/middleware/index')
 const courseMiddleware = require('../middleware/course')
+const { buildErrorResponse } = require('../utils/responses/index')
 
 router.use(isAuthenticated)
 router.use(bindUserIdFromEmail)
@@ -421,5 +422,25 @@ router
 			}
 		}
 	)
+
+// Individual student routes for course grades
+router.route('/:courseId/grades-student').get(async (req, res) => {
+	try {
+		const { email } = req
+		if (!email) {
+			throw ReferenceError('req.email needs to be provided')
+		}
+		const { course } = await Course.findCourseById(req.params.courseId)
+		const user = await User.findUserByEmail(email)
+		const { submissions } = await Quiz.getAllBestQuizzesInACourse(
+			course._id,
+			user._id
+		)
+
+		res.status(200).json({ submissions })
+	} catch (error) {
+		res.status(400).json(buildErrorResponse(error))
+	}
+})
 
 module.exports = router
