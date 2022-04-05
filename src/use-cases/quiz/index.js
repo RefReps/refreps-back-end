@@ -14,6 +14,7 @@ const makeFindContentQuizBelongsTo = require('./findContentQuizBelongsTo')
 const makeFindQuizById = require('./findQuizById')
 const makeGetAllBestQuizzesInACourse = require('./getAllBestQuizzesInACourse')
 const makeGetAllSubmissionGrades = require('./getAllSubmissionGrades')
+const makeGetCourseQuizzesOverview = require('./getCourseQuizzesOverview')
 const makeStartQuiz = require('./startQuiz')
 
 const addQuestions = makeAddQuestions({ Quiz, QuizVersion })
@@ -33,6 +34,12 @@ const getAllSubmissionGrades = makeGetAllSubmissionGrades({
 	Quiz,
 	QuizSubmission,
 })
+const getCourseQuizzesOverview = makeGetCourseQuizzesOverview({
+	Quiz,
+	QuizSubmission,
+	Course,
+	User,
+})
 const startQuiz = makeStartQuiz({ Quiz, QuizVersion, QuizSubmission })
 
 module.exports = {
@@ -45,5 +52,6 @@ module.exports = {
 	findQuizById,
 	getAllBestQuizzesInACourse,
 	getAllSubmissionGrades,
+	getCourseQuizzesOverview,
 	startQuiz,
 }

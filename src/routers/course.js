@@ -443,4 +443,15 @@ router.route('/:courseId/grades-student').get(async (req, res) => {
 	}
 })
 
+// Author routes for course grades
+router.route('/:courseId/grades-all').get(async (req, res) => {
+	try {
+		const { course } = await Course.findCourseById(req.params.courseId)
+		const {overviews} = await Quiz.getCourseQuizzesOverview(course._id)
+		res.status(200).json({overviews})
+	} catch (error) {
+		res.status(400).json(buildErrorResponse(error))
+	}
+})
+
 module.exports = router
