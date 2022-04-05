@@ -99,43 +99,6 @@ module.exports = makeGetCourseQuizzesOverview = ({
 				})
 			)
 
-			// const bestQuizSubmissions = await Promise.all(
-			// 	quizzes.map(async (quiz) => {
-			// 		const quizSubmissions = await QuizSubmission.find({
-			// 			quizId: quiz._id,
-			// 			userId: userId,
-			// 		})
-			// 			.sort({ grade: -1, submissionNumber: -1 })
-			// 			.limit(1)
-			// 			.exec()
-			// 		if (quizSubmissions.length > 0) {
-			// 			const submission = quizSubmissions[0].toObject()
-			// 			result.push({
-			// 				quizName: quiz.name,
-			// 				submissionId: submission._id,
-			// 				userId: userId,
-			// 				quizId: submission.quizId,
-			// 				email: user.email,
-			// 				grade: submission.grade,
-			// 				submissionNumber: submission.submissionNumber,
-			// 				dateStarted: submission.dateStarted,
-			// 				dateFinished: submission.dateFinished,
-			// 				isTaken: true,
-			// 			})
-			// 		} else {
-			// 			result.push({
-			// 				quizName: quiz.name,
-			// 				quizId: quiz._id,
-			// 				userId: userId,
-			// 				email: user.email,
-			// 				grade: 0,
-			// 				submissionNumber: 0,
-			// 				isTaken: false,
-			// 			})
-			// 		}
-			// 	})
-			// )
-
 			return Promise.resolve({ overviews: result })
 		} catch (error) {
 			return Promise.reject(error)
