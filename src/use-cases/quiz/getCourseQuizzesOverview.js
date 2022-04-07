@@ -79,9 +79,7 @@ module.exports = makeGetCourseQuizzesOverview = ({
                     ]).exec()
 
 					// get the count of quizzes taken by the user
-					console.log(student.email, bestQuizSubmissions)
 					const quizzesTakenCount = bestQuizSubmissions.filter(quiz => quiz.bestSubmission).length
-					console.log(quizzesTakenCount)
 
                     // Calculate the average score from the best quiz submissions
                     let averageScore
