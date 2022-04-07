@@ -73,12 +73,19 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 				})
 			})
 
+			const isEnforcements = course.settings.isEnforcements
+
 			// Append a new field on content -> .isCompleted
 			let disableRemainder = false
 			course.sections.forEach((section) => {
 				section.modules.forEach((module) => {
 					module.contents.forEach((content) => {
 						if (forceShowAll) {
+							content.isCompleted = true
+							return
+						}
+
+						if (!isEnforcements) {
 							content.isCompleted = true
 							return
 						}
