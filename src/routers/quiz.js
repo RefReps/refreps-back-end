@@ -3,7 +3,7 @@ require('dotenv').config({ path: '.env' })
 const multer = require('multer')()
 
 const useCases = require('../use-cases/index')
-const { User, Quiz, QuizSubmission } = useCases
+const { User, Quiz, QuizSubmission, Content, Course } = useCases
 
 // Middleware Imports
 const { isAuthenticated } = require('../utils/middleware/auth')
@@ -76,12 +76,12 @@ router
 			}
 			const user = await useCases.User.findUserByEmail(email)
 
-			const { submissions } = await useCases.QuizSubmission.findAllCompletedInQuiz(quizId, user._id)
+			const { submissions } =
+				await useCases.QuizSubmission.findAllCompletedInQuiz(quizId, user._id)
 			const { course } = await useCases.Course.findCourseByQuizId(quizId)
 			if (submissions.length >= course.settings.maximumQuizAttempts) {
 				throw new Error('Maximum Quiz Attempts Exhausted')
 			}
-
 
 			const { questions, quizSubmission } = await useCases.Quiz.startQuiz(
 				quizId,
@@ -181,6 +181,22 @@ router
 			}
 			const user = await User.findUserByEmail(email)
 			const submission = await QuizSubmission.finishSubmission(submissionId)
+
+			const { content } = await Quiz.findContentQuizBelongsTo(quizId)
+			const { course } = await Course.findCourseByQuizId(quizId)
+
+			// mark the student as having completed the quiz
+			await Content.markCompleteForStudent(
+				content._id,
+				user._id,
+				submission.grade * 100
+			)
+
+			// check if submission.submissionNumber is equal to course.settings.maximumQuizAttempts
+			if (submission.submissionNumber === course.settings.maximumQuizAttempts) {
+				// if so, mark complete for the student
+				await Content.markCompleteForStudent(content._id, user._id, 100, true)
+			}
 
 			res.status(200).json({ submission })
 		} catch (error) {
