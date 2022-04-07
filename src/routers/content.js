@@ -10,8 +10,10 @@ const {
 	isAuthenticated,
 	bindUserIdFromEmail,
 	authorizeAdmin,
-} = require('../utils/middleware/index');
-const { buildErrorResponse } = require('../utils/responses');
+} = require('../utils/middleware/index')
+const { buildErrorResponse } = require('../utils/responses')
+
+const contentMiddleware = require('../middleware/content')
 
 router.use(isAuthenticated, bindUserIdFromEmail)
 
@@ -25,7 +27,9 @@ router
 			if (!moduleId) {
 				throw new ReferenceError('query for moduleId must be provided')
 			}
-			const result = await useCases.Content.findAllContents(moduleId, {publishedOnly: false})
+			const result = await useCases.Content.findAllContents(moduleId, {
+				publishedOnly: false,
+			})
 			res.send(result.contents)
 		} catch (error) {
 			res.status(400).send(error.message)
@@ -156,5 +160,12 @@ router.route('/:contentId/progress').put(authorizeAdmin, async (req, res) => {
 		return res.status(400).json({ success: false })
 	}
 })
+
+// Author route for publishing content
+router
+	.route('/:contentId/publish')
+	.put(contentMiddleware.toggleContentPublished, async (req, res) => {
+		res.status(200).json({ success: true })
+	})
 
 module.exports = router
