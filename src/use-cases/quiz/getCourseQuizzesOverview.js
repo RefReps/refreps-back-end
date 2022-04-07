@@ -64,7 +64,7 @@ module.exports = makeGetCourseQuizzesOverview = ({
                         },
                         {
                             $sort: {
-                                score: -1,
+                                grade: -1,
                                 submissionNumber: -1,
                             },
                         },
@@ -78,12 +78,17 @@ module.exports = makeGetCourseQuizzesOverview = ({
                         }
                     ]).exec()
 
+					// get the count of quizzes taken by the user
+					console.log(student.email, bestQuizSubmissions)
+					const quizzesTakenCount = bestQuizSubmissions.filter(quiz => quiz.bestSubmission).length
+					console.log(quizzesTakenCount)
+
                     // Calculate the average score from the best quiz submissions
                     let averageScore
-                    if (bestQuizSubmissions.length > 0) {
+                    if (quizzesTakenCount > 0) {
                         averageScore = bestQuizSubmissions.reduce((acc, curr) => {
                             return acc + curr.bestSubmission.grade
-                        }, 0) / bestQuizSubmissions.length
+                        }, 0) / quizzesTakenCount
                     } else {
                         averageScore = 1
                     }
