@@ -10,8 +10,10 @@ const {
 	isAuthenticated,
 	bindUserIdFromEmail,
 	authorizeAdmin,
-} = require('../utils/middleware/index');
-const { buildErrorResponse } = require('../utils/responses');
+} = require('../utils/middleware/index')
+const { buildErrorResponse } = require('../utils/responses')
+
+const contentMiddleware = require('../middleware/content')
 
 router.use(isAuthenticated, bindUserIdFromEmail)
 
@@ -25,7 +27,9 @@ router
 			if (!moduleId) {
 				throw new ReferenceError('query for moduleId must be provided')
 			}
-			const result = await useCases.Content.findAllContents(moduleId, {publishedOnly: false})
+			const result = await useCases.Content.findAllContents(moduleId, {
+				publishedOnly: false,
+			})
 			res.send(result.contents)
 		} catch (error) {
 			res.status(400).send(error.message)
@@ -123,6 +127,14 @@ router.route('/:contentId/progress/video').put(async (req, res) => {
 		if (!(content.onModel == 'Video')) {
 			throw new Error('Only video progress is allowed to be updated.')
 		}
+
+		// check if user is in the course
+		const user = await User.findUserById(req.userId)
+		const { course } = await Course.findCourseByContentId(contentId)
+		if (!user.studentCourses.find(c => c._id.equals(course._id))) {
+			throw new Error('User is not a student in the course.')
+		}
+
 		const { studentComplete } = await Content.markCompleteForStudent(
 			contentId,
 			req.userId,
@@ -156,5 +168,12 @@ router.route('/:contentId/progress').put(authorizeAdmin, async (req, res) => {
 		return res.status(400).json({ success: false })
 	}
 })
+
+// Author route for publishing content
+router
+	.route('/:contentId/publish')
+	.put(contentMiddleware.toggleContentPublished, async (req, res) => {
+		res.status(200).json({ success: true })
+	})
 
 module.exports = router
