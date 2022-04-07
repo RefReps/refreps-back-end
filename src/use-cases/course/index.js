@@ -9,6 +9,7 @@ const makeDeleteCourse = require('./deleteCourse')
 const makeFindAllCourses = require('./findAllCourses')
 const makeFindAllCoursesForUser = require('./findAllCoursesForUser')
 const makeFindCourseByCode = require('./findCourseByCode')
+const makeFindCourseByContentId = require('./findCourseByContentId')
 const makeFindCourseById = require('./findCourseById')
 const makeFindCourseByQuizId = require('./findCourseByQuizId')
 const makeFindCourseForStudent = require('./findCourseForStudent')
@@ -22,6 +23,7 @@ module.exports = {
 	findAllCourses: makeFindAllCourses({ Course }),
 	findAllCoursesForUser: makeFindAllCoursesForUser({ Course, User }),
 	findCourseByCode: makeFindCourseByCode({ Course }),
+	findCourseByContentId: makeFindCourseByContentId({ Course, Content }),
 	findCourseById: makeFindCourseById({ Course, User }),
 	findCourseByQuizId: makeFindCourseByQuizId({ Course, Content }),
 	findCourseForStudent: makeFindCourseForStudent({ Course, User }),
