@@ -127,6 +127,14 @@ router.route('/:contentId/progress/video').put(async (req, res) => {
 		if (!(content.onModel == 'Video')) {
 			throw new Error('Only video progress is allowed to be updated.')
 		}
+
+		// check if user is in the course
+		const user = await User.findUserById(req.userId)
+		const { course } = await Course.findCourseByContentId(contentId)
+		if (!user.studentCourses.find(c => c._id.equals(course._id))) {
+			throw new Error('User is not a student in the course.')
+		}
+
 		const { studentComplete } = await Content.markCompleteForStudent(
 			contentId,
 			req.userId,
