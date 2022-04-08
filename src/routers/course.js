@@ -14,6 +14,9 @@ const {
 const courseMiddleware = require('../middleware/course')
 const { buildErrorResponse } = require('../utils/responses/index')
 
+// utils
+const mailUtil = require('../utils/email/index')
+
 router.use(isAuthenticated)
 router.use(bindUserIdFromEmail)
 
@@ -268,17 +271,42 @@ router
 				course.students.length != undefined ? course.students.length : 999
 
 			// Add emails until course is full (if applicable)
-			for (email of emails) {
+			emails.forEach(async (email) => {
 				try {
-					if (!isCourseFull(course, studentsLength)) {
-						let user = await User.findUserByEmail(email)
+					// check if user is in the database
+					if (!(await User.isUserInSystem(email))) {
+						// if not, send email to user to create account
+						await mailUtil.sendEmailCourseLinkToNewUser({
+							email,
+							courseObj: course,
+							transport_strategy: mailUtil.TRANSPORTER_STRATEGY.GMAIL,
+						})
+						return
+					}
+
+					// get user
+					const user = await User.findUserByEmail(email)
+
+					// check if user is already in course
+					if (course.students.find((student) => student._id.equals(user._id))) {
+						return
+					}
+
+					if (studentsLength < course.settings.courseCapacity) {
 						await User.addStudentInCourse(user._id, courseId)
 						studentsLength++
+
+						// send email to user that they have been added to course
+						await mailUtil.sendEmailCourseLinkToExistingUser({
+							email: user.email,
+							courseObj: course,
+							transport_strategy: mailUtil.TRANSPORTER_STRATEGY.GMAIL,
+						})
 					}
 				} catch (error) {
 					console.log({ error: error.name, message: error.message })
 				}
-			}
+			})
 
 			res.status(204).send()
 		} catch (error) {
@@ -442,7 +470,6 @@ router.route('/:courseId/grades-student').get(async (req, res) => {
 		res.status(400).json(buildErrorResponse(error))
 	}
 })
-
 
 // TODO: Add author only route
 router.route('/:courseId/grades-student/:studentId').get(async (req, res) => {

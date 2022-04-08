@@ -16,3 +16,10 @@ PORT=[port that the api will be hosted on, usually `3000`]
 DB_CONNECT="uri-of-mongodb/database"
 TOKEN_SECRET="can be any string"
 LOCAL_UPLOAD_PATH=[use "uploads/" as default]
+
+FRONTEND_URL="http://localhost:4200"
+
+GOOGLE_USER="google-user-id"
+GOOGLE_OAUTH_CLIENT_ID="google-oauth-client-id"
+GOOGLE_OAUTH_CLIENT_SECRET="google-oauth-client-secret"
+GOOGLE_OAUTH_REFRESH_TOKEN="google-oauth-refresh-token"
