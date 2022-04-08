@@ -71,7 +71,7 @@ router
 	.delete(authorizeAdmin, async (req, res) => {
 		try {
 			const { courseId } = req.params
-			const result = await Course.deleteCourse(courseId)
+			const result = await Course.deleteCourse(courseId, {softDelete: true})
 			res.send(result)
 		} catch (error) {
 			res.status(400).send(error)
