@@ -1,4 +1,4 @@
-module.exports = makeDeleteSection = ({ Section, Course }) => {
+module.exports = makeDeleteSection = ({ Section, Course, Module, Content }) => {
 	// Delete a section in the db
 	// Resolve -> {deleted: #}
 	// Rejects -> err.name
@@ -19,6 +19,17 @@ module.exports = makeDeleteSection = ({ Section, Course }) => {
 					{ $pull: { sections: section._id } },
 					options
 				)
+
+				// Get all modules on the section
+				const modules = await Module.find({ sectionId: section._id }).exec()
+
+				// Delete all modules on the section
+				await Module.deleteMany({ _id: { $in: modules.map(m => m._id) } }).exec()
+
+				// Delete all contents on the modules
+				await Content.deleteMany({
+					moduleId: { $in: modules.map(module => module._id) },
+				}).exec()
 
 				return resolve({ deleted: 1 })
 			} catch (err) {

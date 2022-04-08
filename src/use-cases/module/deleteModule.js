@@ -1,4 +1,4 @@
-module.exports = makeDeleteModule = ({ Module, Section }) => {
+module.exports = makeDeleteModule = ({ Module, Section, Content }) => {
 	// Delete a module in the db
 	// Resolve -> {deleted: #}
 	// Rejects -> err.name
@@ -18,6 +18,11 @@ module.exports = makeDeleteModule = ({ Module, Section }) => {
 					{ $pull: { modules: module._id } },
 					options
 				)
+
+				// Delete all contents on the module
+				const contents = await Content.deleteMany({
+					moduleId: module._id,
+				}).exec()
 
 				return resolve({ deleted: 1 })
 			} catch (err) {
