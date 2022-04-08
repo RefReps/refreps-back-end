@@ -123,3 +123,15 @@ module.exports.sendEmailCourseLinkToNewUser = async ({
 	let info = await transporter.sendMail(mailDetails)
 	return Promise.resolve(info)
 }
+
+// If emails are off, overwrite the sendEmail functions with a no-op function
+if (!['TRUE', 'True', 'true'].includes(process.env.SEND_EMAILS)) {
+	console.log('Emails are turned off. Overwriting sendEmail functions')
+	module.exports = {
+		TRANSPORTER_STRATEGY,
+		sendEmailCourseLinkToExistingUser: () => {},
+		sendEmailCourseLinkToNewUser: () => {},
+	}
+} else {
+	console.log('Emails are turned on. Using sendEmail functions')
+}
