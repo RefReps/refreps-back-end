@@ -79,3 +79,24 @@ module.exports.toggleContentPublished = async (req, res, next) => {
 		return res.status(400).json(buildErrorResponse(error))
 	}
 }
+
+/**
+ * Toggle content.isKeepOpen on a content
+ * @param {request} req - req.params.contentId is required
+ * @param {response} res
+ * @param {next} next
+ */
+module.exports.toggleContentKeepOpen = async (req, res, next) => {
+	try {
+		const { contentId } = req.params
+		if (!contentId)
+			throw new ReferenceError('`req.params.contentId` is required')
+
+		const content = await Content.findContentById(contentId)
+		const isKeepOpen = !content.isKeepOpen
+		await Content.updateContent(contentId, { isKeepOpen })
+		next()
+	} catch (error) {
+		return res.status(400).json(buildErrorResponse(error))
+	}
+}

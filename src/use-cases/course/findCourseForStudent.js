@@ -90,6 +90,11 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 							return
 						}
 
+						if (content.isKeepOpen) {
+							content.isCompleted = true
+							return
+						}
+
 						if (disableRemainder) {
 							content.isCompleted = false
 							return

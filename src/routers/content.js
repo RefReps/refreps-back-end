@@ -176,4 +176,11 @@ router
 		res.status(200).json({ success: true })
 	})
 
+// Author route for toggling content being kept open
+router
+	.route('/:contentId/keep-open')
+	.put(contentMiddleware.toggleContentKeepOpen, async (req, res) => {
+		res.status(200).json({ success: true })
+	})
+
 module.exports = router

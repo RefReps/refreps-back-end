@@ -29,6 +29,11 @@ const moduleSchema = new Schema(
 			required: true,
 			default: true,
 		},
+		isKeepOpen: {
+			type: Boolean,
+			required: true,
+			default: false,
+		},
 		contentOrder: {
 			type: Number,
 			min: 1,
