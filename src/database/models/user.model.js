@@ -2,20 +2,22 @@ const { Schema, model, Types } = require('mongoose')
 
 const userSchema = new Schema(
 	{
-		// firstName: {
-		// 	type: String,
-		// 	required: true,
-		// 	trim: true,
-		// 	minlength: 1,
-		// 	maxlength: 120,
-		// },
-		// lastName: {
-		// 	type: String,
-		// 	required: true,
-		// 	trim: true,
-		// 	minlength: 1,
-		// 	maxlength: 120,
-		// },
+		firstName: {
+			type: String,
+			required: true,
+			trim: true,
+			default: '',
+			minlength: 0,
+			maxlength: 256,
+		},
+		lastName: {
+			type: String,
+			required: true,
+			trim: true,
+			default: '',
+			minlength: 1,
+			maxlength: 256,
+		},
 		email: {
 			type: String,
 			trim: true,
