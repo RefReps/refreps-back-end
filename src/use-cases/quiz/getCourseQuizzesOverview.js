@@ -96,7 +96,11 @@ module.exports = makeGetCourseQuizzesOverview = ({
                     }
 
                     result.push({
-                        user: {_id: student._id, email: student.email},
+                        user: {
+							_id: student._id, 
+							firstName: student.firstName, 
+							lastName: student.lastName,
+							email: student.email},
                         courseGrade: averageScore
                     })
 				})

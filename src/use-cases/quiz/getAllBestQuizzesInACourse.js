@@ -72,6 +72,8 @@ module.exports = makeGetAllBestQuizzesInACourse = ({
 							submissionId: submission._id,
 							userId: userId,
 							quizId: submission.quizId,
+							firstName: user.firstName,
+							lastName: user.lastName,
 							email: user.email,
 							grade: submission.grade,
 							submissionNumber: submission.submissionNumber,
@@ -84,6 +86,8 @@ module.exports = makeGetAllBestQuizzesInACourse = ({
                             quizName: quiz.name,
 							quizId: quiz._id,
 							userId: userId,
+							firstName: user.firstName,
+							lastName: user.lastName,
 							email: user.email,
 							grade: 0,
 							submissionNumber: 0,
@@ -92,7 +96,6 @@ module.exports = makeGetAllBestQuizzesInACourse = ({
 					}
 				})
 			)
-
 			return Promise.resolve({ submissions: result })
 		} catch (error) {
 			return Promise.reject(error)
