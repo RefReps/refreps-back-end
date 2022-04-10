@@ -75,34 +75,27 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 
 			const isEnforcements = course.settings.isEnforcements
 
-			// Append a new field on content -> .isCompleted
+			// Append a new field on content -> .isOpen
 			let disableRemainder = false
 			course.sections.forEach((section) => {
 				section.modules.forEach((module) => {
 					module.contents.forEach((content) => {
+						content.isCompleted = false
 						if (forceShowAll) {
-							content.isCompleted = true
+							content.isOpen = true
 							return
-						}
-
-						if (!isEnforcements) {
-							content.isCompleted = true
-							return
-						}
-
-						if (content.isKeepOpen) {
-							content.isCompleted = true
-							return
-						}
-
-						if (disableRemainder) {
-							content.isCompleted = false
+						} else if (!isEnforcements) {
+							content.isOpen = true
+						} else if (content.isKeepOpen) {
+							content.isOpen = true
+						} else if (disableRemainder) {
+							content.isOpen = false
 							return
 						}
 
 						// If the content's date is not passed, mark it as not completed
 						if (content.dropDate && content.dropDate > Date.now()) {
-							content.isCompleted = false
+							content.isOpen = false
 							return
 						}
 
@@ -115,6 +108,7 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 							studentComplete.percentComplete >=
 								course.settings.enforcementPercent
 						) {
+							content.isOpen = true
 							content.isCompleted = true
 
 							// If content is on video, check if student has watched the entire video
@@ -127,7 +121,9 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 							}
 							return
 						} else {
-							content.isCompleted = true
+							// open the content (this is the last content) and mark it as not completed
+							content.isOpen = true
+							content.isCompleted = false
 							disableRemainder = true
 							return
 						}
