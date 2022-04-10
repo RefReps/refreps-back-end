@@ -15,7 +15,11 @@ module.exports = makeFindAllUsersInCourse = ({ User }) => {
 						.in(courseId)
 						.exec()
 					students.forEach((student) =>
-						userDocs.push({ email: student.email, role: 'student' })
+						userDocs.push({ 
+							firstName: student.firstName,
+							lastName: student.lastName,
+							email: student.email, 
+							role: 'student' })
 					)
 				}
 
@@ -25,7 +29,11 @@ module.exports = makeFindAllUsersInCourse = ({ User }) => {
 						.in(courseId)
 						.exec()
 					authors.forEach((author) =>
-						userDocs.push({ email: author.email, role: 'author' })
+						userDocs.push({ 
+							firstName: author.firstName,
+							lastName: author.lastName,
+							email: author.email, 
+							role: 'author' })
 					)
 				}
 
