@@ -1,5 +1,7 @@
 const Section = require('../../database/models/section.model')
 const Course = require('../../database/models/course.model')
+const Module = require('../../database/models/module.model')
+const Content = require('../../database/models/content.model')
 const { makeFakeSection } = require('../../../__test__/fixtures')
 const {
 	dbConnect,
@@ -10,7 +12,7 @@ const makeDeleteSection = require('./deleteSection')
 
 describe('deleteSection Test Suite', () => {
 	const addSection = makeAddSection({ Section, Course })
-	const deleteSection = makeDeleteSection({ Section, Course })
+	const deleteSection = makeDeleteSection({ Section, Course, Module, Content })
 
 	beforeAll(async () => {
 		await dbConnect()
