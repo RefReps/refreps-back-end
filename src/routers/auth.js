@@ -49,8 +49,8 @@ router
 	// response -> {success, access_token, refresh_token}
 	.post(multer.none(), async (req, res) => {
 		try {
-			const { email, password } = req.body
-			await User.addUser({ email, password })
+			const { email, password, firstName, lastName } = req.body
+			await User.addUser({ email, password, firstName, lastName })
 			const { access_token, refresh_token } = await generateUserTokens(email)
 			return res.status(200).json({
 				success: true,

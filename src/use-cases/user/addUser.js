@@ -3,7 +3,7 @@ module.exports = makeAddUser = ({ User, Encryption }) => {
 	// Save a new user in the db
 	// Resolve -> user object
 	// Reject -> error name
-	return async function addUser(userInfo = { email, password, role: 'user' }) {
+	return async function addUser(userInfo = { email, password, role: 'user', firstName, lastName }) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				const userData = Object.assign({}, { ...userInfo })
