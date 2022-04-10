@@ -40,6 +40,7 @@ const courseRouter = require('./routers/course')
 const moduleRouter = require('./routers/module')
 const quizRouter = require('./routers/quiz')
 const sectionRouter = require('./routers/section')
+const userRouter = require('./routers/user')
 const videoRouter = require('./routers/video')
 
 // Use Routers
@@ -49,6 +50,7 @@ app.use('/api/course', courseRouter)
 app.use('/api/module', moduleRouter)
 app.use('/api/quiz', quizRouter)
 app.use('/api/section', sectionRouter)
+app.use('/api/user', userRouter)
 app.use('/api/video', videoRouter)
 
 app.listen(3000, () => {
