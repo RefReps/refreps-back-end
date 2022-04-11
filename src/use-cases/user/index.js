@@ -16,6 +16,9 @@ const makeRemoveAuthorInCourse = require('./removeAuthorInCourse')
 const makeRemoveRefreshToken = require('./removeRefreshToken')
 const makeRemoveStudentInCourse = require('./removeStudentInCourse')
 const makeUpdatePassword = require('./updatePassword')
+const makeUpdateName = require('./updateName')
+const makeUpdateEmail = require('./updateEmail')
+const makeUpdateRole = require('./updateRole')
 
 const addAuthorInCourse = makeAddAuthorInCourse({ User, Course })
 const addStudentInCourse = makeAddStudentInCourse({ User, Course })
@@ -31,6 +34,9 @@ const removeAuthorInCourse = makeRemoveAuthorInCourse({ User, Course })
 const removeRefreshToken = makeRemoveRefreshToken({ User })
 const removeStudentInCourse = makeRemoveStudentInCourse({ User, Course })
 const updatePassword = makeUpdatePassword({ User, Encryption: bcrypt })
+const updateName = makeUpdateName({ User })
+const updateEmail = makeUpdateEmail({ User })
+const updateRole = makeUpdateRole({ User })
 
 module.exports = {
 	addAuthorInCourse,
@@ -47,4 +53,7 @@ module.exports = {
 	removeRefreshToken,
 	removeStudentInCourse,
 	updatePassword,
+	updateName,
+	updateEmail,
+	updateRole,
 }
