@@ -75,7 +75,7 @@ module.exports = makeFindStudentsProgress = ({ Content, Course }) => {
 
 			// depopulate the content
 			content.depopulate('moduleId studentsCompleted')
-console.log(allStudents)
+
 			return Promise.resolve({
 				students: allStudents,
 				content: content,
