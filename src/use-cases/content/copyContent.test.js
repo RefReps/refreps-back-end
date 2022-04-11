@@ -10,7 +10,7 @@ const makeCopyContent = require('./copyContent')
 
 describe('copyContent Test Suite', () => {
 	const addContent = makeAddContent({ Content, Module })
-	const copyContent = makeCopyContent({ Content })
+	const copyContent = makeCopyContent({ Content, Module })
 
 	beforeAll(async () => {
 		await dbConnect()

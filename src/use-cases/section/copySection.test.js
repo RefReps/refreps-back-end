@@ -10,7 +10,7 @@ const makeCopySection = require('./copySection')
 
 describe('copySection Test Suite', () => {
 	const addSection = makeAddSection({ Section, Course })
-	const copySection = makeCopySection({ Section })
+	const copySection = makeCopySection({ Section, Course })
 
 	beforeAll(async () => {
 		await dbConnect()

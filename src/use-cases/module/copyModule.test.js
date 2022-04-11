@@ -10,7 +10,7 @@ const makeCopyModule = require('./copyModule')
 
 describe('copyModule Test Suite', () => {
 	const addModule = makeAddModule({ Module, Section })
-	const copyModule = makeCopyModule({ Module })
+	const copyModule = makeCopyModule({ Module, Section })
 
 	beforeAll(async () => {
 		await dbConnect()

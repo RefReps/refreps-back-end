@@ -70,6 +70,8 @@ module.exports.makeFakeContent = (overrides) => {
 
 module.exports.makeFakeUser = (overrides) => {
 	const user = {
+		firstName: 'Test',
+		lastName: 'User',
 		email: 'example@email.com',
 		password: '111111',
 		refreshTokens: [],
