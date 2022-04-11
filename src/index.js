@@ -34,6 +34,7 @@ app.use(cors())
 app.use(express.static('public'))
 
 // Require all routers
+const announcementRouter = require('./routers/announcement')
 const authRouter = require('./routers/auth')
 const contentRouter = require('./routers/content')
 const courseRouter = require('./routers/course')
@@ -43,6 +44,7 @@ const sectionRouter = require('./routers/section')
 const videoRouter = require('./routers/video')
 
 // Use Routers
+app.use('/api/announcement', announcementRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/content', contentRouter)
 app.use('/api/course', courseRouter)

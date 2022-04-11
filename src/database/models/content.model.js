@@ -17,7 +17,7 @@ const moduleSchema = new Schema(
 		onModel: {
 			type: String,
 			required: true,
-			enum: ['Video', 'Quiz'],
+			enum: ['Video', 'Quiz', 'Announcement'],
 		},
 		moduleId: {
 			type: Types.ObjectId,
