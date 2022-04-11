@@ -56,6 +56,7 @@ module.exports = makeFindStudentsProgress = ({ Content, Course }) => {
 							firstName: studentCompleted.student.firstName,
 							lastName: studentCompleted.student.lastName,
 							email: studentCompleted.student.email,
+							_id: studentCompleted.student._id,
 						},
 						percentComplete: studentCompleted.percentComplete || 0,
 					})
@@ -65,6 +66,7 @@ module.exports = makeFindStudentsProgress = ({ Content, Course }) => {
 							firstName: student.firstName,
 							lastName: student.lastName,
 							email: student.email,
+							_id: student._id,
 						},
 						percentComplete: 0,
 					})
@@ -73,7 +75,7 @@ module.exports = makeFindStudentsProgress = ({ Content, Course }) => {
 
 			// depopulate the content
 			content.depopulate('moduleId studentsCompleted')
-
+console.log(allStudents)
 			return Promise.resolve({
 				students: allStudents,
 				content: content,
