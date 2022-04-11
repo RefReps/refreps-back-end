@@ -49,8 +49,6 @@ module.exports = makeFindStudentsProgress = ({ Content }) => {
 				}
 			})
 
-			console.log(students)
-
 			return Promise.resolve({ students: students })
 		} catch (error) {
 			return Promise.reject(error)
