@@ -131,7 +131,7 @@ router.route('/:contentId/progress/video').put(async (req, res) => {
 		// check if user is in the course
 		const user = await User.findUserById(req.userId)
 		const { course } = await Course.findCourseByContentId(contentId)
-		if (!user.studentCourses.find(c => c._id.equals(course._id))) {
+		if (!user.studentCourses.find((c) => c._id.equals(course._id))) {
 			throw new Error('User is not a student in the course.')
 		}
 
@@ -148,26 +148,44 @@ router.route('/:contentId/progress/video').put(async (req, res) => {
 	}
 })
 
-// Admin only route
-// update a student's progress on a content
-// acts as a force complete for a content if percentComplete=100
-router.route('/:contentId/progress').put(authorizeAdmin, async (req, res) => {
-	try {
-		const { contentId } = req.params
-		const { userId, percentComplete } = req.body
-		const { studentComplete } = await Content.markCompleteForStudent(
-			contentId,
-			userId,
-			percentComplete,
-			true
-		)
-		return res
-			.status(200)
-			.json({ percentComplete: studentComplete.percentComplete })
-	} catch (error) {
-		return res.status(400).json({ success: false })
-	}
-})
+router
+	.route('/:contentId/progress')
+	// get all students progress for a content (only those students in the course)
+	.get(async (req, res) => {
+		try {
+			const { contentId } = req.params
+			const { students, content, course } = await Content.studentsProgress(
+				contentId
+			)
+			res.status(200).json({ students, content, course })
+		} catch (error) {
+			return res.status(400).json(buildErrorResponse(error))
+		}
+	})
+	// Author+ only route
+	// update a student's progress on a content
+	// acts as a force complete for a content if percentComplete=100
+	.put(async (req, res) => {
+		try {
+			const { contentId } = req.params
+			const { userId, percentComplete } = req.body
+
+			// check if user is author (or admin)
+			const { success } = await Content.isAuthorOnContent(contentId, req.userId)
+
+			const { studentComplete } = await Content.markCompleteForStudent(
+				contentId,
+				userId,
+				percentComplete,
+				true
+			)
+			return res
+				.status(200)
+				.json({ percentComplete: studentComplete.percentComplete })
+		} catch (error) {
+			return res.status(400).json({ success: false })
+		}
+	})
 
 // Author route for publishing content
 router

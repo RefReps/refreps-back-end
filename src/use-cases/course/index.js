@@ -6,6 +6,7 @@ const makeAddCourse = require('./addCourse')
 const makeAddCourseCode = require('./addCourseCode')
 const makeCopyCourse = require('./copyCourse')
 const makeDeleteCourse = require('./deleteCourse')
+const makeFetchAllStudents = require('./fetchAllStudents')
 const makeFindAllCourses = require('./findAllCourses')
 const makeFindAllCoursesForUser = require('./findAllCoursesForUser')
 const makeFindCourseByCode = require('./findCourseByCode')
@@ -21,6 +22,7 @@ module.exports = {
 	addCourseCode: makeAddCourseCode({ Course }),
 	copyCourse: makeCopyCourse({ Course }),
 	deleteCourse: makeDeleteCourse({ Course }),
+	fetchAllStudents: makeFetchAllStudents({ Course }),
 	findAllCourses: makeFindAllCourses({ Course }),
 	findAllCoursesForUser: makeFindAllCoursesForUser({ Course, User }),
 	findCourseByCode: makeFindCourseByCode({ Course }),
