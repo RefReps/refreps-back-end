@@ -62,5 +62,54 @@ router
 		}
 	})
 
+router
+	.route('/:userId/email')
+	// @route   PUT api/user/:userId/email
+	// @desc    Update user email
+	// @access  Authenticated, Admin
+	.put(authorizeAdmin, multer.none(), async (req, res) => {
+		try {
+			const { userId } = req.params
+			const { email } = req.body
+			const { user } = await User.updateEmail(userId, email)
+			res.status(200).json({ success: true })
+		} catch (error) {
+			res.status(500).json({ error: error.message })
+		}
+	})
+
+router
+	.route('/:userId/role')
+	// @route   PUT api/user/:userId/role
+	// @desc    Update user role
+	// @access  Authenticated, Admin
+	.put(authorizeAdmin, multer.none(), async (req, res) => {
+		try {
+			const { userId } = req.params
+			const { role } = req.body
+			const { user } = await User.updateRole(userId, role)
+			res.status(200).json({ success: true })
+		} catch (error) {
+			res.status(500).json({ error: error.message })
+		}
+	})
+
+router
+	.route('/:userId/name')
+	// @route   PUT api/user/:userId/name
+	// @desc    Update user name
+	// @access  Authenticated, Admin
+	.put(authorizeAdmin, multer.none(), async (req, res) => {
+		try {
+			const { userId } = req.params
+			const { firstName, lastName } = req.body
+			const { user } = await User.updateName(userId, firstName, lastName)
+			res.status(200).json({ success: true })
+		} catch (error) {
+			res.status(500).json({ error: error.message })
+		}
+	})
+	
+
 // export router
 module.exports = router
