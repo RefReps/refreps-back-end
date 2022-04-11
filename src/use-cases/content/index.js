@@ -10,6 +10,7 @@ const makeFindAllContents = require('./findAllContents')
 const makeFindContentById = require('./findContentById')
 const makeMarkCompleteForStudent = require('./markCompleteForStudent')
 const makeMoveContentOrder = require('./moveContentOrder')
+const makestudentsProgress = require('./studentsProgress')
 const makeUpdateContent = require('./updateContent')
 
 const addContent = makeAddContent({ Content, Module })
@@ -20,6 +21,7 @@ const findAllContents = makeFindAllContents({ Content })
 const findContentById = makeFindContentById({ Content })
 const markCompleteForStudent = makeMarkCompleteForStudent({ Content, User })
 const moveContentOrder = makeMoveContentOrder({ Content })
+const studentsProgress = makestudentsProgress({ Content })
 const updateContent = makeUpdateContent({ Content })
 
 module.exports = {
@@ -31,5 +33,6 @@ module.exports = {
 	findContentById,
 	markCompleteForStudent,
 	moveContentOrder,
+	studentsProgress,
 	updateContent,
 }
