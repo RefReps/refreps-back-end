@@ -1,5 +1,5 @@
 // get students progress on the content from the database
-module.exports = makeFindStudentsProgress = ({ Content }) => {
+module.exports = makeFindStudentsProgress = ({ Content, Course }) => {
 	return async function findStudentsProgress(contentId) {
 		try {
 			// find the content and students completed on the content
@@ -16,6 +16,9 @@ module.exports = makeFindStudentsProgress = ({ Content }) => {
 						path: 'sectionId',
 						populate: {
 							path: 'courseId',
+							populate: {
+								path: 'students',
+							},
 						},
 					},
 				})
@@ -27,29 +30,55 @@ module.exports = makeFindStudentsProgress = ({ Content }) => {
 			// deconstruct the content
 			const {
 				moduleId: {
+					sectionId: {
+						courseId: { students },
+					},
+				},
+			} = content
+			const {
+				moduleId: {
 					sectionId: { courseId: course },
 				},
 				studentsCompleted,
 			} = content
 
-			// filter out students that are not in the course
-			let students = studentsCompleted.filter((student) => {
-				return course.students.find((c) => c._id.equals(student.student._id))
-			})
+			let allStudents = []
 
-			// filter out unneeded data
-			students = students.map((student) => {
-				return {
-					student: {
-						firstName: student.student.firstName,
-						lastName: student.student.lastName,
-						email: student.student.email,
-					},
-					percentComplete: student.percentComplete,
+			students.forEach((student) => {
+				// find the student in the studentsCompleted array
+				const studentCompleted = studentsCompleted.find((studentCompleted) =>
+					studentCompleted.student._id.equals(student._id)
+				)
+
+				if (studentCompleted) {
+					allStudents.push({
+						student: {
+							firstName: studentCompleted.student.firstName,
+							lastName: studentCompleted.student.lastName,
+							email: studentCompleted.student.email,
+						},
+						percentComplete: studentCompleted.percentComplete || 0,
+					})
+				} else {
+					allStudents.push({
+						student: {
+							firstName: student.firstName,
+							lastName: student.lastName,
+							email: student.email,
+						},
+						percentComplete: 0,
+					})
 				}
 			})
 
-			return Promise.resolve({ students: students })
+			// depopulate the content
+			content.depopulate('moduleId studentsCompleted')
+
+			return Promise.resolve({
+				students: allStudents,
+				content: content,
+				course: course,
+			})
 		} catch (error) {
 			return Promise.reject(error)
 		}

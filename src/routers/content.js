@@ -154,8 +154,10 @@ router
 	.get(async (req, res) => {
 		try {
 			const { contentId } = req.params
-			const { students } = await Content.studentsProgress(contentId)
-			res.status(200).json({ students: students })
+			const { students, content, course } = await Content.studentsProgress(
+				contentId
+			)
+			res.status(200).json({ students, content, course })
 		} catch (error) {
 			return res.status(400).json(buildErrorResponse(error))
 		}

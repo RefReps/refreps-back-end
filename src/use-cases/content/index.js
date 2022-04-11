@@ -1,6 +1,7 @@
 const Content = require('../../database/models/content.model')
 const Module = require('../../database/models/module.model')
 const User = require('../../database/models/user.model')
+const Course = require('../../database/models/course.model')
 
 const makeAddContent = require('./addContent')
 const makeCollapseContent = require('./collapseContents')
@@ -21,7 +22,7 @@ const findAllContents = makeFindAllContents({ Content })
 const findContentById = makeFindContentById({ Content })
 const markCompleteForStudent = makeMarkCompleteForStudent({ Content, User })
 const moveContentOrder = makeMoveContentOrder({ Content })
-const studentsProgress = makestudentsProgress({ Content })
+const studentsProgress = makestudentsProgress({ Content, Course })
 const updateContent = makeUpdateContent({ Content })
 
 module.exports = {
