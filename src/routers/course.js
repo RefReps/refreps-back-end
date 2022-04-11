@@ -399,7 +399,6 @@ router
 							moduleCopy._id,
 							bindDocumentId
 						)
-						console.log('copied content')
 
 						// TODO: If video -> dont do anything else
 						// If quiz -> copy the quiz (change toDocument in content) so that it can be edited
