@@ -13,7 +13,27 @@ module.exports = makeFindUserById = ({ User }) => {
 				}
 				const found = userDoc.toObject()
 
-				return resolve(found)
+				const {
+					_id,
+					firstName,
+					lastName,
+					email,
+					role,
+					authorCourses,
+					studentCourses,
+					createdAt,
+				} = found
+
+				return resolve({
+					_id,
+					firstName,
+					lastName,
+					email,
+					role,
+					authorCourses,
+					studentCourses,
+					createdAt,
+				})
 			} catch (error) {
 				return reject(error)
 			}

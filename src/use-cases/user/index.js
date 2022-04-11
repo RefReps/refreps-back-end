@@ -10,6 +10,7 @@ const makeCompareRefreshToken = require('./compareRefreshToken')
 const makeFindAllUsersInCourse = require('./findAllUsersInCourse')
 const makeFindUserByEmail = require('./findUserByEmail')
 const makeFindUserById = require('./findUserById')
+const makeGetAll = require('./getAll')
 const makeIsUserInSystem = require('./isUserInSystem')
 const makeRemoveAuthorInCourse = require('./removeAuthorInCourse')
 const makeRemoveRefreshToken = require('./removeRefreshToken')
@@ -23,6 +24,7 @@ const compareRefreshToken = makeCompareRefreshToken({ User })
 const findAllUsersInCourse = makeFindAllUsersInCourse({ User })
 const findUserByEmail = makeFindUserByEmail({ User })
 const findUserById = makeFindUserById({ User })
+const getAll = makeGetAll({ User })
 const isUserInSystem = makeIsUserInSystem({ User })
 const removeAuthorInCourse = makeRemoveAuthorInCourse({ User, Course })
 const removeRefreshToken = makeRemoveRefreshToken({ User })
@@ -37,6 +39,7 @@ module.exports = {
 	findAllUsersInCourse,
 	findUserByEmail,
 	findUserById,
+	getAll,
 	isUserInSystem,
 	removeAuthorInCourse,
 	removeRefreshToken,
