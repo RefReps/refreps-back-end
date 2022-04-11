@@ -1,4 +1,4 @@
-module.exports = makeCopySection = ({ Section }) => {
+module.exports = makeCopySection = ({ Section, Course }) => {
 	// Copy a section
 	// Resolve -> section object
 	// Reject -> error name
@@ -25,6 +25,13 @@ module.exports = makeCopySection = ({ Section }) => {
 				const copySection = new Section(sectionInfo)
 
 				const saved = await copySection.save()
+
+				// save the section id to the course
+				const course = await Course.findOneAndUpdate(
+					{ _id: bindCourseId },
+					{ $push: { sections: saved._id } }
+				)
+
 				return resolve(saved.toObject())
 			} catch (err) {
 				return reject(err)

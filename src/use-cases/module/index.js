@@ -13,7 +13,7 @@ const makeUpdateModule = require('./updateModule')
 
 const addModule = makeAddModule({ Module, Section })
 const collapseModule = makeCollapseModule({ Module })
-const copyModule = makeCopyModule({ Module })
+const copyModule = makeCopyModule({ Module, Section })
 const deleteModule = makeDeleteModule({ Module, Section, Content })
 const findAllModules = makeFindAllModules({ Module })
 const findModuleById = makeFindModuleById({ Module })

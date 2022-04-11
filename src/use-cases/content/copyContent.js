@@ -1,4 +1,4 @@
-module.exports = makeCopyContent = ({ Content }) => {
+module.exports = makeCopyContent = ({ Content, Module }) => {
 	// Copy a content
 	// Resolve -> content object
 	// Reject -> error name
@@ -17,6 +17,7 @@ module.exports = makeCopyContent = ({ Content }) => {
 					onModel: content.onModel,
 					moduleId: bindModuleId,
 					isPublished: content.isPublished,
+					isKeepOpen: content.isKeepOpen,
 					contentOrder: content.contentOrder,
 					dropDate: content.dropDate,
 				}
@@ -24,6 +25,13 @@ module.exports = makeCopyContent = ({ Content }) => {
 				const copyContent = new Content(contentInfo)
 
 				const saved = await copyContent.save()
+
+				// save the content id to the module
+				const module_ = await Module.findOneAndUpdate(
+					{ _id: bindModuleId },
+					{ $push: { contents: saved._id } }
+				)
+
 				return resolve(saved.toObject())
 			} catch (err) {
 				return reject(err)
