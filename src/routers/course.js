@@ -71,7 +71,7 @@ router
 	.delete(authorizeAdmin, async (req, res) => {
 		try {
 			const { courseId } = req.params
-			const result = await Course.deleteCourse(courseId, {softDelete: true})
+			const result = await Course.deleteCourse(courseId, { softDelete: true })
 			res.send(result)
 		} catch (error) {
 			res.status(400).send(error)
@@ -358,25 +358,24 @@ router
 			const overrides = req.body
 			const { authorEmail } = req.body
 
-			const course = await Course.copyCourse(courseId, overrides)
+			const courseCopy = await Course.copyCourse(courseId, overrides)
 
-			const { sections } = await useCases.Section.findAllSections(courseId)
-			sections.forEach(async (section) => {
+			const { course } = await Course.getCourseSkeleton(courseId)
+
+			course.sections.forEach(async (section) => {
 				// Copy all sections and bind them to the new course
 				let sectionCopy = await useCases.Section.copySection(
 					section._id,
-					course._id
+					courseCopy._id
 				)
 
-				let { modules } = await useCases.Module_.findAllModules(section._id)
-				modules.forEach(async (module_) => {
+				section.modules.forEach(async (module_) => {
 					// Copy all modules and bind them to the new section, resp.
 					let moduleCopy = await useCases.Module_.copyModule(
 						module_._id,
 						sectionCopy._id
 					)
-					let { contents } = await useCases.Content.findAllContents(module_._id)
-					contents.forEach(async (content) => {
+					module_.contents.forEach(async (content) => {
 						// Copy the document that the Content points to (if needed)
 						let bindDocumentId
 						switch (content.onModel) {
@@ -400,6 +399,7 @@ router
 							moduleCopy._id,
 							bindDocumentId
 						)
+						console.log('copied content')
 
 						// TODO: If video -> dont do anything else
 						// If quiz -> copy the quiz (change toDocument in content) so that it can be edited
@@ -410,7 +410,7 @@ router
 			// Add author if provided
 			if (authorEmail) {
 				const user = await User.findUserByEmail(authorEmail)
-				await User.addAuthorInCourse(user._id, course._id)
+				await User.addAuthorInCourse(user._id, courseCopy._id)
 			}
 
 			res.status(201).send()

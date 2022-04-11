@@ -13,6 +13,7 @@ const makeFindCourseByContentId = require('./findCourseByContentId')
 const makeFindCourseById = require('./findCourseById')
 const makeFindCourseByQuizId = require('./findCourseByQuizId')
 const makeFindCourseForStudent = require('./findCourseForStudent')
+const makeGetCourseSkeleton = require('./getCourseSkeleton')
 const makeUpdateCourse = require('./updateCourse')
 
 module.exports = {
@@ -27,5 +28,6 @@ module.exports = {
 	findCourseById: makeFindCourseById({ Course, User }),
 	findCourseByQuizId: makeFindCourseByQuizId({ Course, Content }),
 	findCourseForStudent: makeFindCourseForStudent({ Course, User }),
+	getCourseSkeleton: makeGetCourseSkeleton({ Course }),
 	updateCourse: makeUpdateCourse({ Course }),
 }

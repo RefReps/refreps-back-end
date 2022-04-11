@@ -14,7 +14,7 @@ const makeUpdateSection = require('./updateSection')
 
 const addSection = makeAddSection({ Section, Course })
 const collapseSection = makeCollapseSection({ Section })
-const copySection = makeCopySection({ Section })
+const copySection = makeCopySection({ Section, Course })
 const deleteSection = makeDeleteSection({ Section, Course, Module, Content })
 const findAllSections = makeFindAllSections({ Section })
 const findSectionById = makeFindSectionById({ Section })

@@ -14,7 +14,7 @@ const makeUpdateContent = require('./updateContent')
 
 const addContent = makeAddContent({ Content, Module })
 const collapseContent = makeCollapseContent({ Content })
-const copyContent = makeCopyContent({ Content })
+const copyContent = makeCopyContent({ Content, Module })
 const deleteContent = makeDeleteContent({ Content, Module })
 const findAllContents = makeFindAllContents({ Content })
 const findContentById = makeFindContentById({ Content })
