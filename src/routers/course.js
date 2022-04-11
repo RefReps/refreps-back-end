@@ -71,7 +71,7 @@ router
 	.delete(authorizeAdmin, async (req, res) => {
 		try {
 			const { courseId } = req.params
-			const result = await Course.deleteCourse(courseId, {softDelete: true})
+			const result = await Course.deleteCourse(courseId, { softDelete: true })
 			res.send(result)
 		} catch (error) {
 			res.status(400).send(error)
@@ -242,10 +242,8 @@ router
 	.get(async (req, res) => {
 		try {
 			const { courseId } = req.params
-			const users = await User.findAllUsersInCourse(courseId, {
-				includeAuthors: false,
-			})
-			res.status(200).json(users)
+			const { students } = await Course.fetchAllStudents(courseId)
+			res.status(200).json({ users: students })
 		} catch (error) {
 			res
 				.status(400)
