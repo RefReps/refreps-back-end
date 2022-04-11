@@ -9,6 +9,7 @@ const makeCopyContent = require('./copyContent')
 const makeDeleteContent = require('./deleteContent')
 const makeFindAllContents = require('./findAllContents')
 const makeFindContentById = require('./findContentById')
+const makeIsAuthorOnContent = require('./isAuthorOnContent')
 const makeMarkCompleteForStudent = require('./markCompleteForStudent')
 const makeMoveContentOrder = require('./moveContentOrder')
 const makestudentsProgress = require('./studentsProgress')
@@ -20,6 +21,7 @@ const copyContent = makeCopyContent({ Content })
 const deleteContent = makeDeleteContent({ Content, Module })
 const findAllContents = makeFindAllContents({ Content })
 const findContentById = makeFindContentById({ Content })
+const isAuthorOnContent = makeIsAuthorOnContent({ Content, User })
 const markCompleteForStudent = makeMarkCompleteForStudent({ Content, User })
 const moveContentOrder = makeMoveContentOrder({ Content })
 const studentsProgress = makestudentsProgress({ Content, Course })
@@ -32,6 +34,7 @@ module.exports = {
 	deleteContent,
 	findAllContents,
 	findContentById,
+	isAuthorOnContent,
 	markCompleteForStudent,
 	moveContentOrder,
 	studentsProgress,

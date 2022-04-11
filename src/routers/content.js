@@ -162,13 +162,17 @@ router
 			return res.status(400).json(buildErrorResponse(error))
 		}
 	})
-	// Admin only route
+	// Author+ only route
 	// update a student's progress on a content
 	// acts as a force complete for a content if percentComplete=100
-	.put(authorizeAdmin, async (req, res) => {
+	.put(async (req, res) => {
 		try {
 			const { contentId } = req.params
 			const { userId, percentComplete } = req.body
+
+			// check if user is author (or admin)
+			const { success } = await Content.isAuthorOnContent(contentId, req.userId)
+
 			const { studentComplete } = await Content.markCompleteForStudent(
 				contentId,
 				userId,
