@@ -53,6 +53,19 @@ router
 	.route('/:courseId/complete')
 	.get(courseMiddleware.studentFullCourseStructure)
 
+router.route('/:courseId/skeleton')
+// @route   GET api/course/:courseId/skeleton
+// @desc    Get the skeleton of a course
+// @access  Authenticated
+.get(async (req, res) => {
+	try {
+		const {course} = await Course.getCourseSkeleton(req.params.courseId)
+		res.status(200).json({course})
+	} catch (error) {
+		res.status(400).send(error)
+	}
+})
+
 router
 	.route('/:courseId')
 	.get(async (req, res) => {
