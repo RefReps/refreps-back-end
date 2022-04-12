@@ -25,6 +25,27 @@ module.exports = makeGetCourseSkeleton = ({ Course }) => {
 
 			const course = courseDoc.toObject()
 
+			// sort contents in order
+			course.sections.forEach((section) => {
+				section.modules.forEach((module) => {
+					module.contents.sort((a, b) => {
+						return a.contentOrder - b.contentOrder
+					})
+				})
+			})
+
+			// sort modules in order
+			course.sections.forEach((section) => {
+				section.modules.sort((a, b) => {
+					return a.moduleOrder - b.moduleOrder
+				})
+			})
+
+			// sort sections in order
+			course.sections.sort((a, b) => {
+				return a.sectionOrder - b.sectionOrder
+			})
+
 			return Promise.resolve({ course })
 		} catch (error) {
 			return Promise.reject(error)
