@@ -73,6 +73,18 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 				})
 			})
 
+			// sort modules in order
+			course.sections.forEach((section) => {
+				section.modules.sort((a, b) => {
+					return a.moduleOrder - b.moduleOrder
+				})
+			})
+
+			// sort sections in order
+			course.sections.sort((a, b) => {
+				return a.sectionOrder - b.sectionOrder
+			})
+
 			const isEnforcements = course.settings.isEnforcements
 
 			// Append a new field on content -> .isOpen
@@ -96,6 +108,7 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 						// If the content's date is not passed, mark it as not completed
 						if (content.dropDate && content.dropDate > Date.now()) {
 							content.isOpen = false
+							disableRemainder = true
 							return
 						}
 
@@ -129,27 +142,6 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 						}
 					})
 				})
-			})
-
-			// sort contents in order
-			course.sections.forEach((section) => {
-				section.modules.forEach((module) => {
-					module.contents.sort((a, b) => {
-						return a.contentOrder - b.contentOrder
-					})
-				})
-			})
-
-			// sort modules in order
-			course.sections.forEach((section) => {
-				section.modules.sort((a, b) => {
-					return a.moduleOrder - b.moduleOrder
-				})
-			})
-
-			// sort sections in order
-			course.sections.sort((a, b) => {
-				return a.sectionOrder - b.sectionOrder
 			})
 
 			return Promise.resolve({ course })
