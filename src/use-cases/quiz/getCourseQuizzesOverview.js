@@ -38,12 +38,12 @@ module.exports = makeGetCourseQuizzesOverview = ({
 			// Get all students in the course
 			const students = course.students
 
-			// Get all quizzes from the course
+			// Get all quizzes from the course and only get published quizzes
 			const quizzes = []
 			course.sections.forEach((section) => {
 				section.modules.forEach((module) => {
 					module.contents.forEach((content) => {
-						if (content.onModel == 'Quiz') {
+						if (content.onModel == 'Quiz' && content.isPublished) {
 							quizzes.push(content.toDocument)
 						}
 					})

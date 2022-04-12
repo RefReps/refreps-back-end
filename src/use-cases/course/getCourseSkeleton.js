@@ -2,7 +2,7 @@ module.exports = makeGetCourseSkeleton = ({ Course }) => {
 	// Gets the skeleton of a course
 	// Resolve -> {course: course doc}
 	// Reject -> error
-	return async function getCourseSkeleton(courseId) {
+	return async function getCourseSkeleton(courseId, {onlyPublished=true} = {}) {
 		try {
 			// Check for params being used
 			if (!courseId) throw new ReferenceError('`courseId` must be provided.')
@@ -24,6 +24,17 @@ module.exports = makeGetCourseSkeleton = ({ Course }) => {
 			}
 
 			const course = courseDoc.toObject()
+
+			// If onlyPublished is true, filter out all contents that are not published
+			if (onlyPublished) {
+				course.sections.forEach((section) => {
+					section.modules.forEach((module) => {
+						module.contents = module.contents.filter(
+							(content) => content.isPublished
+						)
+					})
+				})
+			}
 
 			// sort contents in order
 			course.sections.forEach((section) => {

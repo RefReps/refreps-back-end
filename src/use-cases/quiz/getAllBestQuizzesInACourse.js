@@ -46,7 +46,7 @@ module.exports = makeGetAllBestQuizzesInACourse = ({
 			course.sections.forEach((section) => {
 				section.modules.forEach((module) => {
 					module.contents.forEach((content) => {
-						if (content.onModel == 'Quiz') {
+						if (content.onModel == 'Quiz' && content.isPublished) {
 							quizzes.push(content.toDocument)
 						}
 					})
