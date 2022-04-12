@@ -36,7 +36,7 @@ router
 	// @route   GET api/user/:id
 	// @desc    Get a user by id
 	// @access  Authenticated, Admin
-	.get('/:userId', authorizeAdmin, async (req, res) => {
+	.get('/:userId', async (req, res) => {
 		try {
 			const { userId } = req.params
 			const user = await User.findUserById(userId)

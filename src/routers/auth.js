@@ -31,6 +31,7 @@ router
 					access_token,
 					refresh_token,
 					user_role: user.role,
+					user_id: user._id
 				})
 			}
 
