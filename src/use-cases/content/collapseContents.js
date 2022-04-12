@@ -9,14 +9,18 @@ module.exports = makeCollapseContents = ({ Content }) => {
 					throw new ReferenceError('moduleId is undefined')
 				}
 
-				let query = {}
-				query['moduleId'] = moduleId
+				// let query = {}
+				// query['moduleId'] = moduleId
 
-				const contentQuery = Content.find(query)
+				// const contentQuery = Content.find(query)
 
 				// Sort the query by the following: contentOrder->name->_id
-				contentQuery.sort({ contentOrder: 1, name: 1, _id: 1 })
-				const contentDocs = await contentQuery.exec()
+				// contentQuery.sort({ contentOrder: 1, name: 1, _id: 1 })
+				const contentDocs = await Content.find()
+					.where('moduleId')
+					.equals(moduleId)
+					.sort({ contentOrder: 1, name: 1, _id: 1 })
+					.exec()
 
 				if (isDocsEmpty(contentDocs)) {
 					return resolve({
@@ -32,6 +36,7 @@ module.exports = makeCollapseContents = ({ Content }) => {
 					fixDuplicates(contentDocs, 'contentOrder')
 					fixGaps(contentDocs, 'contentOrder')
 				}
+				fixZeros(contentDocs, 'contentOrder')
 
 				// Update all docs
 				for (let i = 0; i < totalDocs; i++) {
@@ -44,6 +49,7 @@ module.exports = makeCollapseContents = ({ Content }) => {
 				contentDocs.forEach((doc) => {
 					contentObjects.push(doc.toObject())
 				})
+
 				return resolve({
 					found: contentObjects.length,
 					contents: contentObjects,
@@ -99,6 +105,15 @@ const fixGaps = (docs, attribute) => {
 		const previous = i - 1
 		while (docs[i][attribute] != docs[previous][attribute] + 1) {
 			docs[i][attribute] -= 1
+		}
+	}
+}
+
+const fixZeros = (docs, attribute) => {
+	const totalDocs = docs.length
+	for (let i = 0; i < totalDocs; i++) {
+		if (docs[i][attribute] == 0) {
+			docs[i][attribute] = 1
 		}
 	}
 }

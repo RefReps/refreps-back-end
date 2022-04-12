@@ -46,6 +46,7 @@ router
 				isKeepOpen: false,
 				contentOrder: 200,
 			})
+			await Content.collapseContent(moduleId)
 
 			res.status(200).send({ _id: announcement._id })
 		} catch (error) {
