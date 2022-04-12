@@ -53,18 +53,19 @@ router
 	.route('/:courseId/complete')
 	.get(courseMiddleware.studentFullCourseStructure)
 
-router.route('/:courseId/skeleton')
-// @route   GET api/course/:courseId/skeleton
-// @desc    Get the skeleton of a course
-// @access  Authenticated
-.get(async (req, res) => {
-	try {
-		const {course} = await Course.getCourseSkeleton(req.params.courseId)
-		res.status(200).json({course})
-	} catch (error) {
-		res.status(400).send(error)
-	}
-})
+router
+	.route('/:courseId/skeleton')
+	// @route   GET api/course/:courseId/skeleton
+	// @desc    Get the skeleton of a course
+	// @access  Authenticated
+	.get(async (req, res) => {
+		try {
+			const { course } = await Course.getCourseSkeleton(req.params.courseId)
+			res.status(200).json({ course })
+		} catch (error) {
+			res.status(400).send(error)
+		}
+	})
 
 router
 	.route('/:courseId')
@@ -371,7 +372,9 @@ router
 
 			const courseCopy = await Course.copyCourse(courseId, overrides)
 
-			const { course } = await Course.getCourseSkeleton(courseId)
+			const { course } = await Course.getCourseSkeleton(courseId, {
+				onlyPublished: false,
+			})
 
 			course.sections.forEach(async (section) => {
 				// Copy all sections and bind them to the new course
@@ -400,9 +403,10 @@ router
 								bindDocumentId = quiz._id
 								break
 							case 'Announcement':
-								const { announcement } = await useCases.Announcement.copyAnnouncement(
-									content.toDocument
-								)
+								const { announcement } =
+									await useCases.Announcement.copyAnnouncement(
+										content.toDocument
+									)
 								bindDocumentId = announcement._id
 								break
 							default:
