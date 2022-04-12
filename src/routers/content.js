@@ -148,6 +148,36 @@ router.route('/:contentId/progress/video').put(async (req, res) => {
 	}
 })
 
+router.route('/:contentId/progress/announcement')
+// @route PUT api/content/:contentId/progress/announcement
+.put(async (req, res) => {	
+	try {
+		const { contentId } = req.params
+
+		const content = await Content.findContentById(contentId)
+		if (!(content.onModel == 'Announcement')) {
+			throw new Error('Only announcement progress is allowed to be updated.')
+		}
+
+		// check if user is in the course
+		const user = await User.findUserById(req.userId)
+		const { course } = await Course.findCourseByContentId(contentId)
+		if (!user.studentCourses.find((c) => c._id.equals(course._id))) {
+			throw new Error('User is not a student in the course.')
+		}
+
+		// mark content complete for user
+		const { studentComplete } = await Content.markCompleteForStudent(
+			contentId,
+			req.userId,
+			100 // percentComplete
+		)
+		return res.status(200).json({ percentComplete: studentComplete.percentComplete })
+	} catch (error) {
+		return res.status(400).json(buildErrorResponse(error))
+	}
+})
+
 router
 	.route('/:contentId/progress')
 	// get all students progress for a content (only those students in the course)
