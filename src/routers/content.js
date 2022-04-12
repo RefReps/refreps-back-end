@@ -63,7 +63,7 @@ router
 		try {
 			const { contentId } = req.params
 			const result = await useCases.Content.findContentById(contentId)
-			res.send(result)
+			res.send({content: result})
 		} catch (error) {
 			res.status(400).send(error)
 		}

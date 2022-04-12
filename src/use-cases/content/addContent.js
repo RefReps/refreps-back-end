@@ -6,7 +6,11 @@ module.exports = makeAddContent = ({ Content, Module }) => {
 		return new Promise(async (resolve, reject) => {
 			const options = { returnDocument: 'after' }
 
-			const content = new Content(contentInfo)
+			const info = Object.assign({
+				dropDate: new Date(),
+			}, {...contentInfo})
+
+			const content = new Content(info)
 			try {
 				await content.validate()
 
