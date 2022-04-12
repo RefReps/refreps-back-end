@@ -106,7 +106,7 @@ module.exports = makeFindCourseForStudent = ({ Course, User }) => {
 						}
 
 						// If the content's date is not passed, mark it as not completed
-						if (content.dropDate && content.dropDate > Date.now()) {
+						if (content.dropDate && content.dropDate > Date.now() && !content.isKeepOpen) {
 							content.isOpen = false
 							disableRemainder = true
 							return
