@@ -399,6 +399,12 @@ router
 								)
 								bindDocumentId = quiz._id
 								break
+							case 'Announcement':
+								const { announcement } = await useCases.Announcement.copyAnnouncement(
+									content.toDocument
+								)
+								bindDocumentId = announcement._id
+								break
 							default:
 								bindDocumentId = content.toDocument
 						}
