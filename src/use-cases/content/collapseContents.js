@@ -29,21 +29,19 @@ module.exports = makeCollapseContents = ({ Content }) => {
 					})
 				}
 
-				decreaseToLowestNumber(contentDocs, 'contentOrder', 1)
+				// set contentOrder to index ordering
+				contentDocs.forEach((doc, index) => {
+					doc.contentOrder = index + 1
+				})
 
-				const totalDocs = contentDocs.length
-				if (totalDocs > 1) {
-					fixDuplicates(contentDocs, 'contentOrder')
-					fixGaps(contentDocs, 'contentOrder')
-				}
-				fixZeros(contentDocs, 'contentOrder')
-
-				// Update all docs
-				for (let i = 0; i < totalDocs; i++) {
-					await Content.findByIdAndUpdate(contentDocs[i]._id, {
-						contentOrder: contentDocs[i].contentOrder,
-					}).exec()
-				}
+				// mongoose transaction to update all docs
+				const transaction = await Content.collection.initializeUnorderedBulkOp()
+				contentDocs.forEach((doc) => {
+					transaction
+						.find({ _id: doc._id })
+						.updateOne({ $set: { contentOrder: doc.contentOrder } })
+				})
+				await transaction.execute()
 
 				let contentObjects = []
 				contentDocs.forEach((doc) => {

@@ -9,14 +9,18 @@ module.exports = makeCollapseSections = ({ Section }) => {
 					throw new ReferenceError('courseId is undefined')
 				}
 
-				let query = {}
-				query['courseId'] = courseId
+				// let query = {}
+				// query['courseId'] = courseId
 
-				const sectionQuery = Section.find(query)
+				// const sectionQuery = Section.find(query)
 
 				// Sort the query by the following: sectionOrder->name->_id
-				sectionQuery.sort({ sectionOrder: 1, name: 1, _id: 1 })
-				const sectionDocs = await sectionQuery.exec()
+				// sectionQuery.sort({ sectionOrder: 1, name: 1, _id: 1 })
+				const sectionDocs = await Section.find()
+					.where('courseId')
+					.equals(courseId)
+					.sort({ sectionOrder: 1, name: 1, _id: 1 })
+					.exec()
 
 				if (isDocsEmpty(sectionDocs)) {
 					return resolve({
@@ -25,20 +29,17 @@ module.exports = makeCollapseSections = ({ Section }) => {
 					})
 				}
 
-				decreaseToLowestNumber(sectionDocs, 'sectionOrder', 1)
+				// set sectionOrder to index ordering
+				sectionDocs.forEach((doc, index) => {
+					doc.sectionOrder = index + 1
+				})
 
-				const totalDocs = sectionDocs.length
-				if (totalDocs > 1) {
-					fixDuplicates(sectionDocs, 'sectionOrder')
-					fixGaps(sectionDocs, 'sectionOrder')
-				}
-
-				// Update all docs
-				for (let i = 0; i < totalDocs; i++) {
-					await Section.findByIdAndUpdate(sectionDocs[i]._id, {
-						sectionOrder: sectionDocs[i].sectionOrder,
-					}).exec()
-				}
+				// mongoose transaction to update all docs
+				const transaction = await Section.collection.initializeUnorderedBulkOp()
+				sectionDocs.forEach((doc) => {
+					transaction.find({ _id: doc._id }).updateOne({ $set: { sectionOrder: doc.sectionOrder } })
+				})
+				await transaction.execute()
 
 				let sectionObjects = []
 				sectionDocs.forEach((doc) => {
@@ -99,6 +100,15 @@ const fixGaps = (docs, attribute) => {
 		const previous = i - 1
 		while (docs[i][attribute] != docs[previous][attribute] + 1) {
 			docs[i][attribute] -= 1
+		}
+	}
+}
+
+const fixZeros = (docs, attribute) => {
+	const totalDocs = docs.length
+	for (let i = 0; i < totalDocs; i++) {
+		if (docs[i][attribute] == 0) {
+			docs[i][attribute] = 1
 		}
 	}
 }

@@ -23,8 +23,8 @@ module.exports = makeMoveModuleOrder = ({ Module }) => {
 				let changed = 0
 				const oldOrder = module.moduleOrder
 				if (newOrder > oldOrder) {
-					const docs = await Module.where('courseId')
-						.equals(module['courseId'])
+					const docs = await Module.where('sectionId')
+						.equals(module['sectionId'])
 						.where('moduleOrder')
 						.gte(oldOrder)
 						.lte(newOrder)
@@ -32,8 +32,8 @@ module.exports = makeMoveModuleOrder = ({ Module }) => {
 						.exec()
 					changed = docs.modifiedCount
 				} else if (newOrder < oldOrder) {
-					const docs = await Module.where('courseId')
-						.equals(module['courseId'])
+					const docs = await Module.where('sectionId')
+						.equals(module['sectionId'])
 						.where('moduleOrder')
 						.gte(newOrder)
 						.lte(oldOrder)

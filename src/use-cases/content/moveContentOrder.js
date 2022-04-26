@@ -23,8 +23,8 @@ module.exports = makeMoveContentOrder = ({ Content }) => {
 				let changedContents = 0
 				const oldOrder = content.contentOrder
 				if (newOrder > oldOrder) {
-					const docs = await Content.where('courseId')
-						.equals(content['courseId'])
+					const docs = await Content.where('moduleId')
+						.equals(content['moduleId'])
 						.where('contentOrder')
 						.gte(oldOrder)
 						.lte(newOrder)
@@ -32,8 +32,8 @@ module.exports = makeMoveContentOrder = ({ Content }) => {
 						.exec()
 					changedContents = docs.modifiedCount
 				} else if (newOrder < oldOrder) {
-					const docs = await Content.where('courseId')
-						.equals(content['courseId'])
+					const docs = await Content.where('moduleId')
+						.equals(content['moduleId'])
 						.where('contentOrder')
 						.gte(newOrder)
 						.lte(oldOrder)

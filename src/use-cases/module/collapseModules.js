@@ -9,14 +9,13 @@ module.exports = makeCollapseModules = ({ Module }) => {
 					throw new ReferenceError('sectionId is undefined')
 				}
 
-				let query = {}
-				query['sectionId'] = sectionId
-
-				const moduleQuery = Module.find(query)
-
 				// Sort the query by the following: moduleOrder->name->_id
-				moduleQuery.sort({ moduleOrder: 1, name: 1, _id: 1 })
-				const moduleDocs = await moduleQuery.exec()
+				// moduleQuery.sort({ moduleOrder: 1, name: 1, _id: 1 })
+				const moduleDocs = await Module.find()
+					.where('sectionId')
+					.equals(sectionId)
+					.sort({ moduleOrder: 1, name: 1, _id: 1 })
+					.exec()
 
 				if (isDocsEmpty(moduleDocs)) {
 					return resolve({
@@ -25,20 +24,19 @@ module.exports = makeCollapseModules = ({ Module }) => {
 					})
 				}
 
-				decreaseToLowestNumber(moduleDocs, 'moduleOrder', 1)
+				// set moduleOrder to index ordering
+				moduleDocs.forEach((doc, index) => {
+					doc.moduleOrder = index + 1
+				})
 
-				const totalDocs = moduleDocs.length
-				if (totalDocs > 1) {
-					fixDuplicates(moduleDocs, 'moduleOrder')
-					fixGaps(moduleDocs, 'moduleOrder')
-				}
-
-				// Update all docs
-				for (let i = 0; i < totalDocs; i++) {
-					await Module.findByIdAndUpdate(moduleDocs[i]._id, {
-						moduleOrder: moduleDocs[i].moduleOrder,
-					}).exec()
-				}
+				// mongoose transaction to update all docs
+				const transaction = await Module.collection.initializeUnorderedBulkOp()
+				moduleDocs.forEach((doc) => {
+					transaction
+						.find({ _id: doc._id })
+						.updateOne({ $set: { moduleOrder: doc.moduleOrder } })
+				})
+				await transaction.execute()
 
 				let moduleObjects = []
 				moduleDocs.forEach((doc) => {
@@ -99,6 +97,26 @@ const fixGaps = (docs, attribute) => {
 		const previous = i - 1
 		while (docs[i][attribute] != docs[previous][attribute] + 1) {
 			docs[i][attribute] -= 1
+		}
+	}
+}
+
+const fixZeros = (docs, attribute) => {
+	const totalDocs = docs.length
+	for (let i = 0; i < totalDocs; i++) {
+		if (docs[i][attribute] == 0) {
+			docs[i][attribute] = 1
+		}
+	}
+}
+
+const fixNegatives = (docs, attribute) => {
+	const totalDocs = docs.length
+	for (let i = 0; i < totalDocs; i++) {
+		while (docs[i][attribute] < 0) {
+			docs.forEach((doc) => {
+				doc[attribute] += 1
+			})
 		}
 	}
 }
